@@ -25,14 +25,14 @@
 
 /* START Primary Functions */
 
-FILE *getStream(FILE *fp);
+FILE *getStream(FILE *fp)
 {
 	if(fp==NULL)
 	{
 		printf("Cannot Open File!");
 		exit(0);
 	}
-
+	return NULL;
 }
 
 void removeComments(char *testcaseFile, char *cleanFile)
@@ -63,7 +63,7 @@ void removeComments(char *testcaseFile, char *cleanFile)
 
 			if(c=='*')
 			{
-				while(c=fgetc(f1)!='*' && c=fgetc(f1)!='*')
+				while((c=fgetc(f1))!='*' && (c=fgetc(f1))!='*')
 					continue; // ignore everything till double **
 
 				c = fgetc(f1); // Gets the character after the last *
@@ -79,7 +79,7 @@ void removeComments(char *testcaseFile, char *cleanFile)
 
 Node* getNextToken()
 {
-
+	return NULL;
 }
 
 /* END Primary Functions */
