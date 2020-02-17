@@ -9,110 +9,104 @@
 	Anirudh Garg 2017A7PS0142P
 	Sanjeev Singla 2017A7PS0152P
 
-*/ 
-
-#ifndef LEXER_H
-#define LEXER_H 
-
+*/
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-typedef enum 
+#ifndef LEXER_H
+#define LEXER_H
+
+char *keyword[30] = 
 {
+	"integer",
+	"real",
+	"boolean",
+	"of",
+	"array",
+	"start",
+	"end",
+	"declare",
+	"module",
+	"driver",
+	"program",
+	"get_value",
+	"print",
+	"use",
+	"with",
+	"parameters",
+	"true",
+	"false",
+	"takes",
+	"input",
+	"returns",
+	"AND",
+	"OR",
+	"for",
+	"in",
+	"switch",
+	"case",
+	"break",
+	"default",
+	"while"
+};
 
-	integer,
-	real,
-	boolean,
-	of,
-	array,
-	start,
-	end,
-	declare,
-	module,
-	driver,
-	program,
-	get_value,
-	print,
-	use,
-	with,
-	parameters,
-	true,
-	false,
-	takes,
-	input,
-	returns,
-	AND,
-	OR,
-	for,
-	in,
-	switch,
-	case,
-	break,
-	default,
-	while
-
-}Keyword;
-
-typedef enum 
+char *tokens[30] = 
 {
-
-	INTEGER,
-	REAL,
-	BOOLEAN,
-	OF,
-	ARRAY,
-	START,
-	END,
-	DECLARE,
-	MODULE,
-	DRIVER,
-	PROGRAM,
-	GET_VALUE,
-	PRINT,
-	USE,
-	WITH,
-	PARAMETERS,
-	TRUE,
-	FALSE,
-	TAKES,
-	INPUT,
-	RETURNS,
-	AND,
-	OR,
-	FOR,
-	IN,
-	SWITCH,
-	CASE,
-	BREAK,
-	DEFAULT,
-	WHILE,
-	PLUS,
-	MINUS,
-	MUL,
-	DIV,
-	LT,
-	LE,
-	GE,
-	GT,
-	EQ,
-	NE,
-	DEF,
-	ENDDEF,
-	COLON,
-	RANGEOP,
-	SEMICOL,
-	COMMA,
-	ASSIGNOP,
-	SQBO,
-	SQBC,
-	BO,
-	BC,
-	COMMENTMARK,
-	DRIVERDEF,
-	DRIVERENDDEF
-
-}Token;
+	"integer",
+	"real",
+	"boolean",
+	"of",
+	"array",
+	"start",
+	"end",
+	"declare",
+	"module",
+	"driver",
+	"program",
+	"get_value",
+	"print",
+	"use",
+	"with",
+	"parameters",
+	"true",
+	"false",
+	"takes",
+	"input",
+	"returns",
+	"AND",
+	"OR",
+	"for",
+	"in",
+	"switch",
+	"case",
+	"break",
+	"default",
+	"while",
+	"PLUS",
+	"MINUS",
+	"MUL",
+	"DIV",
+	"LT",
+	"LE",
+	"GE",
+	"GT",
+	"EQ",
+	"NE",
+	"DEF",
+	"ENDDEF",
+	"COLON",
+	"RANGEOP",
+	"SEMICOL",
+	"COMMA",
+	"ASSIGNOP",
+	"SQBO",
+	"SQBC",
+	"BO",
+	"BC",
+	"COMMENTMARK"
+};
 
 struct token
 {
@@ -136,9 +130,9 @@ typedef struct node Node;
 struct head
 {
 	Node *hd;
-}
+};
 
-typedef struct head *Head;
+typedef struct head Head;
 
 // Functions Declarations - 
 
@@ -147,7 +141,3 @@ Node* getNextToken();
 void removeComments(char *testcaseFile, char *cleanFile);
 
 #endif
-
-
-
-

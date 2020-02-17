@@ -14,13 +14,13 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "lexer.c"
+#include "lexer.h"
 
-struct parsetree
+/*struct parsetree
 {				
 	
 };
 
-typedef struct parsetree ParseTree;
+typedef struct parsetree ParseTree;*/
 
 #endif
