@@ -110,7 +110,7 @@ char *tokens[60] =
 	"COMMENTMARK"
 };
 
-char buffer[4000];
+char buffer[4000]; // DOUBT is twin buffer necessary ?
 int buflen=4000;
 
 /* ******************************************************* */
@@ -194,16 +194,38 @@ void removeComments(char *testcaseFile, char *cleanFile)
 
 			if(c=='*')
 			{
-				while((c=fgetc(f1))!='*' && (c=fgetc(f1))!='*')
-					continue; // ignore everything till double **
-
+				/*while((c=fgetc(f1))!='*' && (c=fgetc(f1))!='*')
+				{
+					continue; // NOT WORKING, EXTRA *
+				}
 				c = fgetc(f1); // Gets the character after the last *
-			}
-		}
+				*/
+				
+				c=fgetc(f1);
 
+				while(c!='*')
+				{
+					if(c=='\n')
+					{
+						fputc(c,f2);
+					}
+					c=fgetc(f1);
+					if(c=='*')
+					{
+						break;
+					}
+					else
+					{
+						continue;
+					}
+				}
+				/* NOT WORKING FOR MULTIPLY */
+			}
+			c=fgetc(f1);
+			c=fgetc(f1);
+		}
 		fputc(c,f2);
 	}
-
 	fclose(f1);
 	fclose(f2);
 }

@@ -8,6 +8,10 @@ start
     [r,m] := use mod1 with parameters v, w; 
     print(r);
     print(m);
+    ** X 
+    Y
+    Z **
+    print(m);
 end
 
 <<module mod1>>

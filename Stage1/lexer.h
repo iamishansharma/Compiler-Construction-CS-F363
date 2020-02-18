@@ -11,44 +11,14 @@
 
 */
  
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #ifndef LEXER_H
 #define LEXER_H
 
-extern int keyno;
-extern int tokno;
-extern char *keyword[35];
-extern char *tokens[60];
-
-struct token
-{
-	char token[30];
-	char value[30];
-	int lineno;
-};
-
-typedef struct token Token;
-
-struct node
-{
-	Token *t;
-};
-
-typedef struct node Node;
-
-struct head
-{
-	Node *hd;
-};
-
-typedef struct head Head;
+#include "lexerDef.h"
 
 // Primary Functions Declarations - 
 
-FILE *getStream(FILE *fp);
+FILE* getStream(FILE *fp);
 Node* getNextToken();
 void removeComments(char *testcaseFile, char *cleanFile);
 

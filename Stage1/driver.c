@@ -19,5 +19,7 @@ int main(int argc, char *argv[])
 
 	f=getStream(f);
 
+	removeComments("tc1.txt","mod.txt");
+
 	return 0;
 }
