@@ -11,10 +11,13 @@
 
 */
 
-#include "lexer.h"
 #include "parser.h"
 
-int main()
+int main(int argc, char *argv[])
 {
+	FILE *f=fopen(argv[1],"r");
+
+	f=getStream(f);
+
 	return 0;
 }
