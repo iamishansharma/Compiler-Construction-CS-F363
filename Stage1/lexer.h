@@ -21,6 +21,7 @@
 FILE* getStream(FILE *fp);
 Node* getNextToken();
 void removeComments(char *testcaseFile, char *cleanFile);
+Token getLexeme(int begin, int fwd);
 
 // Supporting Functions Declarations - 
 

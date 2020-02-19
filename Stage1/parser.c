@@ -13,14 +13,24 @@
 
 #include "parser.h"
 
-/* ******************************************************* */
+Term t[100];
+
+{
+	/* HARD CODE the terms here*/
+}
+
+/* **************************************************************************** */
 
 /* START Supporting Functions for Primary Functions */
 
+Grammar getGrammar(FILE *f)
+{
+
+}
 
 /* END Supporting Functions for Primary Functions */
 
-/* ******************************************************* */
+/* **************************************************************************** */
 
 /* START Primary Functions */
 
@@ -46,4 +56,4 @@ void printParseTree(ParseTree PT, char *outfile)
 
 /* END Primary Functions */
 
-/* ******************************************************* */
+/* **************************************************************************** */

@@ -1,0 +1,26 @@
+Lexer: 
+
+	Create union for value in struct of token - Sarthak
+	Finish getToken() - Ishan
+	Hash keyword and tokens - Sanjeev
+	Twin Buffer - Sanjeev
+
+Parser: 
+
+	Hard Code Terms - Sarthak 
+
+	Complete and see parse tree and parse table structure - Ishan
+	
+	Finish - 
+
+		getGrammar() - Sarthak
+
+		First and follow - Sanjeev
+
+		createParseTable - Ishan
+
+		printParseTree - Anirudh
+
+
+
+

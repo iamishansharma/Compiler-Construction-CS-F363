@@ -17,16 +17,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
+
+extern int state;
+extern int begin;
+extern int fwd;
+extern int fwd2;
 extern int keyno;
 extern int tokno;
 extern char *keyword[35];
 extern char *tokens[60];
 
+
 struct token
 {
 	char token[30];
-	char value[30];
+	char value[30]; // create union 
 	int lineno;
 };
 
