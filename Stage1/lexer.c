@@ -13,9 +13,15 @@
 
 #include "parser.h"
 
-/* ******************************************************* */
+/* **************************************************************************** */
 
 /* Global Variables */
+
+int state=1;
+
+int begin=0;
+int fwd=0;
+int fwd2=0;
 
 int keyno=35;
 int tokno=60;
@@ -110,12 +116,10 @@ char *tokens[60] =
 	"COMMENTMARK"
 };
 
-char buffer1[2000]; 
-char buffer2[2000];
-int buflen1=2000;
-int buflen2=2000;
+char buffer[4000];
+int buflen;
 
-/* ******************************************************* */
+/* **************************************************************************** */
 
 /* START Supporting Functions for Primary Functions */
 
@@ -145,9 +149,25 @@ void ClearMem(char *c,int len) // To Clear Char Arrays
 	}
 }
 
+Token getLexeme(int begin, int fwd)
+{
+	Token t;
+
+	char valueinit[30];
+
+	for(int i=begin; i<fwd; i++)
+	{
+		valueinit[i]=buffer[i];
+		/* token and value differences */
+	}
+	begin=fwd+1;
+	fwd=begin;
+	return t;
+}
+
 /* END Supporting Functions for Primary Functions */
 
-/* ******************************************************* */
+/* **************************************************************************** */
 
 /* START Primary Functions */
 
@@ -159,10 +179,9 @@ FILE* getStream(FILE *fp)
 		exit(0);
 	}
 
-	ClearMem(buffer1,buflen1);
-	ClearMem(buffer2,buflen2);
+	ClearMem(buffer,buflen);
 
-	fread(buffer1,buflen1,1,fp);
+	fread(buffer,buflen,1,fp);
 
 	//printf("%s",buffer); //for debugging.
 
@@ -235,9 +254,54 @@ void removeComments(char *testcaseFile, char *cleanFile)
 
 Node* getNextToken()
 {
-	return NULL;
+	Node *newToken=newNode();
+	ClearMem(newToken->t->token,30);
+	ClearMem(newToken->t->value,30);
+	newToken->t->lineno=0;
+
+	char c;
+
+	char tokeninit[30];
+	char valueinit[30];
+
+	while(1)
+	{
+		c=buffer1[fwd];
+		switch(state)
+		{
+			case 1: 
+					if(c=='\b' || c=='\t')
+					{
+						if((fwd-begin)!=0)
+						{
+							Token t;
+							t=getLexeme(begin,fwd);
+						}
+						else
+						{
+							;
+						}
+						fwd++;
+					}
+					else if(c=='\n')
+					{
+						newToken->t->lineno++;
+						if((fwd-begin)!=0)
+						{
+							Token t;
+							t=getLexeme(begin,fwd);
+						}
+						else
+						{
+							;
+						}
+						fwd++;
+					}
+					break;
+		}
+	}
 }
 
 /* END Primary Functions */
 
-/* ******************************************************* */
+/* **************************************************************************** */
