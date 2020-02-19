@@ -110,8 +110,10 @@ char *tokens[60] =
 	"COMMENTMARK"
 };
 
-char buffer[4000]; // DOUBT is twin buffer necessary ?
-int buflen=4000;
+char buffer1[2000]; 
+char buffer2[2000];
+int buflen1=2000;
+int buflen2=2000;
 
 /* ******************************************************* */
 
@@ -157,9 +159,10 @@ FILE* getStream(FILE *fp)
 		exit(0);
 	}
 
-	ClearMem(buffer,buflen);
+	ClearMem(buffer1,buflen1);
+	ClearMem(buffer2,buflen2);
 
-	fread(buffer,buflen,1,fp);
+	fread(buffer1,buflen1,1,fp);
 
 	//printf("%s",buffer); //for debugging.
 
@@ -194,34 +197,34 @@ void removeComments(char *testcaseFile, char *cleanFile)
 
 			if(c=='*')
 			{
-				/*while((c=fgetc(f1))!='*' && (c=fgetc(f1))!='*')
+				while(1)
 				{
-					continue; // NOT WORKING, EXTRA *
-				}
-				c = fgetc(f1); // Gets the character after the last *
-				*/
-				
-				c=fgetc(f1);
-
-				while(c!='*')
-				{
+					c=fgetc(f1);
 					if(c=='\n')
 					{
 						fputc(c,f2);
 					}
-					c=fgetc(f1);
-					if(c=='*')
-					{
-						break;
-					}
 					else
 					{
-						continue;
+						if(c=='*')
+						{
+							c=fgetc(f1);
+							if(c=='*')
+							{
+								break;
+							}
+							else
+							{
+								continue;
+							}
+						}
+						else
+						{
+							continue;
+						}
 					}
 				}
-				/* NOT WORKING FOR MULTIPLY */
 			}
-			c=fgetc(f1);
 			c=fgetc(f1);
 		}
 		fputc(c,f2);

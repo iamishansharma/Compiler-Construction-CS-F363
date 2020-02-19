@@ -8,9 +8,8 @@ start
     [r,m] := use mod1 with parameters v, w; 
     print(r);
     print(m);
-    ** X 
-    Y
-    Z **
+    ** This is testing for comments (a*b)
+    this is second line **
     print(m);
 end
 
