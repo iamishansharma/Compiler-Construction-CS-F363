@@ -14,13 +14,15 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "lexer.h"
+#include "parserDef.h"
 
-/*struct parsetree
-{				
-	
-};
+// Primary Functions Declarations - 
 
-typedef struct parsetree ParseTree;*/
+void ComputeFirstAndFollowSets(Grammar G, FirstAndFollow F);
+void createParseTable(FirstAndFollow F, ParseTable T);
+void parseInputSourceCode(char *testcaseFile, ParseTable T);
+void printParseTree(ParseTree PT, char *outfile);
+
+// Supporting Functions Declarations - 
 
 #endif

@@ -1,14 +1,14 @@
 compileAll: driver.o lexer.o parser.o
 	gcc -o stage1 driver.o lexer.o parser.o
 
-driver.o: driver.c parser.h lexer.h
+driver.o: driver.c parser.h
 	gcc -c driver.c 
 
-lexer.o: lexer.c lexer.h
-	gcc -c lexer.c
-
-parser.o: parser.c parser.h lexer.h
+parser.o: parser.c parser.h parserDef.h
 	gcc -c parser.c
 
+lexer.o: lexer.c lexer.h lexerDef.h
+	gcc -c lexer.c
+
 clean: 
-	rm -r *.o stage1
+	rm -r *.o stage1 mod.txt

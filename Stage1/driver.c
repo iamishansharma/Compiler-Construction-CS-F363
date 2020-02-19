@@ -11,10 +11,15 @@
 
 */
 
-#include "lexer.h"
 #include "parser.h"
 
-int main()
+int main(int argc, char *argv[])
 {
+	FILE *f=fopen(argv[1],"r");
+
+	f=getStream(f);
+
+	removeComments("tc1.txt","mod.txt");
+
 	return 0;
 }
