@@ -1,9 +1,12 @@
 Lexer: 
 
 	Create union for value in struct of token - Sarthak
+
 	Finish getToken() - Ishan
+
 	Hash keyword and tokens - Sanjeev
-	Twin Buffer - Sanjeev
+	
+	getChar and getString - Sanjeev
 
 Parser: 
 
@@ -20,6 +23,8 @@ Parser:
 		createParseTable - Ishan
 
 		printParseTree - Anirudh
+
+		parseInputCode - Sanjeev / Ishan
 
 
 

@@ -19,6 +19,7 @@
 
 int state=1;
 
+int line=1;
 int begin=0;
 int fwd=0;
 int fwd2=0;
@@ -59,6 +60,8 @@ char *keyword[35] =
 	"default",
 	"while"
 };
+
+/* no use 
 
 char *tokens[60] = 
 {
@@ -114,10 +117,10 @@ char *tokens[60] =
 	"BO",
 	"BC",
 	"COMMENTMARK"
-};
+}; */
 
 char buffer[4000];
-int buflen;
+int buflen=4000;
 
 /* **************************************************************************** */
 
@@ -149,20 +152,9 @@ void ClearMem(char *c,int len) // To Clear Char Arrays
 	}
 }
 
-Token getLexeme(int begin, int fwd)
+bool isKeyword(char value[30])
 {
-	Token t;
 
-	char valueinit[30];
-
-	for(int i=begin; i<fwd; i++)
-	{
-		valueinit[i]=buffer[i];
-		/* token and value differences */
-	}
-	begin=fwd+1;
-	fwd=begin;
-	return t;
 }
 
 /* END Supporting Functions for Primary Functions */
@@ -259,44 +251,399 @@ Node* getNextToken()
 	ClearMem(newToken->t->value,30);
 	newToken->t->lineno=0;
 
-	char c;
-
+	char ch;
+	int tklen=0; // used here to read into token/value
 	char tokeninit[30];
 	char valueinit[30];
 
 	while(1)
 	{
-		c=buffer1[fwd];
+		ch=buffer[fwd];
 		switch(state)
 		{
-			case 1: 
-					if(c=='\b' || c=='\t')
+			case 1: /* This branch is for state 1 and all 
+					its direct paths in our original DFA */
+					
+					 // change this 
+					/*if(ch == '\r')
 					{
-						if((fwd-begin)!=0)
+						ch = buffer[++fwd];
+						if(ch == '\n')
 						{
-							Token t;
-							t=getLexeme(begin,fwd);
+							ch = buffer[++fwd];
+						}
+						line++;
+						state = 1;
+						break;
+					}*/
+					else if(ch=='\b'|| ch=='\t')
+					{
+						state = 1;
+						ch = buffer[++fwd];
+						break;
+					}
+					else if(((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
+					{
+						valueinit[tklen++] = ch;
+						ch=buffer[++fwd];
+						state = 2;
+					}
+					else if((ch>='0') && (ch<='9'))
+					{
+						valueinit[tklen++] = ch;
+						ch = buffer[++fwd];
+						state = 3;
+					}
+					else if(ch=='+')
+					{
+						strcpy(newToken->t->token,"PLUS");
+						strcpy(newToken->t->value,"+");
+						newToken->t->lineno=line;
+						fwd++;
+						begin = fwd;
+						state = 1;
+						return newToken;
+						break;
+					}
+					else if(ch=='-')
+					{
+						strcpy(newToken->t->token,"MINUS");
+						strcpy(newToken->t->value,"-");
+						newToken->t->lineno=line;
+						fwd++;
+						begin = fwd;
+						state = 1;
+						return newToken;
+						break;
+					}
+					else if(ch=='*')
+					{
+						ch = buffer[++fwd];
+
+						if(ch=='*')
+						{
+							while(1)
+							{
+								ch=buffer[++fwd];
+
+								if(ch=='\n')
+								{
+									line++;
+								}
+								else
+								{
+									if(ch=='*')
+									{
+										ch=buffer[++fwd];
+										if(ch=='*')
+										{
+											break;
+										}
+										else
+										{
+											continue;
+										}
+									}
+									else
+									{
+										continue;
+									}
+								}
+							}
 						}
 						else
 						{
-							;
+							strcpy(newToken->t->token,"MUL");
+							strcpy(newToken->t->value,"*");
+							newToken->t->lineno=line;
+							begin = fwd;
+							state = 1;
+							return newToken;
+							break;
 						}
-						fwd++;
 					}
-					else if(c=='\n')
+					else if(ch=='/')
 					{
-						newToken->t->lineno++;
-						if((fwd-begin)!=0)
+						strcpy(newToken->t->token,"DIV");
+						strcpy(newToken->t->value,"/");
+						newToken->t->lineno=line;
+						fwd++;
+						begin = fwd;
+						state = 1;
+						return newToken;
+						break;
+					}
+					else if(ch=='<')
+					{
+						ch = buffer[++fwd];
+
+						if(ch=='=')
 						{
-							Token t;
-							t=getLexeme(begin,fwd);
+							strcpy(newToken->t->token,"LE");
+							strcpy(newToken->t->value,"<=");
+							newToken->t->lineno=line;
+							fwd++;
+							begin = fwd;
+							state = 1;
+							return newToken;
+							break;
+						}
+						else if(ch=='<')
+						{
+							ch = buffer[++fwd];
+
+							if(ch=='<')
+							{
+								strcpy(newToken->t->token,"DRIVERDEF");
+								strcpy(newToken->t->value,"<<<");
+								newToken->t->lineno=line;
+								fwd++;
+								begin = fwd;
+								state = 1;
+								return newToken;
+								break;
+							}
+							else
+							{
+								strcpy(newToken->t->token,"DEF");
+								strcpy(newToken->t->value,"<<");
+								newToken->t->lineno=line;
+								begin = fwd;
+								state = 1;
+								return newToken;
+								break;
+							}
 						}
 						else
 						{
-							;
+							strcpy(newToken->t->token,"LT");
+							strcpy(newToken->t->value,"<");
+							newToken->t->lineno=line;
+							begin = fwd;
+							state = 1;
+							return newToken;
+							break;
 						}
-						fwd++;
 					}
+					else if(ch=='>')
+					{
+						ch = buffer[++fwd];
+
+						if(ch=='=')
+						{
+							strcpy(newToken->t->token,"GE");
+							strcpy(newToken->t->value,">=");
+							newToken->t->lineno=line;
+							fwd++;
+							begin = fwd;
+							state = 1;
+							return newToken;
+							break;
+						}
+						else if(ch=='>')
+						{
+							ch = buffer[++fwd];
+
+							if(ch=='>')
+							{
+								strcpy(newToken->t->token,"DRIVERENDDEF");
+								strcpy(newToken->t->value,">>>");
+								newToken->t->lineno=line;
+								fwd++;
+								begin = fwd;
+								state = 1;
+								return newToken;
+								break;
+							}
+							else
+							{
+								strcpy(newToken->t->token,"ENDDEF");
+								strcpy(newToken->t->value,">>");
+								newToken->t->lineno=line;
+								begin = fwd;
+								state = 1;
+								return newToken;
+								break;
+							}
+						}
+						else
+						{
+							strcpy(newToken->t->token,"GT");
+							strcpy(newToken->t->value,">");
+							newToken->t->lineno=line;
+							begin = fwd;
+							state = 1;
+							return newToken;
+							break;
+						}
+					}
+					else if(ch=='=')
+					{
+						ch = buffer[++fwd];
+
+						if(ch=='=')
+						{
+							strcpy(newToken->t->token,"EQ");
+							strcpy(newToken->t->value,"==");
+							newToken->t->lineno=line;
+							fwd++;
+							begin = fwd;
+							state = 1;
+							return newToken;
+							break;
+						}
+					}
+					else if(ch=='!')
+					{
+						ch = buffer[++fwd];
+
+						if(ch=='=')
+						{
+							strcpy(newToken->t->token,"NE");
+							strcpy(newToken->t->value,"!=");
+							newToken->t->lineno=line;
+							fwd++;
+							begin = fwd;
+							state = 1;
+							return newToken;
+							break;
+						}
+					}
+					else if(ch==':')
+					{
+						ch = buffer[++fwd];
+
+						if(ch=='=')
+						{
+							strcpy(newToken->t->token,"ASSIGNOP");
+							strcpy(newToken->t->value,":=");
+							newToken->t->lineno=line;
+							fwd++;
+							begin = fwd;
+							state = 1;
+							return newToken;
+							break;
+						}
+						else
+						{
+							strcpy(newToken->t->token,"COLON");
+							strcpy(newToken->t->value,":");
+							newToken->t->lineno=line;
+							begin = fwd;
+							state = 1;
+							return newToken;
+							break;
+						}
+					}
+					else if(ch=='.')
+					{
+						ch = buffer[++fwd];
+
+						if(ch=='.')
+						{
+							strcpy(newToken->t->token,"RANGEOP");
+							strcpy(newToken->t->value,"..");
+							newToken->t->lineno=line;
+							fwd++;
+							begin = fwd;
+							state = 1;
+							return newToken;
+							break;
+						}
+					}
+					else if(ch==';')
+					{
+						strcpy(newToken->t->token,"SEMICOL");
+						strcpy(newToken->t->value,";");
+						newToken->t->lineno=line;
+						fwd++;
+						begin = fwd;
+						state = 1;
+						return newToken;
+						break;
+					}
+					else if(ch==',')
+					{
+						strcpy(newToken->t->token,"COMMA");
+						strcpy(newToken->t->value,",");
+						newToken->t->lineno=line;
+						fwd++;
+						begin = fwd;
+						state = 1;
+						return newToken;
+						break;
+					}
+					else if(ch=='[')
+					{
+						strcpy(newToken->t->token,"SQBO");
+						strcpy(newToken->t->value,"[");
+						newToken->t->lineno=line;
+						fwd++;
+						begin = fwd;
+						state = 1;
+						return newToken;
+						break;
+					}
+					else if(ch==']')
+					{
+						strcpy(newToken->t->token,"SQBC");
+						strcpy(newToken->t->value,"]");
+						newToken->t->lineno=line;
+						fwd++;
+						begin = fwd;
+						state = 1;
+						return newToken;
+						break;
+					}
+					else if(ch=='(')
+					{
+						strcpy(newToken->t->token,"BO");
+						strcpy(newToken->t->value,"(");
+						newToken->t->lineno=line;
+						fwd++;
+						begin = fwd;
+						state = 1;
+						return newToken;
+						break;
+					}
+					else if(ch==')')
+					{
+						strcpy(newToken->t->token,"BC");
+						strcpy(newToken->t->value,")");
+						newToken->t->lineno=line;
+						fwd++;
+						begin = fwd;
+						state = 1;
+						return newToken;
+						break;
+					}
+					else
+					{
+						strcpy(newToken->t->token,"Error");
+						printf("Lexical Error: %s at line no: %d\n",valueinit,line);
+						state = 1;
+						fwd++;
+						begin = fwd;
+						return newToken;
+					}
+					break;
+
+			case 2: /* This branch is for state 2 and state 3
+					 in our original DFA */
+
+
+					isKeyword(char value[30]);
+
+
+
+					
+					break;
+
+			case 3: /* This branch is for state 4 to state10
+					 in our original DFA */
+
+
+					
 					break;
 		}
 	}

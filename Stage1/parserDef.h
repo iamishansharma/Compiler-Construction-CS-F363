@@ -16,15 +16,13 @@
 
 #include "lexer.h"
 
-extern Term t[100]; // may increase over 100
-
 struct parsetree
 {				
-	node* token;
-	ParseTree *child;
-	ParseTree *parent;
-	ParseTree *left;
-	ParseTree *right;
+	Node* token;
+	struct parsetree *child;
+	struct parsetree *parent;
+	struct parsetree *left;
+	struct parsetree *right;
 	int ifleaf;
 
 };
