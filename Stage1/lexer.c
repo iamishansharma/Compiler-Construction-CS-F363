@@ -154,7 +154,7 @@ void ClearMem(char *c,int len) // To Clear Char Arrays
 
 bool isKeyword(char value[30])
 {
-
+	return true;
 }
 
 /* END Supporting Functions for Primary Functions */
@@ -264,18 +264,13 @@ Node* getNextToken()
 			case 1: /* This branch is for state 1 and all 
 					its direct paths in our original DFA */
 					
-					 // change this 
-					/*if(ch == '\r')
+					if(ch == '\n')
 					{
 						ch = buffer[++fwd];
-						if(ch == '\n')
-						{
-							ch = buffer[++fwd];
-						}
 						line++;
 						state = 1;
 						break;
-					}*/
+					}
 					else if(ch=='\b'|| ch=='\t')
 					{
 						state = 1;
@@ -285,14 +280,16 @@ Node* getNextToken()
 					else if(((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
 					{
 						valueinit[tklen++] = ch;
-						ch=buffer[++fwd];
+						ch = buffer[++fwd];
 						state = 2;
+						tklen++;
 					}
 					else if((ch>='0') && (ch<='9'))
 					{
 						valueinit[tklen++] = ch;
 						ch = buffer[++fwd];
 						state = 3;
+						tklen++;
 					}
 					else if(ch=='+')
 					{
@@ -324,7 +321,7 @@ Node* getNextToken()
 						{
 							while(1)
 							{
-								ch=buffer[++fwd];
+								ch = buffer[++fwd];
 
 								if(ch=='\n')
 								{
@@ -334,7 +331,7 @@ Node* getNextToken()
 								{
 									if(ch=='*')
 									{
-										ch=buffer[++fwd];
+										ch = buffer[++fwd];
 										if(ch=='*')
 										{
 											break;
@@ -631,19 +628,228 @@ Node* getNextToken()
 			case 2: /* This branch is for state 2 and state 3
 					 in our original DFA */
 
+					// Idenfier limit 20 characters including _
 
-					isKeyword(char value[30]);
+					//isKeyword(char value[30]);
 
+					while(1)
+					{
+						ch = buffer[++fwd];
 
+						if(((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')) || ((ch>='0') && (ch<='9')) || (ch=='_'))
+						{
+							valueinit[tklen++] = ch;
+							ch = buffer[++fwd];
+							state = 2;
+							tklen++;
+						}
+						else
+						{
+							state = 1;
+							break;
+						}
+					}
 
+					bool isk;
+
+					isk=isKeyword(valueinit);
+
+					if(isk)
+					{
+
+						// Need to change this for keyword
+
+						if(tklen>20)
+						{
+							strcpy(newToken->t->token,"Error");
+							printf("Identifier size too large! \n");
+							printf("Lexical Error: %s at line no: %d\n",valueinit,line);
+							state = 1;
+							fwd++;
+							begin = fwd;
+							return newToken;
+							break;
+						}
+						else
+						{
+							strcpy(newToken->t->token,"ID");
+							strcpy(newToken->t->value,valueinit);
+							newToken->t->lineno=line;
+							return newToken;
+							break;
+						}
+					}
+					else
+					{
+						if(tklen>20)
+						{
+							strcpy(newToken->t->token,"Error");
+							printf("Identifier size too large! \n");
+							printf("Lexical Error: %s at line no: %d\n",valueinit,line);
+							state = 1;
+							fwd++;
+							begin = fwd;
+							return newToken;
+							break;
+						}
+						else
+						{
+							strcpy(newToken->t->token,"ID");
+							strcpy(newToken->t->value,valueinit);
+							newToken->t->lineno=line;
+							return newToken;
+							break;
+						}
+					}
 					
 					break;
 
 			case 3: /* This branch is for state 4 to state10
 					 in our original DFA */
 
+					while(1)
+					{
+						ch = buffer[++fwd];
 
+						if((ch>='0') && (ch<='9'))
+						{
+							valueinit[tklen++] = ch;
+							ch = buffer[++fwd];
+							state = 3;
+						}
+						else if(ch=='.')
+						{
+							ch = buffer[++fwd];
+
+							if(ch=='.')
+							{
+								fwd--;
+								state = 1;
+								break;
+							}
+							else if((ch>='0') && (ch<='9'))
+							{
+								valueinit[tklen++] = '.';
+								valueinit[tklen++] = ch;
+								while(1)
+								{
+									ch = buffer[++fwd];
+									if((ch>='0') && (ch<='9'))
+									{
+										valueinit[tklen++] = ch;
+										ch = buffer[++fwd];
+										state = 3;
+									}
+									else if(ch=='E' || ch=='e')
+									{
+										valueinit[tklen++] = ch;
+										ch = buffer[++fwd];
+										if(ch=='+' || ch=='-')
+										{
+											valueinit[tklen++] = ch;
+											ch = buffer[++fwd];
+											if((ch>='0') && (ch<='9'))
+											{
+												valueinit[tklen++] = ch;
+												while(1)
+												{
+													ch = buffer[++fwd];
+													if((ch>='0') && (ch<='9'))
+													{
+														valueinit[tklen++] = ch;
+														ch = buffer[++fwd];
+														state = 3;
+													}
+													else if (((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
+													{
+														strcpy(newToken->t->token,"Error");
+														printf("Lexical Error: %s at line no: %d\n",valueinit,line);
+														state = 1;
+														fwd++;
+														begin = fwd;
+														return newToken;
+														break;
+													}
+													else
+													{
+														state = 1;
+														break;
+													}
+												}
+
+											}
+										}
+										else if((ch>='0') && (ch<='9'))
+										{
+											valueinit[tklen++] = ch;
+											while(1)
+											{
+												ch = buffer[++fwd];
+												if((ch>='0') && (ch<='9'))
+												{
+													valueinit[tklen++] = ch;
+													ch = buffer[++fwd];
+													state = 3;
+												}
+												else if (((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
+												{
+													strcpy(newToken->t->token,"Error");
+													printf("Lexical Error: %s at line no: %d\n",valueinit,line);
+													state = 1;
+													fwd++;
+													begin = fwd;
+													return newToken;
+													break;
+												}
+												else
+												{
+													state = 1;
+													break;
+												}
+											}
+
+										}
+									}
+									else if (((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
+									{
+										strcpy(newToken->t->token,"Error");
+										printf("Lexical Error: %s at line no: %d\n",valueinit,line);
+										state = 1;
+										fwd++;
+										begin = fwd;
+										return newToken;
+										break;
+									}
+									else
+									{
+										state = 1;
+										break;
+									}
+								}
+							}
+						}
+						else if (((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
+						{
+							strcpy(newToken->t->token,"Error");
+							printf("Lexical Error: %s at line no: %d\n",valueinit,line);
+							state = 1;
+							fwd++;
+							begin = fwd;
+							return newToken;
+							break;
+						}
+						else
+						{
+							state = 1;
+							break;
+						}
+					}
 					
+					break;
+
+			default: 
+					printf("No matching case!\n");
+					return newToken;
 					break;
 		}
 	}
