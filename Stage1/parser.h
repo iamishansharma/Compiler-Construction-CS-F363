@@ -26,5 +26,8 @@ void printParseTree(ParseTree PT, char *outfile);
 // Supporting Functions Declarations - 
 
 Grammar getGrammar(FILE *f);
+void make_stack();
+void push(int ele);
+int pop();
 
 #endif

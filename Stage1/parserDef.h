@@ -54,7 +54,7 @@ typedef struct term Term;
 
 struct parsetable
 {
-
+	int table[110][110];
 }; 
 
 typedef struct parsetable ParseTable;

@@ -2,8 +2,6 @@ Lexer:
 
 	Create union for value in struct of token - Sarthak
 
-	Finish getToken() - Ishan
-
 	Hash keyword and tokens - Sanjeev
 	
 	getChar and getString - Sanjeev
