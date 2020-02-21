@@ -23,7 +23,7 @@ Term t[100];
 
 Grammar getGrammar(FILE *f)
 {
-
+	//return NULL;
 }
 
 /* END Supporting Functions for Primary Functions */

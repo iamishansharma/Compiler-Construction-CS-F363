@@ -13,13 +13,25 @@
 
 #include "parser.h"
 
+void printLexer(FILE *f)
+{
+	f=getStream(f);
+	Node *n=(Node*)malloc(sizeof(Node));
+	for(int i=0; i<=91; i++)
+	{
+		n=getNextToken();
+		if(strcmp(n->t->token,"Error"))
+		{
+			printf("%s %s %d\n",n->t->token,n->t->value,n->t->lineno);
+		}
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	FILE *f=fopen(argv[1],"r");
 
-	f=getStream(f);
-
-	removeComments("tc1.txt","mod.txt");
+	printLexer(f);
 
 	return 0;
 }

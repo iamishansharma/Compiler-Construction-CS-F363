@@ -246,7 +246,8 @@ void removeComments(char *testcaseFile, char *cleanFile)
 
 Node* getNextToken()
 {
-	Node *newToken=newNode();
+	Node *newToken=(Node*)malloc(sizeof(Node));
+	newToken->t=(Token *)malloc(sizeof(Token));
 	ClearMem(newToken->t->token,30);
 	ClearMem(newToken->t->value,30);
 	newToken->t->lineno=0;
@@ -255,24 +256,28 @@ Node* getNextToken()
 	int tklen=0; // used here to read into token/value
 	char tokeninit[30];
 	char valueinit[30];
+	ClearMem(tokeninit,30);
+	ClearMem(valueinit,30);
 
 	while(1)
 	{
 		ch=buffer[fwd];
 		switch(state)
 		{
-			case 1: /* This branch is for state 1 and all 
-					its direct paths in our original DFA */
+			case 1:  // This branch is for state 1 and all 
+					//  its direct paths in our original DFA
 					
 					if(ch == '\n')
 					{
 						ch = buffer[++fwd];
+						//printf("\n %c \n",ch);
 						line++;
 						state = 1;
 						break;
 					}
-					else if(ch=='\b'|| ch=='\t')
+					else if(ch==' '|| ch=='\t')
 					{
+						//printf("Finds a space!\n");
 						state = 1;
 						ch = buffer[++fwd];
 						break;
@@ -280,16 +285,14 @@ Node* getNextToken()
 					else if(((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
 					{
 						valueinit[tklen++] = ch;
-						ch = buffer[++fwd];
 						state = 2;
-						tklen++;
+
 					}
 					else if((ch>='0') && (ch<='9'))
 					{
+						//printf("\n Comes here!\n ");
 						valueinit[tklen++] = ch;
-						ch = buffer[++fwd];
 						state = 3;
-						tklen++;
 					}
 					else if(ch=='+')
 					{
@@ -322,7 +325,7 @@ Node* getNextToken()
 							while(1)
 							{
 								ch = buffer[++fwd];
-
+								//printf("\n %c \n",ch);
 								if(ch=='\n')
 								{
 									line++;
@@ -334,6 +337,10 @@ Node* getNextToken()
 										ch = buffer[++fwd];
 										if(ch=='*')
 										{
+											//printf("Comes here!");
+											fwd++;
+											state=1;
+											//printf("\n %c \n",buffer[fwd]);
 											break;
 										}
 										else
@@ -379,8 +386,9 @@ Node* getNextToken()
 							strcpy(newToken->t->token,"LE");
 							strcpy(newToken->t->value,"<=");
 							newToken->t->lineno=line;
-							fwd++;
 							begin = fwd;
+							fwd++;
+							//printf("%c",buffer[fwd]);
 							state = 1;
 							return newToken;
 							break;
@@ -489,6 +497,16 @@ Node* getNextToken()
 							return newToken;
 							break;
 						}
+						else
+						{
+							strcpy(newToken->t->token,"Error");
+							newToken->t->lineno=line;
+							printf("Lexical Error: = at line no: %d\n",line);
+							state = 1;
+							begin = fwd;
+							return newToken;
+							break;
+						}
 					}
 					else if(ch=='!')
 					{
@@ -547,6 +565,16 @@ Node* getNextToken()
 							return newToken;
 							break;
 						}
+						else
+						{
+							strcpy(newToken->t->token,"Error");
+							newToken->t->lineno=line;
+							printf("Lexical Error: . at line no: %d\n",line);
+							state = 1;
+							begin = fwd;
+							return newToken;
+							break;
+						}
 					}
 					else if(ch==';')
 					{
@@ -561,10 +589,12 @@ Node* getNextToken()
 					}
 					else if(ch==',')
 					{
+						//printf("in here comma");
 						strcpy(newToken->t->token,"COMMA");
 						strcpy(newToken->t->value,",");
 						newToken->t->lineno=line;
 						fwd++;
+						//printf(" %c \n",buffer[fwd]);
 						begin = fwd;
 						state = 1;
 						return newToken;
@@ -617,6 +647,7 @@ Node* getNextToken()
 					else
 					{
 						strcpy(newToken->t->token,"Error");
+						newToken->t->lineno=line;
 						printf("Lexical Error: %s at line no: %d\n",valueinit,line);
 						state = 1;
 						fwd++;
@@ -625,23 +656,19 @@ Node* getNextToken()
 					}
 					break;
 
-			case 2: /* This branch is for state 2 and state 3
-					 in our original DFA */
+			case 2: // This branch is for state 2 and state 3
+					// in our original DFA 
 
 					// Idenfier limit 20 characters including _
 
 					//isKeyword(char value[30]);
-
 					while(1)
 					{
 						ch = buffer[++fwd];
-
 						if(((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')) || ((ch>='0') && (ch<='9')) || (ch=='_'))
 						{
 							valueinit[tklen++] = ch;
-							ch = buffer[++fwd];
 							state = 2;
-							tklen++;
 						}
 						else
 						{
@@ -650,22 +677,20 @@ Node* getNextToken()
 						}
 					}
 
-					bool isk;
+					bool isk=true;
 
-					isk=isKeyword(valueinit);
+					//isk=isKeyword(valueinit);
 
 					if(isk)
 					{
-
 						// Need to change this for keyword
-
 						if(tklen>20)
 						{
 							strcpy(newToken->t->token,"Error");
-							printf("Identifier size too large! \n");
+							printf("Identifier size too large! -- ");
+							newToken->t->lineno=line;
 							printf("Lexical Error: %s at line no: %d\n",valueinit,line);
 							state = 1;
-							fwd++;
 							begin = fwd;
 							return newToken;
 							break;
@@ -684,7 +709,8 @@ Node* getNextToken()
 						if(tklen>20)
 						{
 							strcpy(newToken->t->token,"Error");
-							printf("Identifier size too large! \n");
+							printf("Identifier size too large! -- ");
+							newToken->t->lineno=line;
 							printf("Lexical Error: %s at line no: %d\n",valueinit,line);
 							state = 1;
 							fwd++;
@@ -704,17 +730,17 @@ Node* getNextToken()
 					
 					break;
 
-			case 3: /* This branch is for state 4 to state10
-					 in our original DFA */
-
+			case 3: // This branch is for state 4 to state10
+					// in our original DFA 
 					while(1)
 					{
 						ch = buffer[++fwd];
+						//printf("%c\n",ch);
 
 						if((ch>='0') && (ch<='9'))
 						{
 							valueinit[tklen++] = ch;
-							ch = buffer[++fwd];
+							//printf("\n %s \n",valueinit);
 							state = 3;
 						}
 						else if(ch=='.')
@@ -724,7 +750,11 @@ Node* getNextToken()
 							if(ch=='.')
 							{
 								fwd--;
+								strcpy(newToken->t->token,"NUM");
+								strcpy(newToken->t->value,valueinit);
+								newToken->t->lineno=line;
 								state = 1;
+								return newToken;
 								break;
 							}
 							else if((ch>='0') && (ch<='9'))
@@ -737,7 +767,7 @@ Node* getNextToken()
 									if((ch>='0') && (ch<='9'))
 									{
 										valueinit[tklen++] = ch;
-										ch = buffer[++fwd];
+										//ch = buffer[++fwd];
 										state = 3;
 									}
 									else if(ch=='E' || ch=='e')
@@ -754,30 +784,35 @@ Node* getNextToken()
 												while(1)
 												{
 													ch = buffer[++fwd];
+													//printf("\n %c \n",buffer[fwd]);
 													if((ch>='0') && (ch<='9'))
 													{
 														valueinit[tklen++] = ch;
-														ch = buffer[++fwd];
 														state = 3;
-													}
-													else if (((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
-													{
-														strcpy(newToken->t->token,"Error");
-														printf("Lexical Error: %s at line no: %d\n",valueinit,line);
-														state = 1;
-														fwd++;
-														begin = fwd;
-														return newToken;
-														break;
 													}
 													else
 													{
+														//printf("\n %c \n",buffer[fwd]);
+														strcpy(newToken->t->token,"RNUM");
+														strcpy(newToken->t->value,valueinit);
+														newToken->t->lineno=line;
 														state = 1;
+														return newToken;
 														break;
 													}
 												}
-
 											}
+											else
+											{
+												strcpy(newToken->t->token,"Error");
+												newToken->t->lineno=line;
+												printf("Lexical Error: %s at line no: %d\n",valueinit,line);
+												state = 1;
+												begin = fwd;
+												return newToken;
+												break;
+											}
+
 										}
 										else if((ch>='0') && (ch<='9'))
 										{
@@ -794,6 +829,7 @@ Node* getNextToken()
 												else if (((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
 												{
 													strcpy(newToken->t->token,"Error");
+													newToken->t->lineno=line;
 													printf("Lexical Error: %s at line no: %d\n",valueinit,line);
 													state = 1;
 													fwd++;
@@ -812,7 +848,9 @@ Node* getNextToken()
 									}
 									else if (((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
 									{
+										//printf("\n %c \n",ch);
 										strcpy(newToken->t->token,"Error");
+										newToken->t->lineno=line;
 										printf("Lexical Error: %s at line no: %d\n",valueinit,line);
 										state = 1;
 										fwd++;
@@ -822,25 +860,43 @@ Node* getNextToken()
 									}
 									else
 									{
+										/*strcpy(newToken->t->token,"RNUM");
+										strcpy(newToken->t->value,valueinit);
+										newToken->t->lineno=line;
+										state = 1;
+										return newToken;
+										break;*/
 										state = 1;
 										break;
 									}
 								}
 							}
+							else
+							{
+								fwd--;
+								valueinit[tklen++]=buffer[fwd];
+								strcpy(newToken->t->token,"Error");
+								newToken->t->lineno=line;
+								printf("Lexical Error: %s at line no: %d\n",valueinit,line);
+								state = 1;
+								fwd++;
+								begin = fwd;
+								return newToken;
+								break;
+							}
 						}
-						else if (((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
-						{
-							strcpy(newToken->t->token,"Error");
-							printf("Lexical Error: %s at line no: %d\n",valueinit,line);
-							state = 1;
-							fwd++;
-							begin = fwd;
-							return newToken;
-							break;
-						}
+
 						else
 						{
+							//printf("\n %c \n",ch);
+							//printf("\n %c \n",buffer[fwd]);
+							//printf("%s",valueinit);
+							strcpy(newToken->t->token,"NUM");
+							strcpy(newToken->t->value,valueinit);
+							newToken->t->lineno=line;
 							state = 1;
+							//printf("\n %c \n",buffer[fwd]);
+							return newToken;
 							break;
 						}
 					}
