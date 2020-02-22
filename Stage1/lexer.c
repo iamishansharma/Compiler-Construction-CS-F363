@@ -13,6 +13,7 @@
 
 #include "lexer.h"
 #include "hash.h"
+#include <ctype.h>
 
 /* **************************************************************************** */
 
@@ -125,42 +126,6 @@ char *tokens[60] =
 char buffer[4000];
 int buflen=4000;
 
-/*char buffer[2][2000]; // The twin Buffers
-int bFlag = 1 ;// 0--> Buffer 1 is being used , 1 --> Buffer 2 is being used.
-int buflen=2000; // Actually half of buffer.*/
-
-/* **************************************************************************** */
-
-/* START Supporting Functions for Primary Functions */
-
-/*char bgetc(int pointer){
-	// Return the character at the pointer
-	if(buffer[bFlag][pointer]==EOF){
-		// Notes: EOF is somethinh that cant come in the program in any other way . Change is
-		// later to something lese as EOF will be there at the end of the file.
-		// or use feof in the while condition
-		f = getStream(f); // check the f declaraton
-		begin = 0;
-		fwd = begin;
-	}else{
-		fwd++;
-		// Removed fwd++ from getToken !
-	}
-	return buffer[bFlag][pointer];
-}
-
-//Edited
-char * bgetc(int start ,int end){
-	int s_size = end-start+2;
-	// may need to do it dynamically.
-	char *s = (char *)malloc(sizeof(char)*(s_size));
-	for(int i=0;i<s_size;i++){
-		s[i]=bgetc(start+i);
-	}
-	s[s_size-1]='\0'; // string terminate
-	return s;
-}*/
-
 Token* newToken()
 {
 	Token *t=(Token*)malloc(sizeof(Token));
@@ -189,7 +154,16 @@ void ClearMem(char *c,int len) // To Clear Char Arrays
 
 bool isKeyword(char value[30])
 {
-	return true;
+	int flag=1;
+	for(int i=0; i<29; i++)
+	{
+		flag=strcmp(value,keyword[i]);
+		if(flag==0)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 /* END Supporting Functions for Primary Functions */
@@ -282,8 +256,10 @@ Node* getNextToken()
 
 	char ch;
 	int tklen=0; // used here to read into token/value
+	
 	char tokeninit[30];
 	char valueinit[30];
+
 	ClearMem(tokeninit,30);
 	ClearMem(valueinit,30);
 
@@ -708,35 +684,26 @@ Node* getNextToken()
 						}
 					}
 
-					//isk=isKeyword(valueinit); 
+					bool isk=isKeyword(valueinit);
 
-					//HASH HERE
-
-					int isk=0;
+					//printf("Tklen for %s: %d\n",valueinit,tklen);
 
 					if(isk)
 					{
-						// Need to change this for keyword
-						if(tklen>20)
+						char keyw[30];
+						int v=0;
+						for(int v=0; v<tklen; v++)
 						{
-							strcpy(newToken->t->token,"Error");
-							strcpy(newToken->t->value,valueinit);
-							printf("Identifier size too large! -- ");
-							newToken->t->lineno=line;
-							printf("Lexical Error: %s at line no: %d\n",valueinit,line);
-							state = 1;
-							begin = fwd;
-							return newToken;
-							break;
+							keyw[v]=toupper(valueinit[v]);
 						}
-						else
-						{
-							strcpy(newToken->t->token,"ID");
-							strcpy(newToken->t->value,valueinit);
-							newToken->t->lineno=line;
-							return newToken;
-							break;
-						}
+
+						strcpy(newToken->t->token,keyw);
+						strcpy(newToken->t->value,valueinit);
+						newToken->t->lineno=line;
+						state = 1;
+						begin = fwd;
+						return newToken;
+						break;
 					}
 					else
 					{
