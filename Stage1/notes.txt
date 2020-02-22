@@ -1,20 +1,6 @@
-Lexer: 
-
-	Create union for value in struct of token - Sarthak
-
-	Hash keyword and tokens - Sanjeev
-	
-	getChar and getString - Sanjeev
-
 Parser: 
-
-	Hard Code Terms - Sarthak 
-
-	Complete and see parse tree and parse table structure - Ishan
 	
 	Finish - 
-
-		getGrammar() - Sarthak
 
 		First and follow - Sanjeev
 

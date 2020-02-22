@@ -1,3 +1,4 @@
+$
 program moduleDeclarations otherModules driverModule otherModules
 moduleDeclarations moduleDeclaration moduleDeclarations
 moduleDeclarations EPSILON
@@ -13,7 +14,7 @@ input_plist_again COMMA ID COLON dataType input_plist_again
 input_plist_again EPSILON
 output_plist ID COLON type output_plist_again
 output_plist_again COMMA ID COLON type output_plist_again
-output_plist_again EPISLON
+output_plist_again EPSILON
 dataType INTEGER
 dataType REAL
 dataType BOOLEAN
@@ -32,7 +33,7 @@ statement iterativeStmt
 ioStmt GET_VALUE BO ID BC SEMICOL
 ioStmt PRINT BO var BC SEMICOL
 ioStmt PRINT BO booleanConstants BC SEMICOL
-whichId	SQBO ID SQBC
+whichId SQBO ID SQBC
 whichId EPSILON
 simpleStmt assignmentStmt
 simpleStmt moduleReuseStmt
@@ -60,13 +61,13 @@ arithmeticOrBooleanExpr_again EPSILON
 recTerm arithmeticExpr recTerm_again
 recTerm booleanConstants
 recTerm_again relationalOp arithmeticExpr recTerm_again
-recTerm_again EPISLON
+recTerm_again EPSILON
 arithmeticExpr term arithmeticExpr_again
 arithmeticExpr_again prec2_op term arithmeticExpr_again
 arithmeticExpr_again EPSILON
 term factor term_again
 term_again prec1_op factor term_again
-term_again EPISLON
+term_again EPSILON
 factor BO arithmeticExpr BC
 factor var
 var ID whichId
@@ -86,15 +87,15 @@ relationalOp GT
 relationalOp GE
 relationalOp EQ
 relationalOp NE
-declareStmt	DECLARE idList COLON dataType SEMICOL
+declareStmt DECLARE idList COLON dataType SEMICOL
 conditionalStmt SWITCH BO ID BC START caseStmts default END
 caseStmts CASE value COLON statements BREAK SEMICOL caseStmts_again
 caseStmts_again CASE value COLON statements BREAK SEMICOL caseStmts_again
-caseStmts_again EPISLON
+caseStmts_again EPSILON
 value NUM
 value booleanConstants
-default	DEFAULT COLON statements BREAK SEMICOL
+default DEFAULT COLON statements BREAK SEMICOL
 default EPSILON
 iterativeStmt FOR BO ID IN range BC START statements END
-iterativeStmt WHILE BO booleanExpr BC START statements END
+iterativeStmt WHILE BO arithmeticOrBooleanExpr BC START statements END
 range NUM RANGEOP NUM

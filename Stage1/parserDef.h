@@ -45,14 +45,6 @@ struct grammar
 
 typedef struct grammar Grammar;
 
-struct term
-{
-	char termname[20];
-	bool nont;
-};
-
-typedef struct term Term;
-
 struct parsetable
 {
 	int table[100][58];

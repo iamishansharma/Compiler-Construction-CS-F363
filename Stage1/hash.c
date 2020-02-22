@@ -1,6 +1,9 @@
 #include "hash.h"
+#include <string.h>
 
-#define MOD 1007
+int no_terms=0;
+int no_terminals=0;
+int no_nonterminals=0;
 
 int hash(char *str)
 {
@@ -16,7 +19,7 @@ int hash(char *str)
 int search(char *str,char **Hashtable)
 {
     int hashValue = hash(str);
-    //printf("in serach %d \n",hashValue);
+
     while(Hashtable[hashValue])
     {
         if(~ strcmp(Hashtable[hashValue],str)){
@@ -32,25 +35,68 @@ int insert(char *str,char **Hashtable)
 {
     int hashValue = hash(str);
 
-    //printf("FI: %s ",str);
-
     if(search(str,Hashtable))
     {
-        //printf("Found!");
-        //printf("FI: %d\n",hashValue);
         return hashValue;
     }
-    //printf("in insert %d \n",hashValue);
+
     while(Hashtable[hashValue])
     {
         hashValue++;
     }
 
-    Hashtable[hashValue] = (char *)(malloc(sizeof(char)*strlen(str)));
+    Hashtable[hashValue] = (char*)(malloc(sizeof(char)*strlen(str)));
+
     strcpy(Hashtable[hashValue],str);
-    //printf("FI: %d\n",hashValue);
+
+    strcpy(t[no_terms].termname,str);
+
+    if(str[0]>='a' && str[0]<='z')
+    {
+        t[no_terms].nont=true;
+        no_nonterminals++;
+    }
+    else
+    {
+        t[no_terms].nont=false;
+        no_terminals++;
+    }
+
+    t[no_terms].hashValue=hashValue;
+
+    no_terms++;
+
+    if(no_terms==110)
+    {
+        Hashtable[1301] = (char*)(malloc(sizeof(char)*strlen(str)));
+        strcpy(Hashtable[1301],"SWITCH"); //dealing with switch conflict
+        strcpy(t[110].termname,"SWITCH");
+        t[110].nont=false;
+        t[110].hashValue=1301;
+        no_terms++;
+        no_terminals++;
+    }
+
     return hashValue;
-    //printf("%s",Hashtable[hashValue]);
+}
+
+void printTerms()
+{   
+    FILE *f=fopen("terms.txt","w");
+
+    printf("\nNonT: %d",no_nonterminals);
+    printf("\nT: %d",no_terminals);
+
+    for(int i=0; i<no_terms; i++)
+    {
+        fprintf(f,"Term %d: \n",i);
+        fprintf(f,"\n");
+        fprintf(f,"\t%s",t[i].termname);
+        fprintf(f,"\n\t%d",t[i].nont);
+        fprintf(f,"\n\t%d\n",t[i].hashValue);
+        fprintf(f,"\n");
+    }
+    fclose(f);
 }
  
 /*int hashcallparser(char *tosearch, Term t, int sizeofT)
