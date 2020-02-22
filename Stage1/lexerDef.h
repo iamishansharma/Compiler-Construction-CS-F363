@@ -31,8 +31,8 @@ extern char *tokens[60];
 
 struct token
 {
-	char token[30];
-	char value[30]; // create union 
+	char token[40];
+	char value[40]; // create union 
 	int lineno;
 };
 

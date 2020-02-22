@@ -31,30 +31,32 @@ typedef struct parsetree ParseTree;
 
 struct fandf
 {
-	int first[55][20];
-	int follow[55][20];	
+	int first[100][20];
+	int follow[100][20];
+	// 53 non terminals hence 53 x 20;
 };
 
 typedef struct fandf FirstAndFollow;
 
 struct grammar
 {
-	int gnum[55][20];
+	int gnum[100][30];
 };
 
 typedef struct grammar Grammar;
 
 struct term
 {
-	char termname[15];
-	bool nont_t;
+	char termname[20];
+	bool nont;
 };
 
 typedef struct term Term;
 
 struct parsetable
 {
-	int table[110][110];
+	int table[100][58];
+	// Non terminals x terminals (excluding epsilon);
 }; 
 
 typedef struct parsetable ParseTable;

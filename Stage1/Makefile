@@ -1,5 +1,5 @@
-compileAll: driver.c lexer.c parser.c
-	gcc -o stage1 driver.c lexer.c parser.c
+compileAll: driver.c lexer.c parser.c hash.c
+	gcc -o stage1exe driver.c lexer.c parser.c hash.c
 
 clean: 
-	rm -r stage1 mod.txt
+	rm -r stage1exe

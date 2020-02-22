@@ -12,6 +12,7 @@
 */
 
 #include "lexer.h"
+#include "hash.h"
 
 /* **************************************************************************** */
 
@@ -26,6 +27,8 @@ int fwd2=0;
 
 int keyno=35;
 int tokno=60;
+
+char *KeywordTable[1007];
 
 char *keyword[35] =
 {
@@ -122,9 +125,41 @@ char *tokens[60] =
 char buffer[4000];
 int buflen=4000;
 
+/*char buffer[2][2000]; // The twin Buffers
+int bFlag = 1 ;// 0--> Buffer 1 is being used , 1 --> Buffer 2 is being used.
+int buflen=2000; // Actually half of buffer.*/
+
 /* **************************************************************************** */
 
 /* START Supporting Functions for Primary Functions */
+
+/*char bgetc(int pointer){
+	// Return the character at the pointer
+	if(buffer[bFlag][pointer]==EOF){
+		// Notes: EOF is somethinh that cant come in the program in any other way . Change is
+		// later to something lese as EOF will be there at the end of the file.
+		// or use feof in the while condition
+		f = getStream(f); // check the f declaraton
+		begin = 0;
+		fwd = begin;
+	}else{
+		fwd++;
+		// Removed fwd++ from getToken !
+	}
+	return buffer[bFlag][pointer];
+}
+
+//Edited
+char * bgetc(int start ,int end){
+	int s_size = end-start+2;
+	// may need to do it dynamically.
+	char *s = (char *)malloc(sizeof(char)*(s_size));
+	for(int i=0;i<s_size;i++){
+		s[i]=bgetc(start+i);
+	}
+	s[s_size-1]='\0'; // string terminate
+	return s;
+}*/
 
 Token* newToken()
 {
@@ -180,17 +215,10 @@ FILE* getStream(FILE *fp)
 	return fp;
 }
 
-void removeComments(char *testcaseFile, char *cleanFile)
+void removeComments(char *testcaseFile)
 {
 	FILE *f1 = fopen(testcaseFile, "r");
 	if(f1==NULL)
-	{
-		printf("Error opening file for removing comments!");
-		return;
-	}
-
-	FILE *f2 = fopen(cleanFile, "w");
-	if(f2==NULL)
 	{
 		printf("Error opening file for removing comments!");
 		return;
@@ -213,7 +241,7 @@ void removeComments(char *testcaseFile, char *cleanFile)
 					c=fgetc(f1);
 					if(c=='\n')
 					{
-						fputc(c,f2);
+						printf("%c",c);
 					}
 					else
 					{
@@ -238,10 +266,10 @@ void removeComments(char *testcaseFile, char *cleanFile)
 			}
 			c=fgetc(f1);
 		}
-		fputc(c,f2);
+		if(!feof(f1))
+			printf("%c",c);
 	}
 	fclose(f1);
-	fclose(f2);
 }
 
 Node* getNextToken()
@@ -500,6 +528,7 @@ Node* getNextToken()
 						else
 						{
 							strcpy(newToken->t->token,"Error");
+							//strcpy(newToken->t->value,ch);
 							newToken->t->lineno=line;
 							printf("Lexical Error: = at line no: %d\n",line);
 							state = 1;
@@ -568,6 +597,7 @@ Node* getNextToken()
 						else
 						{
 							strcpy(newToken->t->token,"Error");
+							//strcpy(newToken->t->value,ch);
 							newToken->t->lineno=line;
 							printf("Lexical Error: . at line no: %d\n",line);
 							state = 1;
@@ -647,6 +677,7 @@ Node* getNextToken()
 					else
 					{
 						strcpy(newToken->t->token,"Error");
+						//strcpy(newToken->t->value,ch);
 						newToken->t->lineno=line;
 						printf("Lexical Error: %s at line no: %d\n",valueinit,line);
 						state = 1;
@@ -677,9 +708,11 @@ Node* getNextToken()
 						}
 					}
 
-					bool isk=true;
+					//isk=isKeyword(valueinit); 
 
-					//isk=isKeyword(valueinit);
+					//HASH HERE
+
+					int isk=0;
 
 					if(isk)
 					{
@@ -687,6 +720,7 @@ Node* getNextToken()
 						if(tklen>20)
 						{
 							strcpy(newToken->t->token,"Error");
+							strcpy(newToken->t->value,valueinit);
 							printf("Identifier size too large! -- ");
 							newToken->t->lineno=line;
 							printf("Lexical Error: %s at line no: %d\n",valueinit,line);
@@ -709,6 +743,7 @@ Node* getNextToken()
 						if(tklen>20)
 						{
 							strcpy(newToken->t->token,"Error");
+							strcpy(newToken->t->value,valueinit);
 							printf("Identifier size too large! -- ");
 							newToken->t->lineno=line;
 							printf("Lexical Error: %s at line no: %d\n",valueinit,line);
@@ -805,6 +840,7 @@ Node* getNextToken()
 											else
 											{
 												strcpy(newToken->t->token,"Error");
+												strcpy(newToken->t->value,valueinit);
 												newToken->t->lineno=line;
 												printf("Lexical Error: %s at line no: %d\n",valueinit,line);
 												state = 1;
@@ -829,6 +865,7 @@ Node* getNextToken()
 												else if (((ch>='a') && (ch<='z')) || ((ch>='A') && (ch<='Z')))
 												{
 													strcpy(newToken->t->token,"Error");
+													strcpy(newToken->t->value,valueinit);
 													newToken->t->lineno=line;
 													printf("Lexical Error: %s at line no: %d\n",valueinit,line);
 													state = 1;
@@ -850,6 +887,7 @@ Node* getNextToken()
 									{
 										//printf("\n %c \n",ch);
 										strcpy(newToken->t->token,"Error");
+										strcpy(newToken->t->value,valueinit);
 										newToken->t->lineno=line;
 										printf("Lexical Error: %s at line no: %d\n",valueinit,line);
 										state = 1;
@@ -876,6 +914,7 @@ Node* getNextToken()
 								fwd--;
 								valueinit[tklen++]=buffer[fwd];
 								strcpy(newToken->t->token,"Error");
+								strcpy(newToken->t->value,valueinit);
 								newToken->t->lineno=line;
 								printf("Lexical Error: %s at line no: %d\n",valueinit,line);
 								state = 1;

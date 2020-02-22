@@ -16,12 +16,17 @@
 
 #include "lexerDef.h"
 
+extern char buffer[4000];
+extern int buflen;
+
 // Primary Functions Declarations - 
 
 FILE* getStream(FILE *fp);
 Node* getNextToken();
-void removeComments(char *testcaseFile, char *cleanFile);
+void removeComments(char *testcaseFile);
 bool isKeyword(char value[30]);
+char bgetc(int pointer);
+char* bgets(int start ,int end);
 
 // Supporting Functions Declarations - 
 
