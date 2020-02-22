@@ -32,12 +32,12 @@ int insert(char *str,char **Hashtable)
 {
     int hashValue = hash(str);
 
-    printf("FI: %s ",str);
+    //printf("FI: %s ",str);
 
     if(search(str,Hashtable))
     {
         //printf("Found!");
-        printf("FI: %d\n",hashValue);
+        //printf("FI: %d\n",hashValue);
         return hashValue;
     }
     //printf("in insert %d \n",hashValue);
@@ -48,7 +48,7 @@ int insert(char *str,char **Hashtable)
 
     Hashtable[hashValue] = (char *)(malloc(sizeof(char)*strlen(str)));
     strcpy(Hashtable[hashValue],str);
-    printf("FI: %d\n",hashValue);
+    //printf("FI: %d\n",hashValue);
     return hashValue;
     //printf("%s",Hashtable[hashValue]);
 }

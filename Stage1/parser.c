@@ -83,22 +83,30 @@ Grammar getGrammar(FILE *f)
 
 			do
 			{
-				toinsert[x]=word[g][x];
-				x++;
+				if(word[g][x]=='\n')
+				{
+					x++;
+				}
+				else
+				{
+					toinsert[x]=word[g][x];
+					x++;
+				}
 
 			}while(word[g][x]!='\0');
 
+			fprintf(f2,"%s",toinsert);
+
 			int hashVal=insert(toinsert,TermTable);
-			fprintf(f2,"%d ",hashVal);
+			//fprintf(f2,"%d ",hashVal);
 			//G.gnum[rule_no][g]=hashVal;
 		}
 
-		fprintf(f2,"\n");
+		//fprintf(f2,"\n");
 
 		//G.gnum[rule_no][g]=-1;
 		//rule_no++;
 	}
-
 	fclose(f);
 	fclose(f2);
 	return G;
