@@ -1,5 +1,5 @@
 declare module mod1; 
-<<driver Program>> 
+<<driver program>> 
 start
     declare v, w, r :integer; 
     get_value(v);

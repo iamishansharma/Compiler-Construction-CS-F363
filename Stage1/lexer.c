@@ -691,11 +691,17 @@ Node* getNextToken()
 					if(isk)
 					{
 						char keyw[30];
-						int v=0;
-						for(int v=0; v<tklen; v++)
+						ClearMem(keyw,30);
+
+						for (int i = 0; valueinit[i]!='\0'; i++) 
 						{
-							keyw[v]=toupper(valueinit[v]);
-						}
+						    if(valueinit[i] >= 'a' && valueinit[i] <= 'z') 
+						    {
+						    	keyw[i] = valueinit[i] - 32;
+						    }
+						    else if(valueinit[i]=='_')
+						    	keyw[i] = '_';
+						}	
 
 						strcpy(newToken->t->token,keyw);
 						strcpy(newToken->t->value,valueinit);
