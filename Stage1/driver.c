@@ -90,7 +90,8 @@ int main(int argc, char *argv[])
 					F=ComputeFirst(F);
 					F=ComputeFollow(F);
 					T=createParseTable(F,T,G);
-					//head=parseInputSourceCode(argv[1],T,G);
+					printTable(T);
+					head=parseInputSourceCode(argv[1],T,G);
 					//printParseTree(head,f2);
 					break;
 

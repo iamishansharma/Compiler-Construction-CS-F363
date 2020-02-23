@@ -37,6 +37,14 @@ Grammar getGrammar(FILE *f)
 {
 	Grammar G;
 
+	for(int i=0; i<101; i++)
+	{
+		for(int j=0; j<30; j++)
+		{
+			G.gnum[i][j]=-1;
+		}
+	}
+
 	char string[100];
 
 	FILE *f2=fopen("checkgrammar.txt","w");
@@ -104,6 +112,7 @@ Grammar getGrammar(FILE *f)
 			G.gnum[no_rules][g]=hashVal;
 
 			fprintf(f2,"%d ",G.gnum[no_rules][g]);
+
 		}
 
 		G.gnum[no_rules][g]=-1;
@@ -120,7 +129,7 @@ Grammar getGrammar(FILE *f)
 int compareTerm(char *tocomp)
 {
 	//printf("%s\n",tocomp);
-	for(int i=0; i<111; i++)
+	for(int i=0; i<110; i++)
 	{
 
 		if(strcmp(tocomp,terms[i])==0)
@@ -405,67 +414,79 @@ ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G)
 	for(int i=1; i<101; i++) // non terminals
 	{
 		int flag=0;
+
 		int j=1;
-		do
+
+		int term=G.gnum[i][0];
+
+		for(;j<30; j++)
 		{
+			//int alpha=G.gnum[i][j];
+			if(G.gnum[i][j]==-1)
+			{
+				break;
+			}
+
 			for(int k=0; k<94; k++)
 			{
 				if(G.gnum[i][j]==F.first[k][0])
 				{
 					for(int l=1; ;l++)
 					{
+						if(F.first[k][l]==-1)
+						{
+							break;
+						}
 						if(F.first[k][l]==54)
 						{
 							flag=1;
 							continue;
 						}
 
-						T.table[G.gnum[i][0]][F.first[k][l]-53]=i;
-
-						if(F.first[k][l]==-1)
-						{
-							break;
-						}
+						T.table[term][F.first[k][l]-53]=i;
 					}
 					break;
 				}
 			}
+		}
 
-			if(flag==1)
+		if(flag==1)
+		{
+			for(int k=0; k<53; k++)
 			{
-				for(int k=0; k<53; k++)
+				if(G.gnum[i][0]==F.follow[k][0])
 				{
-					if(G.gnum[i][j]==F.follow[k][0])
+					for(int l=1; ;l++)
 					{
-						for(int l=1; ;l++)
+						if(F.first[k][l]==-1)
 						{
-							T.table[G.gnum[i][0]][F.follow[k][l]-53]=i;
-
-							if(F.first[k][l]==-1)
-							{
-								break;
-							}
+							break;
 						}
-						break;
+						T.table[G.gnum[i][0]][F.follow[k][l]-53]=i;
 					}
+					break;
 				}
 			}
-
-			j++;
-
-		}while(G.gnum[i][j]!=-1);
+		}
 	}
 	return T;
 }
 
 void printTable(ParseTable T)
 {
-	FILE *f=fopen("checktable.txt","w");
+	FILE *f=fopen("checktable.csv","w");
+	fprintf(f,",");
+	for(int i=0; i<58; i++)
+	{
+		fprintf(f,"%s,",terms[i+53]);
+	}
+	fprintf(f,"\n");
 	for(int i=0; i<53; i++)
 	{
+		fprintf(f,"%s,",terms[i]);
 		for(int j=0; j<58; j++)
 		{
-			fprintf(f,"%d ",T.table[i][j]);
+			fprintf(f,"%d,",T.table[i][j]);
 		}
 		fprintf(f,"\n");
 	}
@@ -496,16 +517,14 @@ ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 
 	make_stack();
 
-	push(1697); // push $ on stack
-	push(721);  // push program on stack
+	push(53); // push $ on stack
+	push(0);  // push program on stack
 
 	//printstack();
 
-	int eps = insert("EPSILON",TermTable);
+	int eps = 54;
 
 	n=getNextToken();
-
-	int checkval=-1;
 
 	while(strcmp(n->t->value,"$")!=0)
 	{
@@ -515,69 +534,47 @@ ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 		printf("%s ",n->t->value);
 		printf("%d\n",n->t->lineno);
 		n=getNextToken();*/
+		int X=stack[top];
 
-		checkval=insert(n->t->token,TermTable); // gets hash value of token
+		int a=compareTerm(n->t->token);
 
-		if(isnont(stack[top])) // top of stack is a non terminal
+		break;
+
+		while(X!=53)
 		{
-			int firstindex = search_nont_in_G(stack[top],G);
-
-			int secondindex = searchinta(checkval);
-
-			int rule = T.table[firstindex][secondindex];
-
-			if(rule==-1)
+			if(X==a)
 			{
-				printf("\nSyntax Error! ");
-				printf("Token: %s at line no: %d is not correct.",n->t->token,n->t->lineno);
-				
-				n=getNextToken();
-				checkval=insert(n->t->token,TermTable);
-
-				firstindex = search_nont_in_G(stack[top],G);
-				secondindex = searchinta(checkval);
-
-				rule = T.table[firstindex][secondindex];
-
-				while(rule==-1)
-				{
-					n=getNextToken();
-				}
-			}
-			else
-			{
-				if(head->child==NULL)
-					head=insert_in_tree(head,rule,G,n);
-				else
-				{
-					ParseTree newNode=seach_in_tree(head,rule);
-				}
 				pop();
-				int temp=size_of_rule(rule,G);
-				for(;temp>0;temp--)
+				n=getNextToken();
+			}
+			else if(X>=53)
+			{
+				//Xerror();
+				printf("X is a terminal\n");
+			}
+			else if(T.table[X][a-53]==-1)
+			{
+				//Xerror();
+				printf("Entry does not exist\n");
+			}
+			else if(T.table[X][a-53]!=-1)
+			{
+				printf("%d ",T.table[X][a-53]);
+				pop();
+				int glno=T.table[X][a-53];
+				for(int f=30; f>0 ;f--)
 				{
-					int pushing=G.gnum[rule][temp];
-
-					if(pushing != eps)
+					if(G.gnum[glno][f]==-1)
 					{
-						push(pushing);
+						continue;
+					}
+					else
+					{
+						push(G.gnum[glno][f]);
 					}
 				}
 			}
-		}
-		else // top of stack is terminal
-		{
-			if(stack[top] == checkval) // stack top matches the hashValue of the current token
-			{
-				pop();
-				n=getNextToken();
-			}
-			else
-			{
-				printf("\nSyntax Error! ");
-				printf("Token: %s at line no: %d is not correct.\n",n->t->token,n->t->lineno);
-                exit(0);
-			}
+			X=stack[top];
 		}
 	}
 	return head;
