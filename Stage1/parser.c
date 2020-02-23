@@ -115,7 +115,7 @@ Grammar getGrammar(FILE *f)
 
 	fclose(f);
 	fclose(f2);
-	printTerms();
+	//printTerms();
 
 	return G;
 }
@@ -160,142 +160,6 @@ bool epsinFIRST(FirstAndFollow F,int nonterminal)
 		return false;
 }
 
-int** computeFirsts(int i,int j,Grammar G)
-{
-	//int count j ,k;
-	/// G[1] = A-> BCD
-
-	int F[101][15];
-
-	int temp[15]; 
-
-	temp[0] = -1;
-
-	int count=0;
-
-	int eps = insert("EPSILON",TermTable);
-
-	for(i=1;i<=100;i++)
-	{
-		for(int g=1; g<15; g++)
-		{
-			F[i][g]=-1;
-		}
-			int setEps = 0;
-
-			hashVal=G.gnum[i][j];
-
-			if(isnont(hashVal)==0)
-			{
-				F[i][count] = i; //store hash value
-				return F;
-			}
-			else if(hashVal==eps)
-			{
-				F[i][count]=eps;// = GrammarTable[i][j];
-				count++;
-			}
-			else
-			{
-				do
-				{
-					temp = computeFirsts(i,j,G);
-
-					for(int k=1; k<20; k++)
-					{
-						if(temp[k]==-1)
-						{
-							break;
-						}
-						else
-						{
-							if(temp[k]==eps)
-							{
-								setEps =1;
-								continue;
-							}
-							F[i][count] = temp[k];
-							count++;
-						}
-					}
-					j++;
-
-				}while{ j<20 && setEps}            
-			}
-			// hardcoded for now
-	}
-	return F;  
-}
-
-int* computeFollows(Grammar G)
-{
-	//int count j ,k;
-	/// G[1] = A-> BCD
-	int F[101][15];
-	
-	int temp[15]; //assuming max 15 in 1 set
-	temp[0] = -1;
-	int count=0;
-	int setEps =0;
-	int eps = 345;// can get from hash as well.
-	
-	for(int i=0;i<Size(GrammarTable);i++)
-	{
-			
-			int j;
-			//int f=20;
-			for(j =0;f<20;f++)
-			{
-				if(G[i][f]==-1)
-				{
-					break;
-				}
-			}
-			for(int g=1;g<15;g++){
-			F[i][g]=-1;
-	}
-			if(GrammarTable[i][0].start == 1)
-			{
-				F[i][count] = -2;// -2 reprsensts $ 
-				return F;
-
-			}
-			elseif(GrammarTable[i][j] ==eps)
-			{
-				F[i][count]=eps;// = GrammarTable[i][j];
-				count++;
-
-			}
-			else
-			{
-				
-				do
-				{
-					temp = computeFollows(G[i][j]);
-					for(int k=1;k<20;k++)
-					{
-						if(temp[k]==-1)
-						{
-							break;
-						}
-						else
-						{
-							if(temp[k]==eps)
-							{
-								setEps =1;
-								continue;
-							}
-							F[i][count] = temp[k];
-							count++;
-						}
-					}
-
-				}while{ j>0 && setEps}            
-			}
-	}
-	return F;
-}
-
 void make_stack()
 {
 	for(int i=0; i<100; i++)
@@ -331,6 +195,49 @@ int pop()
 		return popping;
 	}
 }
+void printstack()
+{
+	FILE *f=fopen("stack.txt","w");
+	int i=0;
+	do
+	{
+		fprintf(f,"%d\n",stack[i++]);
+
+	}while(stack[i]!=-1);
+}
+
+ParseTree* insert_in_tree(ParseTree *head,int rule,Grammar G,Node *n)
+{
+	return head;
+}
+
+int search_nont_in_G(int value, Grammar G)
+{
+	for(int i=1; i<=100; i++)
+	{
+		if(G.gnum[i][0]==value)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+ParseTree seach_in_tree(ParseTree* head,int rule)
+{
+	ParseTree searchNode;
+	return searchNode;
+}
+
+int size_of_rule(int rule, Grammar G)
+{
+	int size=1;
+	while(G.gnum[rule][size]!=-1)
+	{
+		size++;
+	}
+	return size;
+}
 
 /* END Supporting Functions for Primary Functions */
 
@@ -341,7 +248,7 @@ int pop()
 FirstAndFollow ComputeFirstAndFollowSets(Grammar G, FirstAndFollow F)
 {
 
-	F.first=computeFirsts(G);
+	//F.first=computeFirsts(G);
 	//F.follow=computeFollows(G);
 
 	return F;
@@ -355,35 +262,42 @@ ParseTable createParseTable(FirstAndFollow F, ParseTable T)
 	{
 		for(int j=0; j<no_terms; j++)
 		{
-			T.table[i][j]=-2;
+			T.table[i][j]=-1;
 		}
 	}
 
-	for(int nt=1; nt<no_rules; nt++)
+	// INDEX OF [][^this] will we index in terminalarray[];
+
+	int eps = insert("EPSILON",TermTable);
+
+	for(int i=1; i<=100; i++)
 	{
-		for(int j=0; (j<no_terms && t[j].nont==0); j++)
+		for(int j=0; j<58; j++)
 		{
-			if(isinFIRST(F,nt,j))
+			if(isinFIRST(F,j,i) && terminalarray[j]!=eps)
 			{
-				T.table[nt][j]=nt; // rule value is same as nt value;
+				T.table[i][j]=i; //rule no
 			}
-			if(epsinFIRST(F,nt))
+			else if(terminalarray[j]==eps)
 			{
-				int i=0;
+				int x=1;
 				do
 				{
-					T.table[nt][F.follow[nt][i]]=nt;
-					i++;
-
-				}while(F.follow[nt][i]!=-1);
+					for(int g=0; g<58; g++)
+					{
+						if(terminalarray[g]==F.follow[i][x])
+						{
+							T.table[i][g]=i;
+						}
+					}
+				}while(F.follow[i][x]!=-1);
 			}
 		}
 	}
-
 	return T;
 }
 
-ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T)
+ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 {
 	ParseTree *head;
 
@@ -403,11 +317,22 @@ ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T)
 	n->t=(Token*)malloc(sizeof(Token));
 
 	FILE *f=fopen(testcaseFile,"r");
+
 	f = getStream(f);
 
+	make_stack();
+
+	push(1697); // push $ on stack
+	push(721);  // push program on stack
+
+	//printstack();
+
+	int eps = insert("EPSILON",TermTable);
+
 	n=getNextToken();
-	//printf("\n");
-	
+
+	int checkval=-1;
+
 	while(strcmp(n->t->value,"$")!=0)
 	{
 		//For Debugging - 
@@ -416,7 +341,70 @@ ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T)
 		printf("%s ",n->t->value);
 		printf("%d\n",n->t->lineno);
 		n=getNextToken();*/
-		
+
+		checkval=insert(n->t->token,TermTable); // gets hash value of token
+
+		if(isnont(stack[top])) // top of stack is a non terminal
+		{
+			int firstindex = search_nont_in_G(stack[top],G);
+
+			int secondindex = searchinta(checkval);
+
+			int rule = T.table[firstindex][secondindex];
+
+			if(rule==-1)
+			{
+				printf("\nSyntax Error! ");
+				printf("Token: %s at line no: %d is not correct.",n->t->token,n->t->lineno);
+				
+				n=getNextToken();
+				checkval=insert(n->t->token,TermTable);
+
+				firstindex = search_nont_in_G(stack[top],G);
+				secondindex = searchinta(checkval);
+
+				rule = T.table[firstindex][secondindex];
+
+				while(rule==-1)
+				{
+					n=getNextToken();
+				}
+			}
+			else
+			{
+				if(head->child==NULL)
+					head=insert_in_tree(head,rule,G,n);
+				else
+				{
+					ParseTree newNode=seach_in_tree(head,rule);
+				}
+				pop();
+				int temp=size_of_rule(rule,G);
+				for(;temp>0;temp--)
+				{
+					int pushing=G.gnum[rule][temp];
+
+					if(pushing != eps)
+					{
+						push(pushing);
+					}
+				}
+			}
+		}
+		else // top of stack is terminal
+		{
+			if(stack[top] == checkval) // stack top matches the hashValue of the current token
+			{
+				pop();
+				n=getNextToken();
+			}
+			else
+			{
+				printf("\nSyntax Error! ");
+				printf("Token: %s at line no: %d is not correct.\n",n->t->token,n->t->lineno);
+                exit(0);
+			}
+		}
 	}
 	return head;
 }

@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 
 	do
 	{
-		printf("\n\n********* ErPlag Compiler Stage1 *********\n");
+		printf("\n\n********* ERPlAG Compiler Stage1 *********\n");
 		printf("Please select one of the following options - \n");
 		printf("0. Exit the program.\n");
 		printf("1. Remove Comments and display on console.\n");
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 					G=getGrammar(f3);
 					F=ComputeFirstAndFollowSets(G,F);
 					T=createParseTable(F,T);
-					head=parseInputSourceCode(argv[1],T);
+					head=parseInputSourceCode(argv[1],T,G);
 					printParseTree(head,f2);
 					break;
 
@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
 					G=getGrammar(f3);
 					F=ComputeFirstAndFollowSets(G,F);
 					T=createParseTable(F,T);
+					//head=parseInputSourceCode(argv[1],T);
 
 					clock_t start_time, end_time;
 					double total_CPU_time, total_CPU_time_in_seconds;
@@ -112,7 +113,7 @@ int main(int argc, char *argv[])
 
 					printf("\nTotal CPU time is: %lf\n",total_CPU_time);
 					printf("Total CPU time in seconds is: %lf\n",total_CPU_time_in_seconds);
-
+					
 					break;
 
 			case 5:

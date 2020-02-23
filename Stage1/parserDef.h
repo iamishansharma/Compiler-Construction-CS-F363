@@ -49,7 +49,7 @@ typedef struct grammar Grammar;
 
 struct parsetable
 {
-	int table[100][100];
+	int table[100][58];
 	// Non terminals x terminals (excluding epsilon);
 }; 
 

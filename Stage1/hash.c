@@ -18,6 +18,8 @@ int no_terms=0;
 int no_terminals=0;
 int no_nonterminals=0;
 
+int terminalarray[58];
+
 int hash(char *str)
 {
     unsigned long hash = 5381;
@@ -89,6 +91,7 @@ int insert(char *str,char **Hashtable)
     else
     {
         t[no_terms].nont=false;
+        terminalarray[no_terminals]=hashValue;
         no_terminals++;
     }
 
@@ -104,6 +107,7 @@ int insert(char *str,char **Hashtable)
         t[110].nont=false;
         t[110].hashValue=1301;
         no_terms++;
+        terminalarray[no_terminals]=1301;
         no_terminals++;
     }
 
@@ -113,6 +117,8 @@ int insert(char *str,char **Hashtable)
 void printTerms()
 {   
     FILE *f=fopen("terms.txt","w");
+
+    //printta();
 
     for(int i=0; i<no_terms; i++)
     {
@@ -124,6 +130,28 @@ void printTerms()
         fprintf(f,"\n");
     }
     fclose(f);
+}
+
+void printta()
+{
+    FILE *f=fopen("ta.txt","w");
+
+    for(int i=0; i<58; i++)
+    {
+        fprintf(f,"%d\n",terminalarray[i]);
+    }
+}
+
+int searchinta(int checkval)
+{
+    for(int i=0; i<58; i++)
+    {
+        if(terminalarray[i]==checkval)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
  
 /*int hashcallparser(char *tosearch, Term t, int sizeofT)

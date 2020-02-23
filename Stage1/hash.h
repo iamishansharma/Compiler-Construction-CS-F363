@@ -28,6 +28,8 @@ int search(char *str,char **Hashtable);
 int insert(char *str,char **Hashtable);
 void printTerms();
 bool isnont(int hashVal);
+void printta();
+int searchinta(int checkval);
 /*int hashcallparser(char *tosearch, Term T,int sizeofT);
 int hashcalllexer(char *tosearch, char **Keywords,int sizeofK);*/
 
@@ -44,5 +46,6 @@ Term t[115];
 extern int no_terms;
 extern int no_terminals;
 extern int no_nonterminals;
+extern int terminalarray[58];
 
 #endif
