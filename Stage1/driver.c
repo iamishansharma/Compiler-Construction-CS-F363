@@ -86,19 +86,19 @@ int main(int argc, char *argv[])
 					break;
 
 			case 3: 
-					//G=getGrammar(f3);
+					G=getGrammar(f3);
 					F=ComputeFirst(F);
 					F=ComputeFollow(F);
-					//T=createParseTable(F,T);
+					T=createParseTable(F,T,G);
 					//head=parseInputSourceCode(argv[1],T,G);
 					//printParseTree(head,f2);
 					break;
 
 			case 4: 
-					//G=getGrammar(f3);
+					G=getGrammar(f3);
 					F=ComputeFirst(F);
-					//F=ComputeFollow(F);
-					T=createParseTable(F,T);
+					F=ComputeFollow(F);
+					T=createParseTable(F,T,G);
 					//head=parseInputSourceCode(argv[1],T);
 
 					clock_t start_time, end_time;

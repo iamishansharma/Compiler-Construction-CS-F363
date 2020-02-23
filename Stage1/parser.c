@@ -17,6 +17,8 @@
 char *TermTable[MOD];
 
 int no_rules=0;     // total no of grammar rules populated in getGrammar()
+int no_nont=53;
+int no_t=58;
 
 int no_firsts=0;
 int no_follows=0;
@@ -127,46 +129,6 @@ int compareTerm(char *tocomp)
 		}
 	}
 	return -1;
-}
-
-bool isinFIRST(FirstAndFollow F,int nonterminal, int terminal)
-{
-	int flag=0;
-	int i=0;
-	do
-	{
-		if(F.first[nonterminal][i]==terminal)
-		{
-			flag=1;
-		}
-		i++;
-
-	}while(F.first[nonterminal][i]!=-1);
-
-	if(flag==1)
-		return true;
-	else
-		return false;
-}
-
-bool epsinFIRST(FirstAndFollow F,int nonterminal)
-{
-	int flag=0;
-	int i=0;
-	do
-	{
-		if(F.first[nonterminal][i]==1529)
-		{
-			flag=1;
-		}
-		i++;
-
-	}while(F.first[nonterminal][i]!=-1);
-
-	if(flag==1)
-		return true;
-	else
-		return false;
 }
 
 void make_stack()
@@ -428,47 +390,85 @@ FirstAndFollow ComputeFollow(FirstAndFollow F)
 	return F;
 }
 
-ParseTable createParseTable(FirstAndFollow F, ParseTable T)
+ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G)
 {
 	//Initialising table
 
-	for(int i=0; i<no_rules; i++)
+	for(int i=0; i<53; i++) // non terminals
 	{
-		for(int j=0; j<no_terms; j++)
+		for(int j=0; j<58; j++) // terminals
 		{
 			T.table[i][j]=-1;
 		}
 	}
 
-	// INDEX OF [][^this] will we index in terminalarray[];
+	for(int i=1; i<101; i++) // non terminals
+	{
+		int flag=0;
+		int j=1;
+		do
+		{
+			for(int k=0; k<94; k++)
+			{
+				if(G.gnum[i][j]==F.first[k][0])
+				{
+					for(int l=1; ;l++)
+					{
+						if(F.first[k][l]==54)
+						{
+							flag=1;
+							continue;
+						}
 
-	int eps = insert("EPSILON",TermTable);
+						T.table[G.gnum[i][0]][F.first[k][l]-53]=i;
 
-	for(int i=1; i<=100; i++)
+						if(F.first[k][l]==-1)
+						{
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			if(flag==1)
+			{
+				for(int k=0; k<53; k++)
+				{
+					if(G.gnum[i][j]==F.follow[k][0])
+					{
+						for(int l=1; ;l++)
+						{
+							T.table[G.gnum[i][0]][F.follow[k][l]-53]=i;
+
+							if(F.first[k][l]==-1)
+							{
+								break;
+							}
+						}
+						break;
+					}
+				}
+			}
+
+			j++;
+
+		}while(G.gnum[i][j]!=-1);
+	}
+	return T;
+}
+
+void printTable(ParseTable T)
+{
+	FILE *f=fopen("checktable.txt","w");
+	for(int i=0; i<53; i++)
 	{
 		for(int j=0; j<58; j++)
 		{
-			if(isinFIRST(F,j,i) && terminalarray[j]!=eps)
-			{
-				T.table[i][j]=i; //rule no
-			}
-			else if(terminalarray[j]==eps)
-			{
-				int x=1;
-				do
-				{
-					for(int g=0; g<58; g++)
-					{
-						if(terminalarray[g]==F.follow[i][x])
-						{
-							T.table[i][g]=i;
-						}
-					}
-				}while(F.follow[i][x]!=-1);
-			}
+			fprintf(f,"%d ",T.table[i][j]);
 		}
+		fprintf(f,"\n");
 	}
-	return T;
 }
 
 ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)

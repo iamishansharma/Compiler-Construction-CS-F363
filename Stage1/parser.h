@@ -20,13 +20,14 @@
 
 FirstAndFollow ComputeFirst(FirstAndFollow F);
 FirstAndFollow ComputeFollow(FirstAndFollow F);
-ParseTable createParseTable(FirstAndFollow F, ParseTable T);
+ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G);
 ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G);
 void printParseTree(ParseTree *head,FILE *f);
 
 // Supporting Functions Declarations - 
 
 Grammar getGrammar(FILE *f);
+void printTable(ParseTable T);
 int compareTerm(char *tocomp);
 void make_stack();
 void push(int ele);
