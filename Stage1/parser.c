@@ -243,11 +243,173 @@ int size_of_rule(int rule, Grammar G)
 
 /* START Primary Functions */
 
-FirstAndFollow ComputeFirstAndFollowSets(Grammar G, FirstAndFollow F)
+FirstAndFollow ComputeFirst(Grammar G, FirstAndFollow F)
 {
+	char string[100];
 
-	//F.first=computeFirsts(G);
-	//F.follow=computeFollows(G);
+	int no_firsts=0;
+
+	FILE *f=fopen("first.txt","r");
+	FILE *f2=fopen("checkfirst.txt","w");
+
+	if(f==NULL)
+	{
+		printf("Cannot open first read file!");
+		exit(1);
+	}
+
+	while(!feof(f))
+	{
+		fgets(string,100,f);
+
+		int j=0;
+		int k=0;
+
+		char word[15][30];
+
+		for(int i=0; i<=strlen(string); i++)
+		{
+			if(string[i]==' ' || string[i]=='\0')
+			{
+				word[j][k]='\0';
+				j++;
+				k=0;
+			}
+			else
+			{
+				word[j][k]=string[i];
+				k++;
+			}
+		}
+
+		char toinsert[30];
+
+		int g=0;
+
+		for(g=0; g<j; g++)
+		{
+			for(int z=0; z<30; z++)
+			{
+				toinsert[z]='\0';
+			}
+
+			int x=0;
+
+			do
+			{
+				if(word[g][x]==13 || word[g][x]==10)
+				{
+					x++;
+				}
+				else
+				{
+					toinsert[x]=word[g][x];
+					x++;
+				}
+
+			}while(word[g][x]!='\0');
+
+			int hashVal=insert(toinsert,TermTable);
+
+			F.first[no_firsts][g]=hashVal;
+
+			fprintf(f2,"%d ",F.first[no_firsts][g]);
+		}
+
+		F.first[no_firsts][g]=-1;
+		fprintf(f2,"%d",F.first[no_firsts][g]);
+		fprintf(f2,"\n");
+		no_firsts++;
+	}
+
+	fclose(f);
+	fclose(f2);
+
+	return F;
+}
+
+FirstAndFollow ComputeFollow(Grammar G, FirstAndFollow F)
+{
+	char string[100];
+
+	int no_follows=0;
+
+	FILE *f=fopen("follow.txt","r");
+	FILE *f2=fopen("checkfollow.txt","w");
+
+	if(f==NULL)
+	{
+		printf("Cannot open follow read file!");
+		exit(1);
+	}
+
+	while(!feof(f))
+	{
+		fgets(string,100,f);
+
+		int j=0;
+		int k=0;
+
+		char word[15][30];
+
+		for(int i=0; i<=strlen(string); i++)
+		{
+			if(string[i]==' ' || string[i]=='\0')
+			{
+				word[j][k]='\0';
+				j++;
+				k=0;
+			}
+			else
+			{
+				word[j][k]=string[i];
+				k++;
+			}
+		}
+
+		char toinsert[30];
+
+		int g=0;
+
+		for(g=0; g<j; g++)
+		{
+			for(int z=0; z<30; z++)
+			{
+				toinsert[z]='\0';
+			}
+
+			int x=0;
+
+			do
+			{
+				if(word[g][x]==13 || word[g][x]==10)
+				{
+					x++;
+				}
+				else
+				{
+					toinsert[x]=word[g][x];
+					x++;
+				}
+
+			}while(word[g][x]!='\0');
+
+			int hashVal=insert(toinsert,TermTable);
+
+			F.follow[no_follows][g]=hashVal;
+
+			fprintf(f2,"%d ",F.follow[no_follows][g]);
+		}
+
+		F.follow[no_follows][g]=-1;
+
+		fprintf(f2,"%d",F.follow[no_follows][g]);
+		fprintf(f2,"\n");
+
+		no_follows++;
+	}
+	fclose(f);
+	fclose(f2);
 
 	return F;
 }

@@ -18,7 +18,8 @@
 
 // Primary Functions Declarations - 
 
-FirstAndFollow ComputeFirstAndFollowSets(Grammar G, FirstAndFollow F);
+FirstAndFollow ComputeFirst(Grammar G, FirstAndFollow F);
+FirstAndFollow ComputeFollow(Grammar G, FirstAndFollow F);
 ParseTable createParseTable(FirstAndFollow F, ParseTable T);
 ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G);
 void printParseTree(ParseTree *head,FILE *f);
