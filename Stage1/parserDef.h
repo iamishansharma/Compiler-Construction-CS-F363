@@ -33,8 +33,8 @@ typedef struct parsetree ParseTree;
 
 struct fandf
 {
-	int first[101][15];
-	int follow[101][15];
+	int first[112][15];
+	int follow[112][15];
 	// 53 non terminals hence 53 x 20;
 };
 
@@ -49,7 +49,7 @@ typedef struct grammar Grammar;
 
 struct parsetable
 {
-	int table[53][57];
+	int table[53][58];
 }; 
 
 typedef struct parsetable ParseTable;
@@ -109,48 +109,33 @@ static char *terms[111] =
 	"default",
 	"iterativeStmt",
 	"range",
-	"$",
-	"EPSILON",
 	"DECLARE",
-	"MODULE",
-	"ID",
-	"SEMICOL",
-	"DRIVERDEF",
-	"DRIVER",
-	"PROGRAM",
-	"DRIVERENDDEF",
 	"DEF",
-	"ENDDEF",
-	"TAKES",
-	"INPUT",
-	"SQBO",
-	"SQBC",
+	"DRIVERDEF",
+	"EPSILON",
 	"RETURNS",
-	"COLON",
+	"ID",
 	"COMMA",
 	"INTEGER",
 	"REAL",
 	"BOOLEAN",
 	"ARRAY",
-	"OF",
 	"START",
-	"END",
 	"GET_VALUE",
-	"BO",
-	"BC",
 	"PRINT",
-	"ASSIGNOP",
-	"NUM",
+	"SWITCH",
+	"FOR",
 	"USE",
-	"WITH",
-	"PARAMETERS",
-	"MINUS",
-	"PLUS",
+	"SQBO",
+	"WHILE",
 	"RNUM",
+	"NUM",
+	"ASSIGNOP",
+	"MINUS",
+	"BO",
+	"PLUS",
 	"TRUE",
 	"FALSE",
-	"MUL",
-	"DIV",
 	"AND",
 	"OR",
 	"LT",
@@ -159,14 +144,29 @@ static char *terms[111] =
 	"GE",
 	"EQ",
 	"NE",
+	"MUL",
+	"DIV",
 	"CASE",
+	"$",
+	"MODULE",
+	"SEMICOL",
+	"DRIVER",
+	"PROGRAM",
+	"DRIVERENDDEF",
+	"ENDDEF",
+	"TAKES",
+	"INPUT",
+	"SQBC",
+	"COLON",
+	"OF",
+	"END",
+	"BC",
+	"WITH",
+	"PARAMETERS",
 	"BREAK",
-	"DEFAULT",
-	"FOR",
+	"DEFAULT",	
 	"IN",
-	"WHILE",
-	"RANGEOP",
-	"SWITCH"
+	"RANGEOP"
 };
 
 #endif

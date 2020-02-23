@@ -89,9 +89,10 @@ int main(int argc, char *argv[])
 					G=getGrammar(f3);
 					F=ComputeFirst(F);
 					F=ComputeFollow(F);
+					//printFF(F);
 					T=createParseTable(F,T,G);
 					printTable(T);
-					head=parseInputSourceCode(argv[1],T,G);
+					//head=parseInputSourceCode(argv[1],T,G);
 					//printParseTree(head,f2);
 					break;
 

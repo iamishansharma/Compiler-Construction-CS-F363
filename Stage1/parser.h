@@ -23,6 +23,7 @@ FirstAndFollow ComputeFollow(FirstAndFollow F);
 ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G);
 ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G);
 void printParseTree(ParseTree *head,FILE *f);
+void printFF(FirstAndFollow F);
 
 // Supporting Functions Declarations - 
 
