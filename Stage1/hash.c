@@ -1,3 +1,16 @@
+/*  driver.c 
+    
+    Batch No: 14
+
+    Members: 
+
+    Ishan Sharma 2016B2A70773P
+    Sarthan Sahu 2015B5A70749P
+    Anirudh Garg 2017A7PS0142P
+    Sanjeev Singla 2017A7PS0152P
+
+*/
+
 #include "hash.h"
 #include <string.h>
 
@@ -16,15 +29,32 @@ int hash(char *str)
     return hash % MOD;
 }
 
+bool isnont(int hashVal)
+{
+    int i=0;
+    for(i=0; i<no_terms; i++)
+    {
+        if(hashVal==t[i].hashValue)
+        {
+            break;
+        }
+    }
+    return t[i].nont;
+}
+
 int search(char *str,char **Hashtable)
 {
     int hashValue = hash(str);
 
     while(Hashtable[hashValue])
     {
-        if(~ strcmp(Hashtable[hashValue],str)){
+        if(~ strcmp(Hashtable[hashValue],str))
+        {
             return 1;
-        }else{
+
+        }
+        else
+        {
             hashValue++;
         }
     }
@@ -83,9 +113,6 @@ int insert(char *str,char **Hashtable)
 void printTerms()
 {   
     FILE *f=fopen("terms.txt","w");
-
-    printf("\nNonT: %d",no_nonterminals);
-    printf("\nT: %d",no_terminals);
 
     for(int i=0; i<no_terms; i++)
     {

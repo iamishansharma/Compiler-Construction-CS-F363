@@ -18,12 +18,14 @@
 
 struct parsetree
 {				
-	Node* token;
+	Node* n;
+	int rule_no;
 	struct parsetree *child;
 	struct parsetree *parent;
 	struct parsetree *left;
 	struct parsetree *right;
-	int ifleaf;
+	int isleaf;
+	int visited;
 
 };
 
@@ -31,8 +33,8 @@ typedef struct parsetree ParseTree;
 
 struct fandf
 {
-	int first[100][20];
-	int follow[100][20];
+	int first[101][15];
+	int follow[101][15];
 	// 53 non terminals hence 53 x 20;
 };
 
@@ -47,7 +49,7 @@ typedef struct grammar Grammar;
 
 struct parsetable
 {
-	int table[100][58];
+	int table[100][100];
 	// Non terminals x terminals (excluding epsilon);
 }; 
 

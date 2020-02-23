@@ -1,4 +1,4 @@
-/*	parser.c 
+/*  parser.c 
 	
 	Batch No: 14
 
@@ -16,11 +16,11 @@
 
 char *TermTable[MOD];
 
-int no_rules=0; 	// total no of grammar rules populated in getGrammar()
+int no_rules=0;     // total no of grammar rules populated in getGrammar()
 
 int stack[100];
-int stack_max=99; 	//max value for indexing stack
-int top=-1; 		// top pointer
+int stack_max=99;   //max value for indexing stack
+int top=-1;         // top pointer
 
 /* **************************************************************************** */
 
@@ -114,10 +114,186 @@ Grammar getGrammar(FILE *f)
 	}
 
 	fclose(f);
-	//fclose(f2);
+	fclose(f2);
 	printTerms();
 
 	return G;
+}
+
+bool isinFIRST(FirstAndFollow F,int nonterminal, int terminal)
+{
+	int flag=0;
+	int i=0;
+	do
+	{
+		if(F.first[nonterminal][i]==terminal)
+		{
+			flag=1;
+		}
+		i++;
+
+	}while(F.first[nonterminal][i]!=-1);
+
+	if(flag==1)
+		return true;
+	else
+		return false;
+}
+
+bool epsinFIRST(FirstAndFollow F,int nonterminal)
+{
+	int flag=0;
+	int i=0;
+	do
+	{
+		if(F.first[nonterminal][i]==1529)
+		{
+			flag=1;
+		}
+		i++;
+
+	}while(F.first[nonterminal][i]!=-1);
+
+	if(flag==1)
+		return true;
+	else
+		return false;
+}
+
+int** computeFirsts(int i,int j,Grammar G)
+{
+	//int count j ,k;
+	/// G[1] = A-> BCD
+
+	int F[101][15];
+
+	int temp[15]; 
+
+	temp[0] = -1;
+
+	int count=0;
+
+	int eps = insert("EPSILON",TermTable);
+
+	for(i=1;i<=100;i++)
+	{
+		for(int g=1; g<15; g++)
+		{
+			F[i][g]=-1;
+		}
+			int setEps = 0;
+
+			hashVal=G.gnum[i][j];
+
+			if(isnont(hashVal)==0)
+			{
+				F[i][count] = i; //store hash value
+				return F;
+			}
+			else if(hashVal==eps)
+			{
+				F[i][count]=eps;// = GrammarTable[i][j];
+				count++;
+			}
+			else
+			{
+				do
+				{
+					temp = computeFirsts(i,j,G);
+
+					for(int k=1; k<20; k++)
+					{
+						if(temp[k]==-1)
+						{
+							break;
+						}
+						else
+						{
+							if(temp[k]==eps)
+							{
+								setEps =1;
+								continue;
+							}
+							F[i][count] = temp[k];
+							count++;
+						}
+					}
+					j++;
+
+				}while{ j<20 && setEps}            
+			}
+			// hardcoded for now
+	}
+	return F;  
+}
+
+int* computeFollows(Grammar G)
+{
+	//int count j ,k;
+	/// G[1] = A-> BCD
+	int F[101][15];
+	
+	int temp[15]; //assuming max 15 in 1 set
+	temp[0] = -1;
+	int count=0;
+	int setEps =0;
+	int eps = 345;// can get from hash as well.
+	
+	for(int i=0;i<Size(GrammarTable);i++)
+	{
+			
+			int j;
+			//int f=20;
+			for(j =0;f<20;f++)
+			{
+				if(G[i][f]==-1)
+				{
+					break;
+				}
+			}
+			for(int g=1;g<15;g++){
+			F[i][g]=-1;
+	}
+			if(GrammarTable[i][0].start == 1)
+			{
+				F[i][count] = -2;// -2 reprsensts $ 
+				return F;
+
+			}
+			elseif(GrammarTable[i][j] ==eps)
+			{
+				F[i][count]=eps;// = GrammarTable[i][j];
+				count++;
+
+			}
+			else
+			{
+				
+				do
+				{
+					temp = computeFollows(G[i][j]);
+					for(int k=1;k<20;k++)
+					{
+						if(temp[k]==-1)
+						{
+							break;
+						}
+						else
+						{
+							if(temp[k]==eps)
+							{
+								setEps =1;
+								continue;
+							}
+							F[i][count] = temp[k];
+							count++;
+						}
+					}
+
+				}while{ j>0 && setEps}            
+			}
+	}
+	return F;
 }
 
 void make_stack()
@@ -156,46 +332,6 @@ int pop()
 	}
 }
 
-bool isinFIRST(FirstAndFollow F,int nonterminal, int terminal)
-{
-	int flag=0;
-	int i=0;
-	do
-	{
-		if(F.first[nonterminal][i]==terminal)
-		{
-			flag=1;
-		}
-		i++;
-
-	}while(F.first[nonterminal][i]!=-1);
-
-	if(flag==1)
-		return true;
-	else
-		return false;
-}
-
-bool epsinFIRST(FirstAndFollow F,int nonterminal)
-{
-	int flag=0;
-	int i=0;
-	do
-	{
-		if(F.first[nonterminal][i]==/*value of "eps"*/111)
-		{
-			flag=1;
-		}
-		i++;
-
-	}while(F.first[nonterminal][i]!=-1);
-
-	if(flag==1)
-		return true;
-	else
-		return false;
-}
-
 /* END Supporting Functions for Primary Functions */
 
 /* **************************************************************************** */
@@ -204,53 +340,32 @@ bool epsinFIRST(FirstAndFollow F,int nonterminal)
 
 FirstAndFollow ComputeFirstAndFollowSets(Grammar G, FirstAndFollow F)
 {
+
+	F.first=computeFirsts(G);
+	//F.follow=computeFollows(G);
+
 	return F;
 }
 
-void createParseTable(FirstAndFollow F, ParseTable T)
+ParseTable createParseTable(FirstAndFollow F, ParseTable T)
 {
 	//Initialising table
 
-	for(int i=0; i<no_nonterminals; i++)
+	for(int i=0; i<no_rules; i++)
 	{
-		for(int j=0; j<no_terminals; j++)
+		for(int j=0; j<no_terms; j++)
 		{
 			T.table[i][j]=-2;
 		}
 	}
 
-	/*
-		Parse Table - 
-
-		Non terminals x Terminals 
-
-							$ INTEGER REAL BOOLEAN ... AND SO ON
-		<program>
-		<moduleDeclations>
-
-		etc 
-
-		1. do this for very terminal- 
-
-			if $ is in FIRST(program) - 
-
-				put value of table[0][0]=rule_no; //Rule number of <program>
-
-			//start of terminals is at index 53
-		
-		2. if eps is in FIRST(program) - 
-
-			put rule_no //Rule Number of program in 
-			every terminal that is in FOLLOW(program)
-	*/
-
-	for(int nt=0; nt<no_nonterminals; nt++)
+	for(int nt=1; nt<no_rules; nt++)
 	{
-		for(int ter=53; ter<112; ter++)
+		for(int j=0; (j<no_terms && t[j].nont==0); j++)
 		{
-			if(isinFIRST(F,nt,ter))
+			if(isinFIRST(F,nt,j))
 			{
-				T.table[nt][ter-53]=nt; // rule value is same as nt value;
+				T.table[nt][j]=nt; // rule value is same as nt value;
 			}
 			if(epsinFIRST(F,nt))
 			{
@@ -264,22 +379,51 @@ void createParseTable(FirstAndFollow F, ParseTable T)
 			}
 		}
 	}
+
+	return T;
 }
 
-void parseInputSourceCode(char *testcaseFile, ParseTable T)
+ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T)
 {
+	ParseTree *head;
+
+	head=(ParseTree*)malloc(sizeof(ParseTree));
+	head->n=(Node*)malloc(sizeof(Node));
+	head->n->t=(Token*)malloc(sizeof(Token));
+	strcpy(head->n->t->token,"PROGRAM");
+	strcpy(head->n->t->value,"program");
+	head->n->t->lineno = 1;
+	head->child = NULL;
+	head->left = NULL;
+	head->right = NULL;
+	head->isleaf = 0;
+	head->parent = NULL;
+
+	Node *n=(Node*)malloc(sizeof(Node));
+	n->t=(Token*)malloc(sizeof(Token));
+
+	FILE *f=fopen(testcaseFile,"r");
+	f = getStream(f);
+
+	n=getNextToken();
+	//printf("\n");
 	
+	while(strcmp(n->t->value,"$")!=0)
+	{
+		//For Debugging - 
+
+		/*printf("%s ",n->t->token);
+		printf("%s ",n->t->value);
+		printf("%d\n",n->t->lineno);
+		n=getNextToken();*/
+		
+	}
+	return head;
 }
 
-void printParseTree(ParseTree PT, char *outfile)
+void printParseTree(ParseTree *head,FILE *f)
 {
-	FILE *f=fopen(outfile,"w");
-
-	if(f==NULL)
-	{
-		printf("Cannot open Parse Tree print file!");
-		exit(1);
-	}
+	// PRINT THE DAMN TREE;
 }
 
 /* END Primary Functions */

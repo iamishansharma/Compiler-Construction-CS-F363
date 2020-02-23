@@ -35,8 +35,17 @@ void printLexer(FILE *f)
 
 int main(int argc, char *argv[])
 {
-	FILE *f1=fopen(argv[1],"r");
-	FILE *f2=fopen(argv[2],"r");
+	FILE *f1=fopen(argv[1],"r"); // for reading testcase
+
+	FILE *f2=fopen(argv[2],"r"); // for printing parse tree
+
+	FILE *f3=fopen("grammar.txt","r"); // for reading grammar file
+
+	Grammar G;
+	FirstAndFollow F;
+	ParseTree *head=(ParseTree*)malloc(sizeof(ParseTree));
+	ParseTree *head2=(ParseTree*)malloc(sizeof(ParseTree));
+	ParseTable T;
 
 	int option=-1;
 
@@ -54,7 +63,7 @@ int main(int argc, char *argv[])
 		printf("1. Remove Comments and display on console.\n");
 		printf("2. Display token list on console.\n");
 		printf("3. Parse the input file and write the Parse Tree into a file.\n");
-		printf("4. Print the total time taken by Option3.\n");
+		printf("4. Print the total time taken for parsing the input file.\n");
 		printf("5. Clear the Screen.\n\n");
 		printf("Enter your option here: ");
 		scanf("%d",&option);
@@ -62,39 +71,57 @@ int main(int argc, char *argv[])
 		switch(option)
 		{
 			case 0: 
+
 					break;
 
 			case 1:
+
 					printf("\n");
 					removeComments(argv[1]);
 					break;
 
 			case 2: 
+
 					printLexer(f1);
 					break;
 
 			case 3: 
-					// parser & lexer call
-					getGrammar(f1);
+
+					G=getGrammar(f3);
+					F=ComputeFirstAndFollowSets(G,F);
+					T=createParseTable(F,T);
+					head=parseInputSourceCode(argv[1],T);
+					printParseTree(head,f2);
 					break;
 
 			case 4: 
-					/*clock_t start_time, end_time;
+
+					G=getGrammar(f3);
+					F=ComputeFirstAndFollowSets(G,F);
+					T=createParseTable(F,T);
+
+					clock_t start_time, end_time;
 					double total_CPU_time, total_CPU_time_in_seconds;
 					start_time = clock();
-						// parser & lexer call
+
+						//head=parseInputSourceCode(argv[1],T);
+
 					end_time = clock();
 					total_CPU_time = (double)(end_time - start_time);
 					total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
-					printf("Total CPU time is: %lf",total_CPU_time);
-					printf("Total CPU time in seconds is: %lf",total_CPU_time_in_seconds);*/
+
+					printf("\nTotal CPU time is: %lf\n",total_CPU_time);
+					printf("Total CPU time in seconds is: %lf\n",total_CPU_time_in_seconds);
+
 					break;
 
 			case 5:
+			
 					system("clear");
 					break;
 
 			default:
+
 					printf("\nWrong option, try again!\n");
 					break;
 		}

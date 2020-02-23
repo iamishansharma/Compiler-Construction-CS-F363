@@ -650,6 +650,17 @@ Node* getNextToken()
 						return newToken;
 						break;
 					}
+					else if(ch=='$')
+					{
+						strcpy(newToken->t->token,"DOLLAR");
+						strcpy(newToken->t->value,"$");
+						newToken->t->lineno=line;
+						fwd++;
+						begin = fwd;
+						state = 1;
+						return newToken;
+						break;
+					}
 					else
 					{
 						strcpy(newToken->t->token,"Error");
