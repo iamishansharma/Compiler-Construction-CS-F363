@@ -1,0 +1,53 @@
+program DECLARE DEF DRIVERDEF
+moduleDeclarations DECLARE EPSILON
+moduleDeclaration DECLARE
+otherModules DEF EPSILON
+driverModule DRIVERDEF
+module DEF
+ret RETURNS EPSILON
+input_plist ID
+input_plist_again COMMA EPSILON
+output_plist ID
+output_plist_again COMMA EPSILON
+dataType INTEGER REAL BOOLEAN ARRAY
+type INTEGER REAL BOOLEAN
+moduleDef START
+statements GET_VALUE PRINT ID DECLARE SWITCH FOR USE SQBO WHILE EPSILON
+statement GET_VALUE PRINT ID DECLARE SWITCH FOR USE SQBO WHILE EPSILON
+ioStmt GET_VALUE PRINT
+var ID NUM RNUM
+whichId SQBO EPSILON
+simpleStmt ID SQBO USE
+assignmentStmt ID
+whichStmt ASSIGNOP SQBO
+lvalueIDStmt ASSIGNOP
+lvalueARRStmt SQBO
+index NUM ID
+moduleReuseStmt SQBO USE
+optional SQBO EPSILON
+idList ID
+idList_again COMMA EPSILON
+expression MINUS BO ID NUM RNUM PLUS TRUE FALSE
+unary MINUS PLUS
+arithmeticOrBooleanExpr BO ID NUM RNUM TRUE FALSE
+arithmeticOrBooleanExpr_again AND OR EPSILON
+recTerm BO ID NUM RNUM TRUE FALSE
+recTerm_again LT LE GT GE EQ NE EPSILON
+arithmeticExpr BO ID NUM RNUM
+arithmeticExpr_again PLUS MINUS EPSILON
+term BO ID NUM RNUM
+term_again MUL DIV EPSILON
+factor BO ID NUM RNUM
+booleanConstants TRUE FALSE
+prec2_op PLUS MINUS
+prec1_op MUL DIV
+logicalOp AND OR
+relationalOp LT LE GT GE EQ NE
+declareStmt DECLARE
+conditionalStmt SWITCH
+caseStmts CASE
+caseStmts_again CASE EPSILON
+value NUM TRUE FALSE
+default DEFAULT EPSILON
+iterativeStmt FOR WHILE
+range NUM

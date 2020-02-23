@@ -18,12 +18,14 @@ char *TermTable[MOD];
 
 int no_rules=0;     // total no of grammar rules populated in getGrammar()
 
+int no_firsts=0;
+int no_follows=0;
+
 int stack[100];
 int stack_max=99;   //max value for indexing stack
 int top=-1;         // top pointer
 
 /* **************************************************************************** */
-
 
 /* **************************************************************************** */
 
@@ -95,14 +97,9 @@ Grammar getGrammar(FILE *f)
 
 			}while(word[g][x]!='\0');
 
-			int hashVal=insert(toinsert,TermTable);
+			int hashVal=compareTerm(toinsert);
 
-			if(no_rules==90 && g==1)
-			{
-				G.gnum[no_rules][g]=1301; //switch wala BT
-			}
-			else
-				G.gnum[no_rules][g]=hashVal;
+			G.gnum[no_rules][g]=hashVal;
 
 			fprintf(f2,"%d ",G.gnum[no_rules][g]);
 		}
@@ -116,6 +113,20 @@ Grammar getGrammar(FILE *f)
 	fclose(f2);
 	printTerms();
 	return G;
+}
+
+int compareTerm(char *tocomp)
+{
+	//printf("%s\n",tocomp);
+	for(int i=0; i<111; i++)
+	{
+
+		if(strcmp(tocomp,terms[i])==0)
+		{
+			return i;
+		}
+	}
+	return -1;
 }
 
 bool isinFIRST(FirstAndFollow F,int nonterminal, int terminal)
@@ -243,18 +254,18 @@ int size_of_rule(int rule, Grammar G)
 
 /* START Primary Functions */
 
-FirstAndFollow ComputeFirst(Grammar G, FirstAndFollow F)
+FirstAndFollow ComputeFirst(FirstAndFollow F)
 {
-	char string[100];
-
-	int no_firsts=0;
 
 	FILE *f=fopen("first.txt","r");
+
+	char string[100];
+
 	FILE *f2=fopen("checkfirst.txt","w");
 
 	if(f==NULL)
 	{
-		printf("Cannot open first read file!");
+		printf("Cannot open grammar read file!");
 		exit(1);
 	}
 
@@ -299,6 +310,7 @@ FirstAndFollow ComputeFirst(Grammar G, FirstAndFollow F)
 			{
 				if(word[g][x]==13 || word[g][x]==10)
 				{
+					//fprintf(f2,"\n \n %d \n \n",word[g][x]);
 					x++;
 				}
 				else
@@ -309,7 +321,7 @@ FirstAndFollow ComputeFirst(Grammar G, FirstAndFollow F)
 
 			}while(word[g][x]!='\0');
 
-			int hashVal=insert(toinsert,TermTable);
+			int hashVal=compareTerm(toinsert);
 
 			F.first[no_firsts][g]=hashVal;
 
@@ -325,21 +337,23 @@ FirstAndFollow ComputeFirst(Grammar G, FirstAndFollow F)
 	fclose(f);
 	fclose(f2);
 
+	//printTerms();
+
 	return F;
 }
 
-FirstAndFollow ComputeFollow(Grammar G, FirstAndFollow F)
+FirstAndFollow ComputeFollow(FirstAndFollow F)
 {
-	char string[100];
-
-	int no_follows=0;
 
 	FILE *f=fopen("follow.txt","r");
+
+	char string[100];
+
 	FILE *f2=fopen("checkfollow.txt","w");
 
 	if(f==NULL)
 	{
-		printf("Cannot open follow read file!");
+		printf("Cannot open grammar read file!");
 		exit(1);
 	}
 
@@ -384,6 +398,7 @@ FirstAndFollow ComputeFollow(Grammar G, FirstAndFollow F)
 			{
 				if(word[g][x]==13 || word[g][x]==10)
 				{
+					//fprintf(f2,"\n \n %d \n \n",word[g][x]);
 					x++;
 				}
 				else
@@ -394,7 +409,7 @@ FirstAndFollow ComputeFollow(Grammar G, FirstAndFollow F)
 
 			}while(word[g][x]!='\0');
 
-			int hashVal=insert(toinsert,TermTable);
+			int hashVal=compareTerm(toinsert);
 
 			F.follow[no_follows][g]=hashVal;
 
@@ -402,15 +417,14 @@ FirstAndFollow ComputeFollow(Grammar G, FirstAndFollow F)
 		}
 
 		F.follow[no_follows][g]=-1;
-
 		fprintf(f2,"%d",F.follow[no_follows][g]);
 		fprintf(f2,"\n");
-
 		no_follows++;
 	}
+
 	fclose(f);
 	fclose(f2);
-
+	//printTerms();
 	return F;
 }
 

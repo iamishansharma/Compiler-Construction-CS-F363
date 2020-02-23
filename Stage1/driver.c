@@ -86,20 +86,18 @@ int main(int argc, char *argv[])
 					break;
 
 			case 3: 
-
-					G=getGrammar(f3);
-					F=ComputeFirst(G,F);
-					F=ComputeFollow(G,F);
+					//G=getGrammar(f3);
+					F=ComputeFirst(F);
+					F=ComputeFollow(F);
 					//T=createParseTable(F,T);
 					//head=parseInputSourceCode(argv[1],T,G);
 					//printParseTree(head,f2);
 					break;
 
 			case 4: 
-
-					G=getGrammar(f3);
-					F=ComputeFirst(G,F);
-					F=ComputeFollow(G,F);
+					//G=getGrammar(f3);
+					F=ComputeFirst(F);
+					//F=ComputeFollow(F);
 					T=createParseTable(F,T);
 					//head=parseInputSourceCode(argv[1],T);
 

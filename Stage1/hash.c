@@ -122,12 +122,29 @@ void printTerms()
 
     for(int i=0; i<no_terms; i++)
     {
-        fprintf(f,"Term %d: \n",i);
-        fprintf(f,"\n");
-        fprintf(f,"\t%s",t[i].termname);
-        fprintf(f,"\n\t%d",t[i].nont);
-        fprintf(f,"\n\t%d\n",t[i].hashValue);
-        fprintf(f,"\n");
+        if(t[i].nont==1)
+        {
+            /*fprintf(f,"Term %d: \n",i);
+            fprintf(f,"\n");
+            fprintf(f,"\t%s",t[i].termname);
+            fprintf(f,"\n\t%d",t[i].nont);
+            fprintf(f,"\n\t%d\n",t[i].hashValue);
+            fprintf(f,"\n");*/
+            fprintf(f,"\"%s\",\n",t[i].termname);
+        }
+    }
+    for(int i=0; i<no_terms; i++)
+    {
+        if(t[i].nont==0)
+        {
+            /*fprintf(f,"Term %d: \n",i);
+            fprintf(f,"\n");
+            fprintf(f,"\t%s",t[i].termname);
+            fprintf(f,"\n\t%d",t[i].nont);
+            fprintf(f,"\n\t%d\n",t[i].hashValue);
+            fprintf(f,"\n");*/
+            fprintf(f,"\"%s\",\n",t[i].termname);
+        }
     }
     fclose(f);
 }
