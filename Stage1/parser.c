@@ -112,11 +112,9 @@ Grammar getGrammar(FILE *f)
 		fprintf(f2,"\n");
 		no_rules++;
 	}
-
 	fclose(f);
 	fclose(f2);
-	//printTerms();
-
+	printTerms();
 	return G;
 }
 

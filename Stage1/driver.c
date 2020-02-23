@@ -88,10 +88,10 @@ int main(int argc, char *argv[])
 			case 3: 
 
 					G=getGrammar(f3);
-					F=ComputeFirstAndFollowSets(G,F);
-					T=createParseTable(F,T);
-					head=parseInputSourceCode(argv[1],T,G);
-					printParseTree(head,f2);
+					//F=ComputeFirstAndFollowSets(G,F);
+					//T=createParseTable(F,T);
+					//head=parseInputSourceCode(argv[1],T,G);
+					//printParseTree(head,f2);
 					break;
 
 			case 4: 
