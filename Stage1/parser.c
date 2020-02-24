@@ -14,7 +14,7 @@
 #include "parser.h"
 #include "hash.h"
 
-char *TermTable[MOD];
+char *TermTable[MOD]; //RIP
 
 int no_firsts=0;
 int no_follows=0;
@@ -22,6 +22,8 @@ int no_follows=0;
 int stack[100];
 int stack_max=99;   //max value for indexing stack
 int top=-1;         // top pointer
+
+ParseTree *head;
 
 /* **************************************************************************** */
 
@@ -150,6 +152,7 @@ void make_stack()
 		stack[i]=-1;
 	}
 }
+
 void push(int ele)
 {
 	if(top==stack_max)
@@ -163,6 +166,7 @@ void push(int ele)
 		stack[top] = ele;
 	}
 }
+
 int pop()
 {
 	if(top==-1)
@@ -178,6 +182,7 @@ int pop()
 		return popping;
 	}
 }
+
 void printstack()
 {
 	FILE *f=fopen("stack.txt","w");
@@ -189,37 +194,77 @@ void printstack()
 	}while(stack[i]!=-1);
 }
 
-ParseTree* insert_in_tree(ParseTree *head,int rule,Grammar G,Node *n)
+void insert_in_tree(int stacktop, int rule, Grammar G, Node *n)
 {
-	return head;
-}
+	ParseTree *nN;
+	nN=(ParseTree*)malloc(sizeof(ParseTree));
+	nN->n=(Node*)malloc(sizeof(Node));
+	nN->n->t=(Token*)malloc(sizeof(Token));
+	nN->n=n; 
 
-int search_nont_in_G(int value, Grammar G)
-{
-	for(int i=1; i<GR; i++)
+	ParseTree *temp;
+	temp=(ParseTree*)malloc(sizeof(ParseTree)); // for traversing
+	temp=head;
+
+	while(1)
 	{
-		if(G.gnum[i][0]==value)
+		//printf("\nComes here in while loop !\n");
+		if(temp->value == stacktop)
 		{
-			return i;
+			break;
+		}
+		else
+		{
+			if(temp->right!=NULL)
+			{
+				//printf("\nComes here in right wala!\n");
+				temp=temp->right;
+			}
+			else
+			{
+				//printf("\nComes here in child wala!\n");
+				if(temp->child==NULL)
+				{
+					break;
+				}
+				temp=temp->child;
+			}
 		}
 	}
-	return -1;
-}
+	
+	temp->child=nN;
 
-ParseTree seach_in_tree(ParseTree* head,int rule)
-{
-	ParseTree searchNode;
-	return searchNode;
-}
+	nN->parent=temp;
 
-int size_of_rule(int rule, Grammar G)
-{
-	int size=1;
-	while(G.gnum[rule][size]!=-1)
+	nN->value=G.gnum[rule][1];
+
+	nN->rule=rule;
+
+	nN->child=NULL;
+
+	for(int i=2; i<30; i++)
 	{
-		size++;
+		if(G.gnum[rule][i]==-1)
+		{
+			break;
+		}
+		ParseTree *sib;
+		sib=(ParseTree*)malloc(sizeof(ParseTree));
+		sib->n=(Node*)malloc(sizeof(Node));
+		sib->n->t=(Token*)malloc(sizeof(Token));
+		sib->n=n;
+		sib->value=G.gnum[rule][i];
+		sib->rule=rule;
+		sib->child=NULL;
+		nN->right=sib;
+		nN=sib;
 	}
-	return size;
+	nN->right=NULL;
+}
+
+ParseTree* returnhead()
+{
+	return head;
 }
 
 /* END Supporting Functions for Primary Functions */
@@ -238,7 +283,7 @@ FirstAndFollow ComputeFirst(FirstAndFollow F)
 		}
 	}
 
-	FILE *f=fopen("firstmaam.txt","r");
+	FILE *f=fopen("first.txt","r");
 
 	char string[100];
 
@@ -335,7 +380,7 @@ FirstAndFollow ComputeFollow(FirstAndFollow F)
 		}
 	}
 
-	FILE *f=fopen("followmaam.txt","r");
+	FILE *f=fopen("follow.txt","r");
 
 	char string[100];
 
@@ -569,20 +614,18 @@ void printTable(ParseTable T)
 	}
 }
 
-ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
+void parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 {
-	ParseTree *head;
-
 	head=(ParseTree*)malloc(sizeof(ParseTree));
 	head->n=(Node*)malloc(sizeof(Node));
 	head->n->t=(Token*)malloc(sizeof(Token));
 	strcpy(head->n->t->token,"PROGRAM");
 	strcpy(head->n->t->value,"program");
 	head->n->t->lineno = 1;
+	head->value = 0;
+	head->rule = 1;
 	head->child = NULL;
-	head->left = NULL;
 	head->right = NULL;
-	head->isleaf = 0;
 	head->parent = NULL;
 
 	Node *n=(Node*)malloc(sizeof(Node));
@@ -612,12 +655,13 @@ ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 
 	while(strcmp(n->t->value,"$")!=0)
 	{
-		printf("Stack: \n");
-		for(int i=top; i>=0; i--)
-		{
-			printf("%s ",terms[stack[i]]);
-		}
-		printf("\n");
+					
+		//printf("Stack: \n");
+		//for(int i=top; i>=0; i--)
+		//{
+			//printf("%s ",terms[stack[i]]);
+		//}
+		//printf("\n");
 		
 		//For Debugging - 
 
@@ -635,32 +679,42 @@ ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 
 		int a=compareTerm(n->t->token);
 
-		printf("X:%s %d a:%s %d value: %s\n",terms[X],X,terms[a],a,n->t->value);
+		//printf("X:%s %d a:%s %d value: %s\n",terms[X],X,terms[a],a,n->t->value);
 
 		if(X==a)
 		{
-			printf("Popping coz same\n");
+			//printf("Popping coz same\n");
 			pop();
 			n=getNextToken();
 			a=compareTerm(n->t->token);
 		}
 		else if(X>=NTER)
 		{
-			printf("\nSyntatical Error! Error: %s at line no: %d, Expected: %s.\n",terms[a],n->t->lineno,terms[X]);
+			printf("\nSyntactical Error! Error: %s at line no: %d, Expected: %s.\n",terms[a],n->t->lineno,terms[X]);
 			exit(0);
 			//error recovery
 		}
 		else if(T.table[X][a-NTER]==-1)
 		{
-			printf("\nSyntatical Error! Error: %s at line no: %d.\n",terms[a],n->t->lineno);
+			printf("\nSyntactical Error! Error: %s at line no: %d.\n",terms[a],n->t->lineno);
 			exit(0);
 			// error recovery
 		}
 		else if(T.table[X][a-NTER]!=-1)
 		{
-			printf("Entry exists in table\n");
+			if(stack[top]==0)
+			{
+				;
+			}
+			else
+			{
+				//printf("SENDING VALUE: \n%d %d\n",stack[top],T.table[X][a-NTER]);
+				insert_in_tree(stack[top],T.table[X][a-NTER],G,n);
+			}
 
-			printf("Rule no: %d \n",T.table[X][a-NTER]);
+			//printf("Entry exists in table\n");
+
+			//printf("Rule no: %d \n",T.table[X][a-NTER]);
 
 			pop();
 
@@ -680,12 +734,12 @@ ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 				else
 				{
 					push(G.gnum[glno][f]);
-					printf("%d %d %d %s\n",glno,f,G.gnum[glno][f],terms[G.gnum[glno][f]]);
+					//printf("%d %d %d %s\n",glno,f,G.gnum[glno][f],terms[G.gnum[glno][f]]);
 				}
 			}
 		}
 		X=stack[top];
-		printf("\n");
+		//printf("\n");
 	}
 	if(stack[top]==3)
 	{
@@ -695,14 +749,22 @@ ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 	{
 		printf("Parsing successfully....!\n");
 	}
-	return head;
 }
 
 void printParseTree(ParseTree *head,FILE *f)
 {
-	
-	
-	
+	ParseTree *temp;
+	temp=(ParseTree*)malloc(sizeof(ParseTree)); // for traversing
+	temp=head;
+
+	printf("\n%s %s %d %s %d\n",temp->n->t->value,temp->n->t->token,temp->n->t->lineno,terms[temp->value],temp->rule);
+
+	while(temp!=NULL)
+	{
+		printParseTree(temp->child,f);
+		//printf("%s %s %d %s %d",temp->n->t->value,temp->n->t->token,temp->n->t->lineno,terms[temp->value],temp->rule);
+		printParseTree(temp->right,f);
+	}
 }
 
 /* END Primary Functions */

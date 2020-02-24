@@ -1,4 +1,6 @@
-range_arrays
-var_id_num
-unary_op 
-new_NT
+1. Dollar ending in file
+2. Keyword Hashing
+3. First and Follow
+4. Error recovery
+
+Fill execution time and fix it

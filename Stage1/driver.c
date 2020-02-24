@@ -40,19 +40,33 @@ void printLexer(FILE *f)
 	}while(buffer[fwd]!='\0');
 }
 
+void adddollar(FILE *f)
+{
+	FILE *f2=fopen("mainreadfile.txt","w");
+	char ch=0;
+	while(!feof(f))
+	{
+		ch=fgetc(f);
+		fprintf(f2,"%c",ch);
+	}
+	fprintf(f2,"$");
+	fclose(f2);
+}
+
 int main(int argc, char *argv[])
 {
 	FILE *f1=fopen(argv[1],"r"); // for reading testcase
 
 	FILE *f2=fopen(argv[2],"r"); // for printing parse tree
 
-	FILE *f3=fopen("grammarmaam.txt","r"); // for reading grammar file
+	FILE *f3=fopen("grammar.txt","r"); // for reading grammar file
+
+	adddollar(f1);
 
 	Grammar G;
 	FirstAndFollow F;
-	ParseTree *head=(ParseTree*)malloc(sizeof(ParseTree));
-	ParseTree *head2=(ParseTree*)malloc(sizeof(ParseTree));
 	ParseTable T;
+	ParseTree *head;
 
 	int option=-1;
 
@@ -99,16 +113,22 @@ int main(int argc, char *argv[])
 					//printFF(F);
 					T=createParseTable(F,T,G);
 					printTable(T);
-					head=parseInputSourceCode(argv[1],T,G);
-					//printParseTree(head,f2);
+					parseInputSourceCode("mainreadfile.txt",T,G);
+					head=returnhead();
+					printParseTree(head,f2);
+
 					break;
 
 			case 4: 
 					G=getGrammar(f3);
 					F=ComputeFirst(F);
 					F=ComputeFollow(F);
+					//printFF(F);
 					T=createParseTable(F,T,G);
-					//head=parseInputSourceCode(argv[1],T);
+					printTable(T);
+					parseInputSourceCode(argv[1],T,G);
+					head=returnhead();
+					//printParseTree(head,f2);
 
 					clock_t start_time, end_time;
 					double total_CPU_time, total_CPU_time_in_seconds;

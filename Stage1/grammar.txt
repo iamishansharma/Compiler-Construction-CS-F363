@@ -18,7 +18,8 @@ output_plist_again EPSILON
 dataType INTEGER
 dataType REAL
 dataType BOOLEAN
-dataType ARRAY SQBO range SQBC OF type
+dataType ARRAY SQBO range_arrays SQBC OF type
+range_arrays index RANGEOP index
 type INTEGER
 type REAL
 type BOOLEAN
@@ -32,7 +33,12 @@ statement conditionalStmt
 statement iterativeStmt
 ioStmt GET_VALUE BO ID BC SEMICOL
 ioStmt PRINT BO var BC SEMICOL
-whichId SQBO ID SQBC
+var var_id_num
+var booleanConstants
+var_id_num ID whichId
+var_id_num NUM
+var_id_num RNUM
+whichId SQBO index SQBC
 whichId EPSILON
 simpleStmt assignmentStmt
 simpleStmt moduleReuseStmt
@@ -51,15 +57,16 @@ idList_again COMMA ID idList_again
 idList_again EPSILON
 expression arithmeticOrBooleanExpr
 expression unary
-unary MINUS BO arithmeticExpr BC
-unary PLUS BO arithmeticExpr BC
-unary MINUS var
-unary PLUS var
+unary unary_op new_NT
+unary_op PLUS
+unary_op MINUS
+new_NT BO arithmeticExpr BC
+new_NT var_id_num
 arithmeticOrBooleanExpr recTerm arithmeticOrBooleanExpr_again
 arithmeticOrBooleanExpr_again logicalOp recTerm arithmeticOrBooleanExpr_again
 arithmeticOrBooleanExpr_again EPSILON
 recTerm arithmeticExpr recTerm_again
-recTerm booleanConstants
+recTerm booleanConstants recTerm_again
 recTerm_again relationalOp arithmeticExpr recTerm_again
 recTerm_again EPSILON
 arithmeticExpr term arithmeticExpr_again
@@ -68,11 +75,8 @@ arithmeticExpr_again EPSILON
 term factor term_again
 term_again prec1_op factor term_again
 term_again EPSILON
-factor BO arithmeticExpr BC
-factor var
-var ID whichId
-var NUM
-var RNUM
+factor BO arithmeticOrBooleanExpr BC
+factor var_id_num
 booleanConstants TRUE
 booleanConstants FALSE
 prec2_op PLUS

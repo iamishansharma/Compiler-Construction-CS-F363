@@ -21,21 +21,19 @@
 FirstAndFollow ComputeFirst(FirstAndFollow F);
 FirstAndFollow ComputeFollow(FirstAndFollow F);
 ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G);
-ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G);
+void parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G);
 void printParseTree(ParseTree *head,FILE *f);
 void printFF(FirstAndFollow F);
 
 // Supporting Functions Declarations - 
 
 Grammar getGrammar(FILE *f);
+ParseTree* returnhead();
 void printTable(ParseTable T);
 int compareTerm(char *tocomp);
 void make_stack();
 void push(int ele);
 int pop();
-ParseTree* insert_in_tree(ParseTree *head,int rule,Grammar G,Node *n);
-int search_nont_in_G(int value, Grammar G);
-ParseTree seach_in_tree(ParseTree* head,int rule);
-int size_of_rule(int rule, Grammar G);
+void insert_in_tree(int stacktop,int rule,Grammar G,Node *n);
 
 #endif
