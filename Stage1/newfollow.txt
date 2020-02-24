@@ -1,8 +1,8 @@
 program $ 
-moduleDeclarations DEF DRIVERDEF 
+moduleDeclarations DEF DRIVERDEF $ 
 moduleDeclaration DEF DRIVERDEF DECLARE 
 otherModules DRIVERDEF $ 
-driverModule DRIVERDEF $ 
+driverModule DRIVERDEF DEF $ 
 module DEF $ 
 ret START 
 input_plist SQBC 
@@ -10,12 +10,14 @@ input_plist_again SQBC
 output_plist SQBC 
 output_plist_again SQBC 
 dataType SQBC COMMA SEMICOL 
+range_arrays SQBC 
 type SQBC COMMA 
 moduleDef DEF $ 
 statements BREAK END 
 statement GET_VALUE PRINT ID DECLARE SWITCH FOR USE SQBO WHILE END BREAK 
 ioStmt GET_VALUE PRINT ID DECLARE SWITCH FOR USE SQBO WHILE END BREAK 
 var PLUS MINUS MUL DIV LT LE GT GE EQ NE AND OR BC SEMICOL 
+var_id_num PLUS MINUS MUL DIV LT LE GT GE EQ NE AND OR BC SEMICOL 
 whichId PLUS MINUS MUL DIV LT LE GT GE EQ NE AND OR BC SEMICOL 
 simpleStmt GET_VALUE PRINT ID DECLARE SWITCH FOR USE SQBO WHILE END BREAK 
 assignmentStmt GET_VALUE PRINT ID DECLARE SWITCH FOR USE SQBO WHILE END BREAK 
@@ -26,13 +28,15 @@ index SQBC
 moduleReuseStmt GET_VALUE PRINT ID DECLARE SWITCH FOR USE SQBO WHILE END BREAK 
 optional USE 
 idList SQBC SEMICOL COMMA 
-idList_again SQBC SEMICOL COMMA 
+idList_again SQBC SEMICOL COMMA COLON 
 expression SEMICOL 
 unary SEMICOL 
-arithmeticOrBooleanExpr SEMICOL 
-arithmeticOrBooleanExpr_again SEMICOL 
+unary_op BO ID NUM RNUM 
+new_NT SEMICOL 
+arithmeticOrBooleanExpr BC SEMICOL 
+arithmeticOrBooleanExpr_again BC SEMICOL 
 recTerm AND OR SEMICOL 
-recTerm_again AND OR SEMICOL 
+recTerm_again BC AND OR SEMICOL 
 arithmeticExpr AND OR LT LE GT GE NE EQ SEMICOL BC 
 arithmeticExpr_again AND OR LT LE GT GE NE EQ SEMICOL BC 
 term PLUS MINUS LT LE GT GE EQ NE AND OR BC SEMICOL 
@@ -51,6 +55,10 @@ value COLON
 default END 
 iterativeStmt GET_VALUE PRINT ID DECLARE SWITCH FOR USE SQBO WHILE END BREAK 
 range SQBC BC 
+
+
+
+
 
 
 

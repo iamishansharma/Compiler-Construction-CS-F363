@@ -16,10 +16,6 @@
 
 char *TermTable[MOD];
 
-int no_rules=0;     // total no of grammar rules populated in getGrammar()
-int no_nont=53;
-int no_t=58;
-
 int no_firsts=0;
 int no_follows=0;
 
@@ -37,13 +33,15 @@ Grammar getGrammar(FILE *f)
 {
 	Grammar G;
 
-	for(int i=0; i<101; i++)
+	for(int i=0; i<GR; i++)
 	{
 		for(int j=0; j<30; j++)
 		{
 			G.gnum[i][j]=-1;
 		}
 	}
+
+	int no_rules=0;
 
 	char string[100];
 
@@ -107,7 +105,11 @@ Grammar getGrammar(FILE *f)
 
 			}while(word[g][x]!='\0');
 
+			//printf("%s\n",toinsert);
+
 			int hashVal=compareTerm(toinsert);
+
+			//printf("%d\n",hashVal);
 
 			G.gnum[no_rules][g]=hashVal;
 
@@ -120,6 +122,7 @@ Grammar getGrammar(FILE *f)
 		fprintf(f2,"\n");
 		no_rules++;
 	}
+
 	fclose(f);
 	fclose(f2);
 	printTerms();
@@ -129,9 +132,8 @@ Grammar getGrammar(FILE *f)
 int compareTerm(char *tocomp)
 {
 	//printf("%s\n",tocomp);
-	for(int i=0; i<111; i++)
+	for(int i=0; i<(NTER + TER); i++)
 	{
-
 		if(strcmp(tocomp,terms[i])==0)
 		{
 			return i;
@@ -142,6 +144,7 @@ int compareTerm(char *tocomp)
 
 void make_stack()
 {
+	//printf("Comes here! ");
 	for(int i=0; i<100; i++)
 	{
 		stack[i]=-1;
@@ -193,7 +196,7 @@ ParseTree* insert_in_tree(ParseTree *head,int rule,Grammar G,Node *n)
 
 int search_nont_in_G(int value, Grammar G)
 {
-	for(int i=1; i<=100; i++)
+	for(int i=1; i<GR; i++)
 	{
 		if(G.gnum[i][0]==value)
 		{
@@ -227,7 +230,7 @@ int size_of_rule(int rule, Grammar G)
 
 FirstAndFollow ComputeFirst(FirstAndFollow F)
 {
-	for(int i=0; i<112; i++)
+	for(int i=0; i<120; i++)
 	{
 		for(int j=0; j<15; j++)
 		{
@@ -235,7 +238,7 @@ FirstAndFollow ComputeFirst(FirstAndFollow F)
 		}
 	}
 
-	FILE *f=fopen("first.txt","r");
+	FILE *f=fopen("firstmaam.txt","r");
 
 	char string[100];
 
@@ -324,7 +327,7 @@ FirstAndFollow ComputeFirst(FirstAndFollow F)
 
 FirstAndFollow ComputeFollow(FirstAndFollow F)
 {
-	for(int i=0; i<112; i++)
+	for(int i=0; i<120; i++)
 	{
 		for(int j=0; j<15; j++)
 		{
@@ -332,7 +335,7 @@ FirstAndFollow ComputeFollow(FirstAndFollow F)
 		}
 	}
 
-	FILE *f=fopen("follow.txt","r");
+	FILE *f=fopen("followmaam.txt","r");
 
 	char string[100];
 
@@ -420,7 +423,7 @@ void printFF(FirstAndFollow F)
 	FILE *f4=fopen("newfirst.txt","w");
 	FILE *f5=fopen("newfollow.txt","w");
 
-	for(int i=0; i<112; i++)
+	for(int i=0; i<120; i++)
 	{
 		for(int j=0; j<15; j++)
 		{
@@ -435,7 +438,7 @@ void printFF(FirstAndFollow F)
 		}
 		fprintf(f4,"\n");
 	}
-	for(int i=0; i<112; i++)
+	for(int i=0; i<120; i++)
 	{
 		for(int j=0; j<15; j++)
 		{
@@ -458,16 +461,16 @@ ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G)
 
 	printFF(F);
 	
-	for(int i=0; i<53; i++) // non terminals
+	for(int i=0; i<NTER; i++) // non terminals
 	{
-		for(int j=0; j<58; j++) // terminals
+		for(int j=0; j<TER; j++) // terminals
 		{
 			T.table[i][j]=-1;
 		}
 	}
 	int flag=0;
 
-	for(int i=1; i<101; i++) // non terminals
+	for(int i=1; i<GR; i++) // non terminals
 	{
 		flag=0;
 
@@ -484,7 +487,7 @@ ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G)
 			break;
 		}
 
-		for(int k=0; k<94; k++)
+		for(int k=0; k<no_firsts; k++)
 		{
 			if(G.gnum[i][j]==F.first[k][0])
 			{
@@ -496,7 +499,7 @@ ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G)
 						//printf("Outside first set %d %d %d %d\n",i,j,k,l);
 						break;
 					}
-					if(F.first[k][l]==56)
+					if(F.first[k][l]==EPS) // EPSILON
 					{
 						//printf("Every Value: %d %d %d %d %d\n",i,j,k,l,F.first[k][l]);
 						//printf("FOUND EPSILON %d %d %d %d\n",i,j,k,l);
@@ -508,7 +511,7 @@ ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G)
 
 					//printf("In First: %d %d\n",term,F.first[k][l]-53);
 
-					T.table[term][F.first[k][l]-53]=i;
+					T.table[term][F.first[k][l]-NTER]=i;
 
 					//printf("RANGEOP: %d\n",T.table[term][57]);
 				}
@@ -519,7 +522,7 @@ ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G)
 		if(flag==1)
 		{
 			//printf("In flag here!\n");
-			for(int k=0; k<53; k++)
+			for(int k=0; k<no_follows; k++)
 			{
 				if(G.gnum[i][0]==F.follow[k][0])
 				{
@@ -536,7 +539,7 @@ ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G)
 
 						//printf("In Follow: %d %d\n",G.gnum[i][0],F.follow[k][l]-53);
 
-						T.table[G.gnum[i][0]][F.follow[k][l]-53]=i;
+						T.table[G.gnum[i][0]][F.follow[k][l]-NTER]=i;
 					}
 					break;
 				}
@@ -550,15 +553,15 @@ void printTable(ParseTable T)
 {
 	FILE *f=fopen("checktable.csv","w");
 	fprintf(f,",");
-	for(int i=0; i<58; i++)
+	for(int i=0; i<TER; i++)
 	{
-		fprintf(f,"%s,",terms[i+53]);
+		fprintf(f,"%s,",terms[i+NTER]);
 	}
 	fprintf(f,"\n");
-	for(int i=0; i<53; i++)
+	for(int i=0; i<NTER; i++)
 	{
 		fprintf(f,"%s,",terms[i]);
-		for(int j=0; j<58; j++)
+		for(int j=0; j<TER; j++)
 		{
 			fprintf(f,"%d,",T.table[i][j]);
 		}
@@ -590,73 +593,116 @@ ParseTree* parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 	f = getStream(f);
 
 	make_stack();
-
-	push(91); // push $ on stack
+	
+	push(DOL); // push $ on stack
 	push(0);  // push program on stack
+
+	//printf("%s ",terms[91])
 
 	//printstack();
 
-	int eps = 56;
-
 	n=getNextToken();
+
+	printf("\n");
+
+	T.table[0][1]=1; // expicitly added DEF for program (t9.txt)
+	T.table[0][2]=1; // expicitly added DRIVERDEF for program (t9.txt)
+	T.table[49][0]=93;
+	T.table[20][74-NTER]=40;
 
 	while(strcmp(n->t->value,"$")!=0)
 	{
+		printf("Stack: \n");
+		for(int i=top; i>=0; i--)
+		{
+			printf("%s ",terms[stack[i]]);
+		}
+		printf("\n");
+		
 		//For Debugging - 
 
-		/*printf("%s ",n->t->token);
-		printf("%s ",n->t->value);
-		printf("%d\n",n->t->lineno);
-		n=getNextToken();*/
+		//printf("%s ",n->t->token);
+		//printf("%s ",n->t->value);
+		//printf("%d\n",n->t->lineno);
+		//n=getNextToken();
+		
 		int X=stack[top];
+
+		if(strcmp(n->t->token,"Error")==0)
+		{
+			break;
+		}
 
 		int a=compareTerm(n->t->token);
 
-		break;
+		printf("X:%s %d a:%s %d value: %s\n",terms[X],X,terms[a],a,n->t->value);
 
-		while(X!=53)
+		if(X==a)
 		{
-			if(X==a)
+			printf("Popping coz same\n");
+			pop();
+			n=getNextToken();
+			a=compareTerm(n->t->token);
+		}
+		else if(X>=NTER)
+		{
+			printf("\nSyntatical Error! Error: %s at line no: %d, Expected: %s.\n",terms[a],n->t->lineno,terms[X]);
+			exit(0);
+			//error recovery
+		}
+		else if(T.table[X][a-NTER]==-1)
+		{
+			printf("\nSyntatical Error! Error: %s at line no: %d.\n",terms[a],n->t->lineno);
+			exit(0);
+			// error recovery
+		}
+		else if(T.table[X][a-NTER]!=-1)
+		{
+			printf("Entry exists in table\n");
+
+			printf("Rule no: %d \n",T.table[X][a-NTER]);
+
+			pop();
+
+			if(X==30 && a==63)
 			{
-				pop();
-				n=getNextToken();
+				T.table[X][a-NTER]=55; // FOR COMMA IN idList_again
 			}
-			else if(X>=53)
+
+			int glno=T.table[X][a-NTER];
+
+			for(int f=29; f>0 ;f--)
 			{
-				//Xerror();
-				printf("X is a terminal\n");
-			}
-			else if(T.table[X][a-53]==-1)
-			{
-				//Xerror();
-				printf("Entry does not exist\n");
-			}
-			else if(T.table[X][a-53]!=-1)
-			{
-				printf("%d ",T.table[X][a-53]);
-				pop();
-				int glno=T.table[X][a-53];
-				for(int f=30; f>0 ;f--)
+				if(G.gnum[glno][f]==-1 || G.gnum[glno][f]==EPS)
 				{
-					if(G.gnum[glno][f]==-1)
-					{
-						continue;
-					}
-					else
-					{
-						push(G.gnum[glno][f]);
-					}
+					continue;
+				}
+				else
+				{
+					push(G.gnum[glno][f]);
+					printf("%d %d %d %s\n",glno,f,G.gnum[glno][f],terms[G.gnum[glno][f]]);
 				}
 			}
-			X=stack[top];
 		}
+		X=stack[top];
+		printf("\n");
+	}
+	if(stack[top]==3)
+	{
+		pop();
+	}
+	if(stack[top]==DOL)
+	{
+		printf("Parsing successfully....!\n");
 	}
 	return head;
 }
 
 void printParseTree(ParseTree *head,FILE *f)
 {
-	// PRINT THE DAMN TREE;
+	
+	
+	
 }
 
 /* END Primary Functions */

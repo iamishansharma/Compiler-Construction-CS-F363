@@ -16,6 +16,12 @@
 
 #include "lexer.h"
 
+#define GR 105
+#define NTER 57
+#define TER 58
+#define EPS 60
+#define DOL 95
+
 struct parsetree
 {				
 	Node* n;
@@ -33,8 +39,8 @@ typedef struct parsetree ParseTree;
 
 struct fandf
 {
-	int first[112][15];
-	int follow[112][15];
+	int first[120][15];
+	int follow[120][15];
 	// 53 non terminals hence 53 x 20;
 };
 
@@ -42,19 +48,138 @@ typedef struct fandf FirstAndFollow;
 
 struct grammar
 {
-	int gnum[101][30];
+	int gnum[GR][30];
 };
 
 typedef struct grammar Grammar; 
 
 struct parsetable
 {
-	int table[53][58];
+	int table[NTER][TER];
 }; 
 
 typedef struct parsetable ParseTable;
 
-static char *terms[111] = 
+static char *terms[NTER+TER] = 
+{
+	"program",
+	"moduleDeclarations",
+	"moduleDeclaration",
+	"otherModules",
+	"driverModule",
+	"module",
+	"ret",
+	"input_plist",
+	"input_plist_again",
+	"output_plist",
+	"output_plist_again",
+	"dataType",
+	"range_arrays",
+	"type",
+	"moduleDef",
+	"statements",
+	"statement",
+	"ioStmt",
+	"var",
+	"var_id_num",
+	"whichId",
+	"simpleStmt",
+	"assignmentStmt",
+	"whichStmt",
+	"lvalueIDStmt",
+	"lvalueARRStmt",
+	"index",
+	"moduleReuseStmt",
+	"optional",
+	"idList",
+	"idList_again",
+	"expression",
+	"unary",
+	"unary_op",
+	"new_NT",
+	"arithmeticOrBooleanExpr",
+	"arithmeticOrBooleanExpr_again",
+	"recTerm",
+	"recTerm_again",
+	"arithmeticExpr",
+	"arithmeticExpr_again",
+	"term",
+	"term_again",
+	"factor",
+	"booleanConstants",
+	"prec2_op",
+	"prec1_op",
+	"logicalOp",
+	"relationalOp",
+	"declareStmt",
+	"conditionalStmt",
+	"caseStmts",
+	"caseStmts_again",
+	"value",
+	"default",
+	"iterativeStmt",
+	"range",
+	"DECLARE",
+	"DEF",
+	"DRIVERDEF",
+	"EPSILON",
+	"RETURNS",
+	"ID",
+	"COMMA",
+	"INTEGER",
+	"REAL",
+	"BOOLEAN",
+	"ARRAY",
+	"START",
+	"GET_VALUE",
+	"PRINT",
+	"SWITCH",
+	"FOR",
+	"USE",
+	"SQBO",
+	"WHILE",
+	"RNUM",
+	"NUM",
+	"ASSIGNOP",
+	"MINUS",
+	"BO",
+	"PLUS",
+	"TRUE",
+	"FALSE",
+	"AND",
+	"OR",
+	"LT",
+	"LE",
+	"GT",
+	"GE",
+	"EQ",
+	"NE",
+	"MUL",
+	"DIV",
+	"CASE",
+	"$",
+	"MODULE",
+	"SEMICOL",
+	"DRIVER",
+	"PROGRAM",
+	"DRIVERENDDEF",
+	"ENDDEF",
+	"TAKES",
+	"INPUT",
+	"SQBC",
+	"COLON",
+	"OF",
+	"END",
+	"BC",
+	"WITH",
+	"PARAMETERS",
+	"BREAK",
+	"DEFAULT",	
+	"IN",
+	"RANGEOP"
+};
+
+/*static char *terms[111] = 
 {
 	"program",
 	"moduleDeclarations",
@@ -167,6 +292,6 @@ static char *terms[111] =
 	"DEFAULT",	
 	"IN",
 	"RANGEOP"
-};
+};*/
 
 #endif

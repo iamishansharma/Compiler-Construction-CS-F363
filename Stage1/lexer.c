@@ -663,14 +663,28 @@ Node* getNextToken()
 					}
 					else
 					{
-						strcpy(newToken->t->token,"Error");
-						//strcpy(newToken->t->value,ch);
-						newToken->t->lineno=line;
-						printf("Lexical Error: %s at line no: %d\n",valueinit,line);
-						state = 1;
-						fwd++;
-						begin = fwd;
-						return newToken;
+						if(ch!='\0')
+						{
+							//printf("\nyeh wala error %d\n",ch);
+							strcpy(newToken->t->token,"Error");
+							//strcpy(newToken->t->value,ch);
+							newToken->t->lineno=line;
+							printf("Lexical Error: %d at line no: %d\n",ch,line);
+							state = 1;
+							fwd++;
+							begin = fwd;
+							return newToken;
+						}
+						else
+						{
+							strcpy(newToken->t->token,"EOB");
+							//strcpy(newToken->t->value,ch);
+							newToken->t->lineno=line;
+							//printf("Lexical Error: %d at line no: %d\n",ch,line);
+							state = 1;
+							return newToken;
+							break;
+						}
 					}
 					break;
 
@@ -713,14 +727,36 @@ Node* getNextToken()
 						    else if(valueinit[i]=='_')
 						    	keyw[i] = '_';
 						}	
-
-						strcpy(newToken->t->token,keyw);
-						strcpy(newToken->t->value,valueinit);
-						newToken->t->lineno=line;
-						state = 1;
-						begin = fwd;
-						return newToken;
-						break;
+						if(strcmp(valueinit,"AND")==0)
+						{
+							strcpy(newToken->t->token,"AND");
+							strcpy(newToken->t->value,valueinit);
+							newToken->t->lineno=line;
+							state = 1;
+							begin = fwd;
+							return newToken;
+							break;
+						}
+						else if(strcmp(valueinit,"OR")==0)
+						{
+							strcpy(newToken->t->token,"OR");
+							strcpy(newToken->t->value,valueinit);
+							newToken->t->lineno=line;
+							state = 1;
+							begin = fwd;
+							return newToken;
+							break;
+						}
+						else
+						{
+							strcpy(newToken->t->token,keyw);
+							strcpy(newToken->t->value,valueinit);
+							newToken->t->lineno=line;
+							state = 1;
+							begin = fwd;
+							return newToken;
+							break;
+						}	
 					}
 					else
 					{
@@ -882,13 +918,13 @@ Node* getNextToken()
 									}
 									else
 									{
-										/*strcpy(newToken->t->token,"RNUM");
+										strcpy(newToken->t->token,"RNUM");
 										strcpy(newToken->t->value,valueinit);
 										newToken->t->lineno=line;
 										state = 1;
+										
+										begin = fwd;
 										return newToken;
-										break;*/
-										state = 1;
 										break;
 									}
 								}

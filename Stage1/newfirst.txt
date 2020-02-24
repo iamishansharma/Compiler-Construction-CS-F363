@@ -10,12 +10,14 @@ input_plist_again COMMA EPSILON
 output_plist ID 
 output_plist_again COMMA EPSILON 
 dataType INTEGER REAL BOOLEAN ARRAY 
+range_arrays NUM ID 
 type INTEGER REAL BOOLEAN 
 moduleDef START 
 statements GET_VALUE PRINT ID DECLARE SWITCH FOR USE SQBO WHILE EPSILON 
 statement GET_VALUE PRINT ID DECLARE SWITCH FOR USE SQBO WHILE EPSILON 
 ioStmt GET_VALUE PRINT 
-var ID NUM RNUM 
+var ID NUM RNUM TRUE FALSE 
+var_id_num ID NUM RNUM 
 whichId SQBO EPSILON 
 simpleStmt ID SQBO USE 
 assignmentStmt ID 
@@ -29,6 +31,8 @@ idList ID
 idList_again COMMA EPSILON 
 expression MINUS BO ID NUM RNUM PLUS TRUE FALSE 
 unary MINUS PLUS 
+unary_op MINUS PLUS 
+new_NT BO ID NUM RNUM 
 arithmeticOrBooleanExpr BO ID NUM RNUM TRUE FALSE 
 arithmeticOrBooleanExpr_again AND OR EPSILON 
 recTerm BO ID NUM RNUM TRUE FALSE 
@@ -109,4 +113,8 @@ BREAK BREAK
 DEFAULT DEFAULT 
 IN IN 
 RANGEOP RANGEOP 
+
+
+
+
 

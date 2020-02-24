@@ -1,11 +1,4 @@
-Parser: 
-	
-	Finish - 
-
-		First and follow - Sanjeev
-
-		createParseTable check again - Ishan
-
-		printParseTree - Anirudh
-
-		parseInputCode - Sanjeev / Ishan
+range_arrays
+var_id_num
+unary_op 
+new_NT

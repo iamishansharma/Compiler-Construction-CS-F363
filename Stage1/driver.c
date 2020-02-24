@@ -22,14 +22,21 @@ void printLexer(FILE *f)
 	
 	printf("\n");
 
+	printf("\nLine Number      Lexeme            Token\n\n");
 	Node *n=(Node*)malloc(sizeof(Node));
 	do
 	{
 		n=getNextToken();
+		if(strcmp(n->t->token,"EOB")==0)
+		{
+			break;
+		}
 		if(strcmp(n->t->token,"Error"))
 		{
-			printf("%s %s %d\n",n->t->token,n->t->value,n->t->lineno);
+			printf("     %d           %s           %s\n",n->t->lineno,n->t->value,n->t->token);
 		}
+
+
 	}while(buffer[fwd]!='\0');
 }
 
@@ -39,7 +46,7 @@ int main(int argc, char *argv[])
 
 	FILE *f2=fopen(argv[2],"r"); // for printing parse tree
 
-	FILE *f3=fopen("grammar.txt","r"); // for reading grammar file
+	FILE *f3=fopen("grammarmaam.txt","r"); // for reading grammar file
 
 	Grammar G;
 	FirstAndFollow F;
@@ -92,7 +99,7 @@ int main(int argc, char *argv[])
 					//printFF(F);
 					T=createParseTable(F,T,G);
 					printTable(T);
-					//head=parseInputSourceCode(argv[1],T,G);
+					head=parseInputSourceCode(argv[1],T,G);
 					//printParseTree(head,f2);
 					break;
 

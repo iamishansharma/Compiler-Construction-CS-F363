@@ -1,4 +1,4 @@
-** PARSER WORKING FINE FOR THIS **
+** PARSER WORKING FOR THIS TESTCASE **
 
 declare module mod1; 
 <<<driver program>>> 
@@ -9,6 +9,9 @@ start
     declare m:real;
     [r,m] := use module mod1 with parameters v, w; 
     print(r);
+    print(m);
+    ** This is testing for comments (a*b)
+    this is second line **
     print(m);
 end
 
