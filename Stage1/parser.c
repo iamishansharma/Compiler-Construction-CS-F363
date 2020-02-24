@@ -47,7 +47,7 @@ Grammar getGrammar(FILE *f)
 
 	char string[100];
 
-	FILE *f2=fopen("checkgrammar.txt","w");
+	//FILE *f2=fopen("checkgrammar.txt","w");
 
 	if(f==NULL)
 	{
@@ -115,19 +115,19 @@ Grammar getGrammar(FILE *f)
 
 			G.gnum[no_rules][g]=hashVal;
 
-			fprintf(f2,"%d ",G.gnum[no_rules][g]);
+			//fprintf(f2,"%d ",G.gnum[no_rules][g]);
 
 		}
 
 		G.gnum[no_rules][g]=-1;
-		fprintf(f2,"%d",G.gnum[no_rules][g]);
-		fprintf(f2,"\n");
+		//fprintf(f2,"%d",G.gnum[no_rules][g]);
+		//fprintf(f2,"\n");
 		no_rules++;
 	}
 
 	fclose(f);
-	fclose(f2);
-	printTerms();
+	//fclose(f2);
+	//printTerms();
 	return G;
 }
 
@@ -196,7 +196,9 @@ void printstack()
 
 void insert_in_tree(int stacktop, int rule, Grammar G, Node *n)
 {
+
 	ParseTree *nN;
+
 	nN=(ParseTree*)malloc(sizeof(ParseTree));
 	nN->n=(Node*)malloc(sizeof(Node));
 	nN->n->t=(Token*)malloc(sizeof(Token));
@@ -204,7 +206,8 @@ void insert_in_tree(int stacktop, int rule, Grammar G, Node *n)
 
 	ParseTree *temp;
 	temp=(ParseTree*)malloc(sizeof(ParseTree)); // for traversing
-	temp=head;
+
+	temp=head; // HEAD GIVES TO TEMP BUT NEVER TAKES BACK!!
 
 	while(1)
 	{
@@ -287,7 +290,7 @@ FirstAndFollow ComputeFirst(FirstAndFollow F)
 
 	char string[100];
 
-	FILE *f2=fopen("checkfirst.txt","w");
+	//FILE *f2=fopen("checkfirst.txt","w");
 
 	if(f==NULL)
 	{
@@ -355,17 +358,17 @@ FirstAndFollow ComputeFirst(FirstAndFollow F)
 
 			F.first[no_firsts][g]=hashVal;
 
-			fprintf(f2,"%d ",F.first[no_firsts][g]);
+			//fprintf(f2,"%d ",F.first[no_firsts][g]);
 		}
 
 		F.first[no_firsts][g]=-1;
-		fprintf(f2,"%d",F.first[no_firsts][g]);
-		fprintf(f2,"\n");
+		//fprintf(f2,"%d",F.first[no_firsts][g]);
+		//fprintf(f2,"\n");
 		no_firsts++;
 	}
 
 	fclose(f);
-	fclose(f2);
+	//fclose(f2);
 
 	return F;
 }
@@ -384,7 +387,7 @@ FirstAndFollow ComputeFollow(FirstAndFollow F)
 
 	char string[100];
 
-	FILE *f2=fopen("checkfollow.txt","w");
+	//FILE *f2=fopen("checkfollow.txt","w");
 
 	if(f==NULL)
 	{
@@ -448,17 +451,17 @@ FirstAndFollow ComputeFollow(FirstAndFollow F)
 
 			F.follow[no_follows][g]=hashVal;
 
-			fprintf(f2,"%d ",F.follow[no_follows][g]);
+			//fprintf(f2,"%d ",F.follow[no_follows][g]);
 		}
 
 		F.follow[no_follows][g]=-1;
-		fprintf(f2,"%d",F.follow[no_follows][g]);
-		fprintf(f2,"\n");
+		//fprintf(f2,"%d",F.follow[no_follows][g]);
+		//fprintf(f2,"\n");
 		no_follows++;
 	}
 
 	fclose(f);
-	fclose(f2);
+	//fclose(f2);
 
 	return F;
 }
@@ -504,7 +507,7 @@ ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G)
 {
 	//Initialising table
 
-	printFF(F);
+	//printFF(F);
 	
 	for(int i=0; i<NTER; i++) // non terminals
 	{
@@ -614,7 +617,7 @@ void printTable(ParseTable T)
 	}
 }
 
-void parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
+void parseInputSourceCode(FILE *f, ParseTable T, Grammar G)
 {
 	head=(ParseTree*)malloc(sizeof(ParseTree));
 	head->n=(Node*)malloc(sizeof(Node));
@@ -631,8 +634,6 @@ void parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 	Node *n=(Node*)malloc(sizeof(Node));
 	n->t=(Token*)malloc(sizeof(Token));
 
-	FILE *f=fopen(testcaseFile,"r");
-
 	f = getStream(f);
 
 	make_stack();
@@ -646,7 +647,7 @@ void parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 
 	n=getNextToken();
 
-	printf("\n");
+	//printf("\n");
 
 	T.table[0][1]=1; // expicitly added DEF for program (t9.txt)
 	T.table[0][2]=1; // expicitly added DRIVERDEF for program (t9.txt)
@@ -659,7 +660,7 @@ void parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 		//printf("Stack: \n");
 		//for(int i=top; i>=0; i--)
 		//{
-			//printf("%s ",terms[stack[i]]);
+		//	printf("%s ",terms[stack[i]]);
 		//}
 		//printf("\n");
 		
@@ -704,7 +705,7 @@ void parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 		{
 			if(stack[top]==0)
 			{
-				;
+				insert_in_tree(stack[top],T.table[X][a-NTER],G,n);
 			}
 			else
 			{
@@ -747,24 +748,65 @@ void parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G)
 	}
 	if(stack[top]==DOL)
 	{
-		printf("Parsing successfully....!\n");
+		printf("\n\tParsing successfully for input file....!");
 	}
 }
 
-void printParseTree(ParseTree *head,FILE *f)
+void printParseTreeToFile(ParseTree *trav, FILE *f)
 {
-	ParseTree *temp;
-	temp=(ParseTree*)malloc(sizeof(ParseTree)); // for traversing
-	temp=head;
-
-	printf("\n%s %s %d %s %d\n",temp->n->t->value,temp->n->t->token,temp->n->t->lineno,terms[temp->value],temp->rule);
-
-	while(temp!=NULL)
+	if(trav==NULL)
 	{
-		printParseTree(temp->child,f);
-		//printf("%s %s %d %s %d",temp->n->t->value,temp->n->t->token,temp->n->t->lineno,terms[temp->value],temp->rule);
-		printParseTree(temp->right,f);
+		return;
 	}
+
+	printParseTreeToFile(trav->child,f);
+
+	char lexeme[30];
+	char valueifnumber[30];
+	char parent[30];
+	char isleaf[5];
+	char nodesymbol[30];
+
+	if(trav->value>=NTER)
+	{
+		strcpy(lexeme,trav->n->t->value);
+        strcpy(nodesymbol, "----");
+        strcpy(isleaf,"Yes");
+	}
+	else
+	{
+		strcpy(lexeme, "----");
+        strcpy(nodesymbol,terms[trav->value]);
+        strcpy(isleaf,"No");
+	}
+
+	if(trav->parent==NULL)
+	{
+		strcpy(parent,"ROOT");
+	}
+	else
+	{
+		strcpy(parent,terms[trav->parent->value]);
+	}
+
+	if(trav->value==76 || trav->value==77)
+	{
+		strcpy(valueifnumber,trav->n->t->value);
+	}
+	else
+	{
+		strcpy(valueifnumber,"----");
+	}
+
+	fprintf(f,"%s %d %s %s %s %s %s",lexeme,trav->n->t->lineno,trav->n->t->token,valueifnumber,parent,isleaf,nodesymbol);
+
+	printParseTreeToFile(trav->right,f);
+}
+
+void printParseTree(FILE *f)
+{
+	//printf("\n%s",terms[head->child->value]);
+	//printParseTreeToFile(head,f);
 }
 
 /* END Primary Functions */

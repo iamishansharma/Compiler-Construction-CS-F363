@@ -15,9 +15,12 @@
 #include "lexer.h"
 #include <time.h>
 #include <sys/time.h>
+#include <unistd.h>
+#include <sys/types.h>
 
-void printLexer(FILE *f)
+void printLexer(char *filename)
 {
+	FILE *f=fopen(filename,"r");
 	f=getStream(f);
 	
 	printf("\n");
@@ -27,6 +30,10 @@ void printLexer(FILE *f)
 	do
 	{
 		n=getNextToken();
+		if(strcmp(n->t->value,"$")==0)
+		{
+			continue;
+		}
 		if(strcmp(n->t->token,"EOB")==0)
 		{
 			break;
@@ -40,45 +47,51 @@ void printLexer(FILE *f)
 	}while(buffer[fwd]!='\0');
 }
 
-void adddollar(FILE *f)
+/*void adddollar(FILE *f)
 {
 	FILE *f2=fopen("mainreadfile.txt","w");
-	char ch=0;
+	char ch;
 	while(!feof(f))
 	{
 		ch=fgetc(f);
-		fprintf(f2,"%c",ch);
+		fputc(ch,f2);
 	}
-	fprintf(f2,"$");
+	fputc('$',f2);
 	fclose(f2);
-}
+}*/
 
 int main(int argc, char *argv[])
 {
-	FILE *f1=fopen(argv[1],"r"); // for reading testcase
+	FILE *f1=fopen(argv[1],"r"); // appending $
 
 	FILE *f2=fopen(argv[2],"r"); // for printing parse tree
 
 	FILE *f3=fopen("grammar.txt","r"); // for reading grammar file
 
-	adddollar(f1);
+	//adddollar(f1);
 
 	Grammar G;
 	FirstAndFollow F;
 	ParseTable T;
-	ParseTree *head;
+	//ParseTree *hd;
 
 	int option=-1;
 
 	if(argc!=3)
 	{
-		printf("Too few arguments, exiting!");
+		printf("Too few arguments, exiting! Please enter in format as ./stage1exe *.txt *.txt");
 		exit(1);
 	}
 
 	do
 	{
-		printf("\n\n********* ERPlAG Compiler Stage1 *********\n");
+		printf("\n\n********* ERPlAG Compiler Stage1 *********\n\n");
+		printf("Status:  \n");
+		printf("\t1. Remove Comments is Working.\n");
+		printf("\t2. Lexer is Working.\n");
+		printf("\n\t3. CAUTION! ParseInputSourceCode is working only if you add a dollar at the end of every testfile\n");
+		printf("\tAlthough we defined a function in driver.c (which is commented) to add dollar to end of the file\n");
+		printf("\tbut it was giving error in different opearting systems and environments. Requsting you to manually add $.\n\n");
 		printf("Please select one of the following options - \n");
 		printf("0. Exit the program.\n");
 		printf("1. Remove Comments and display on console.\n");
@@ -92,7 +105,6 @@ int main(int argc, char *argv[])
 		switch(option)
 		{
 			case 0: 
-
 					break;
 
 			case 1:
@@ -103,7 +115,7 @@ int main(int argc, char *argv[])
 
 			case 2: 
 
-					printLexer(f1);
+					printLexer(argv[1]);
 					break;
 
 			case 3: 
@@ -112,33 +124,34 @@ int main(int argc, char *argv[])
 					F=ComputeFollow(F);
 					//printFF(F);
 					T=createParseTable(F,T,G);
-					printTable(T);
-					parseInputSourceCode("mainreadfile.txt",T,G);
-					head=returnhead();
-					printParseTree(head,f2);
+					//printTable(T);
+					parseInputSourceCode(f1,T,G);
+					//hd=returnhead();
+					printParseTree(f2);
 
 					break;
 
 			case 4: 
+					
 					G=getGrammar(f3);
 					F=ComputeFirst(F);
 					F=ComputeFollow(F);
 					//printFF(F);
 					T=createParseTable(F,T,G);
-					printTable(T);
-					parseInputSourceCode(argv[1],T,G);
-					head=returnhead();
-					//printParseTree(head,f2);
-
+					//printTable(T);
+					
 					clock_t start_time, end_time;
 					double total_CPU_time, total_CPU_time_in_seconds;
 					start_time = clock();
 
-						//head=parseInputSourceCode(argv[1],T);
+						parseInputSourceCode(f1,T,G);
 
 					end_time = clock();
 					total_CPU_time = (double)(end_time - start_time);
 					total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
+
+					//hd=returnhead();
+					//printParseTree(head,f2);
 
 					printf("\nTotal CPU time is: %lf\n",total_CPU_time);
 					printf("Total CPU time in seconds is: %lf\n",total_CPU_time_in_seconds);
@@ -146,7 +159,7 @@ int main(int argc, char *argv[])
 					break;
 
 			case 5:
-			
+
 					system("clear");
 					break;
 

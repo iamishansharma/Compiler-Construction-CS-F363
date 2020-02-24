@@ -14,7 +14,7 @@ returns [value:integer];
 start
 	value:= x*x;
 end
-
+$
 **notice that this test case does not declare the module before the driver module, still it is syntactically correct as moduleDeclarations is optional. Testing whether a module is declared before its use is a matter of semantic analysis**
 
 ** test the correctness of all lexemes and parse tree created

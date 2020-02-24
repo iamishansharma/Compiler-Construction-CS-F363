@@ -155,7 +155,7 @@ void ClearMem(char *c,int len) // To Clear Char Arrays
 bool isKeyword(char value[30])
 {
 	int flag=1;
-	for(int i=0; i<29; i++)
+	for(int i=0; i<30; i++)
 	{
 		flag=strcmp(value,keyword[i]);
 		if(flag==0)
@@ -666,12 +666,11 @@ Node* getNextToken()
 						if(ch!='\0')
 						{
 							//printf("\nyeh wala error %d\n",ch);
-							strcpy(newToken->t->token,"Error");
+							strcpy(newToken->t->token,"EOF");
 							//strcpy(newToken->t->value,ch);
 							newToken->t->lineno=line;
-							printf("Lexical Error: %d at line no: %d\n",ch,line);
+							//printf("Lexical Error: %d at line no: %d\n",ch,line);
 							state = 1;
-							fwd++;
 							begin = fwd;
 							return newToken;
 						}

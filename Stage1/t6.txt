@@ -55,7 +55,7 @@ start
 		** the semantics of while needs an increment and will be taken care of at the second phase**
 	end
 end
-
+$
 ** List all errors with line numbers in the following format
 Line 53: Error in the input as expected token is an identifier 
 

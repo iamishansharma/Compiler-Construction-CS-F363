@@ -21,12 +21,13 @@
 FirstAndFollow ComputeFirst(FirstAndFollow F);
 FirstAndFollow ComputeFollow(FirstAndFollow F);
 ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G);
-void parseInputSourceCode(char *testcaseFile, ParseTable T, Grammar G);
-void printParseTree(ParseTree *head,FILE *f);
+void parseInputSourceCode(FILE *f, ParseTable T, Grammar G);
+void printParseTree(FILE *f);
 void printFF(FirstAndFollow F);
+//ParseTree* searchposition(ParseTree *head, int stacktop);
 
 // Supporting Functions Declarations - 
-
+void printParseTreeToFile(ParseTree *trav, FILE *f);
 Grammar getGrammar(FILE *f);
 ParseTree* returnhead();
 void printTable(ParseTable T);
