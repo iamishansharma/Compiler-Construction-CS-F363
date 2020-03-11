@@ -19,4 +19,4 @@ end
 
 Leftmost child ‐‐> parent node‐‐> remaining siblings (excluding the leftmost)**
 
-** The above tree construction needs to be verified with manually created tree on paper for the above input using the given grammar. You can try using a A3 sized paper and draw the parse tree. work out the inorder traversal and verify your parser output **
+** The above tree construction needs to be verified with manually created tree on paper for the above input using the given grammar. You can try using a A3 sized paper and draw the parse tree. work out the inorder traversal and verify your parser output **$$$$$$$$$$$$$$$$

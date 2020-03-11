@@ -88,13 +88,15 @@ int main(int argc, char *argv[])
 
 	FILE *f1=fopen(argv[1],"a"); // appending $
 
+	FILE *f5=fopen(argv[3],"w");
+
 	//ParseTree *hd;
 
 	int option=-1;
 
-	if(argc!=3)
+	if(argc!=4)
 	{
-		printf("Too few arguments, exiting! Please enter in format as ./stage1exe *.txt *.txt");
+		printf("Too few/many arguments, exiting! Please enter in format as ./stage1exe *.txt *.txt");
 		exit(1);
 	}
 
@@ -141,11 +143,11 @@ int main(int argc, char *argv[])
 					FILE *f4=fopen(argv[1],"r"); // now reading that file
 					//hashkeywords();
 					G=getGrammar(f3);
-					F=ComputeFirst(F);
-					F=ComputeFollow(F);
+					F=ComputeFirst(F,G);
+					F=ComputeFollow(F,G);
 					T=createParseTable(F,T,G);
 					parseInputSourceCode(f4,T,G,f2);
-					//printParseTree(f2);
+					printParseTree(f5);
 					removedollar(argv[1]);
 					fclose(f4);
 					break;
@@ -156,11 +158,11 @@ int main(int argc, char *argv[])
 					FILE *f5=fopen(argv[1],"r"); // now reading that file
 					//hashkeywords();
 					G=getGrammar(f3);
-					F=ComputeFirst(F);
-					F=ComputeFollow(F);
+					F=ComputeFirst(F,G);
+					F=ComputeFollow(F,G);
 					T=createParseTable(F,T,G);
 					calculateCPUtime(f5,T,G,f2);
-					//printParseTree(head,f2);
+					printParseTree(f5);
 					removedollar(argv[1]);
 					fclose(f5);
 					break;

@@ -18,8 +18,8 @@
 
 // Primary Functions Declarations - 
 
-FirstAndFollow ComputeFirst(FirstAndFollow F);
-FirstAndFollow ComputeFollow(FirstAndFollow F);
+FirstAndFollow ComputeFirst(FirstAndFollow F, Grammar G);
+FirstAndFollow ComputeFollow(FirstAndFollow F, Grammar G);
 ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G);
 void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs);
 void printParseTree(FILE *f);
@@ -36,6 +36,6 @@ int compareTerm(char *tocomp);
 void make_stack();
 void push(int ele);
 int pop();
-void insert_in_tree(int stacktop,int rule,Grammar G,Node *n);
+void insert_in_tree(ParseTree *x,int rule,Grammar G,Node *n);
 
 #endif

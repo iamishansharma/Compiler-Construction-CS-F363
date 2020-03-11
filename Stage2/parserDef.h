@@ -30,6 +30,9 @@ struct parsetree
 	struct parsetree *child;
 	struct parsetree *right;
 	struct parsetree *parent;
+	struct parsetree *left;
+	int isVisited;
+	int isleaf;
 };
 
 typedef struct parsetree ParseTree;

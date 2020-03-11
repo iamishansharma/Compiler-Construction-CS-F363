@@ -1,0 +1,326 @@
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+program $ 
+
+Top of stack: program |||| Input Token: DRIVERDEF |||| Input Token Lecurrenteme: <<<
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 1 
+
+Pushing these on on stack now: 
+otherModules 
+driverModule 
+otherModules 
+moduleDeclarations 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+moduleDeclarations otherModules driverModule otherModules $ 
+
+Top of stack: moduleDeclarations |||| Input Token: DRIVERDEF |||| Input Token Lecurrenteme: <<<
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 3 
+
+Pushing these on on stack now: 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+otherModules driverModule otherModules $ 
+
+Top of stack: otherModules |||| Input Token: DRIVERDEF |||| Input Token Lecurrenteme: <<<
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 6 
+
+Pushing these on on stack now: 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+driverModule otherModules $ 
+
+Top of stack: driverModule |||| Input Token: DRIVERDEF |||| Input Token Lecurrenteme: <<<
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 7 
+
+Pushing these on on stack now: 
+moduleDef 
+DRIVERENDDEF 
+PROGRAM 
+DRIVER 
+DRIVERDEF 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+DRIVERDEF DRIVER PROGRAM DRIVERENDDEF moduleDef otherModules $ 
+
+Top of stack: DRIVERDEF |||| Input Token: DRIVERDEF |||| Input Token Lecurrenteme: <<<
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+DRIVER PROGRAM DRIVERENDDEF moduleDef otherModules $ 
+
+Top of stack: DRIVER |||| Input Token: DRIVER |||| Input Token Lecurrenteme: driver
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+PROGRAM DRIVERENDDEF moduleDef otherModules $ 
+
+Top of stack: PROGRAM |||| Input Token: PROGRAM |||| Input Token Lecurrenteme: program
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+DRIVERENDDEF moduleDef otherModules $ 
+
+Top of stack: DRIVERENDDEF |||| Input Token: DRIVERENDDEF |||| Input Token Lecurrenteme: >>>
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+moduleDef otherModules $ 
+
+Top of stack: moduleDef |||| Input Token: START |||| Input Token Lecurrenteme: start
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 25 
+
+Pushing these on on stack now: 
+END 
+statements 
+START 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+START statements END otherModules $ 
+
+Top of stack: START |||| Input Token: START |||| Input Token Lecurrenteme: start
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+statements END otherModules $ 
+
+Top of stack: statements |||| Input Token: END |||| Input Token Lecurrenteme: end
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 27 
+
+Pushing these on on stack now: 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+END otherModules $ 
+
+Top of stack: END |||| Input Token: END |||| Input Token Lecurrenteme: end
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+otherModules $ 
+
+Top of stack: otherModules |||| Input Token: DEF |||| Input Token Lecurrenteme: <<
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 5 
+
+Pushing these on on stack now: 
+otherModules 
+module 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+module otherModules $ 
+
+Top of stack: module |||| Input Token: DEF |||| Input Token Lecurrenteme: <<
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 8 
+
+Pushing these on on stack now: 
+moduleDef 
+ret 
+SEMICOL 
+SQBC 
+input_plist 
+SQBO 
+INPUT 
+TAKES 
+ENDDEF 
+ID 
+MODULE 
+DEF 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+DEF MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: DEF |||| Input Token: DEF |||| Input Token Lecurrenteme: <<
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+MODULE ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: MODULE |||| Input Token: MODULE |||| Input Token Lecurrenteme: module
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+ID ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: ID |||| Input Token: ID |||| Input Token Lecurrenteme: empty
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+ENDDEF TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: ENDDEF |||| Input Token: ENDDEF |||| Input Token Lecurrenteme: >>
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+TAKES INPUT SQBO input_plist SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: TAKES |||| Input Token: TAKES |||| Input Token Lecurrenteme: takes
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+INPUT SQBO input_plist SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: INPUT |||| Input Token: INPUT |||| Input Token Lecurrenteme: input
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+SQBO input_plist SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: SQBO |||| Input Token: SQBO |||| Input Token Lecurrenteme: [
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+input_plist SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: input_plist |||| Input Token: ID |||| Input Token Lecurrenteme: a
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 11 
+
+Pushing these on on stack now: 
+input_plist_again 
+dataType 
+COLON 
+ID 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+ID COLON dataType input_plist_again SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: ID |||| Input Token: ID |||| Input Token Lecurrenteme: a
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+COLON dataType input_plist_again SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: COLON |||| Input Token: COLON |||| Input Token Lecurrenteme: :
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+dataType input_plist_again SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: dataType |||| Input Token: BOOLEAN |||| Input Token Lecurrenteme: boolean
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 19 
+
+Pushing these on on stack now: 
+BOOLEAN 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+BOOLEAN input_plist_again SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: BOOLEAN |||| Input Token: BOOLEAN |||| Input Token Lecurrenteme: boolean
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+input_plist_again SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: input_plist_again |||| Input Token: SQBC |||| Input Token Lecurrenteme: ]
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 13 
+
+Pushing these on on stack now: 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+SQBC SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: SQBC |||| Input Token: SQBC |||| Input Token Lecurrenteme: ]
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+SEMICOL ret moduleDef otherModules $ 
+
+Top of stack: SEMICOL |||| Input Token: SEMICOL |||| Input Token Lecurrenteme: ;
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+ret moduleDef otherModules $ 
+
+Top of stack: ret |||| Input Token: START |||| Input Token Lecurrenteme: start
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 10 
+
+Pushing these on on stack now: 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+moduleDef otherModules $ 
+
+Top of stack: moduleDef |||| Input Token: START |||| Input Token Lecurrenteme: start
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 25 
+
+Pushing these on on stack now: 
+END 
+statements 
+START 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+START statements END otherModules $ 
+
+Top of stack: START |||| Input Token: START |||| Input Token Lecurrenteme: start
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+statements END otherModules $ 
+
+Top of stack: statements |||| Input Token: END |||| Input Token Lecurrenteme: end
+Entry ecurrentists in Parse Table
+Rule no to use in grammar.txt: 27 
+
+Pushing these on on stack now: 
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+END otherModules $ 
+
+Top of stack: END |||| Input Token: END |||| Input Token Lecurrenteme: end
+ACTION: Popping top of stack because same terminal found at input.
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+otherModules $ 
+
+
+otherModules not used hence popping it!
+
+
+Stack (TOP OF STACK IS LEFT MOST ELEMENT: 
+$ 
+
+	Parsing successfully for input file....!
