@@ -1,0 +1,4 @@
+<<<driver program>>>
+start
+    declare num, k:integer;
+end$$$
