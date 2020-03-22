@@ -784,6 +784,7 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 	T.table[0][2]=1; // expicitly added DRIVERDEF for program (t9.txt)
 	T.table[49][0]=93;
 	T.table[20][74-NTER]=40;
+	T.table[30][6]=55;
 
 	while(strcmp(n->t->value,"$")!=0)
 	{
@@ -858,24 +859,20 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 			if(head->child == NULL)
 			{
 				//printf("Rule to be used first: %d\n",T.table[X][a-NTER]);
+				printf("Searched node = %s | Rule No: %d \n",terms[head->value],T.table[X][a-NTER]);
 				insert_in_tree(head,T.table[X][a-NTER],G,n); //the rule number going there might be wrong
 			}
 			else
 			{
-				//printf("Come here when head = %s\n",terms[head->value]);
-				//printf("Come here when head child = %s\n",terms[head->child->value]);
-				//printf("Come here when head child right = %s\n",terms[head->child->right->value]);
-				//printf("Come here when head child right right = %s\n",terms[head->child->right->right->value]);
-				//printf("Come here when head child right right right = %s\n",terms[head->child->right->right->right->value]);
-
 				ParseTree *internode=(ParseTree *)malloc(sizeof(ParseTree));
-				internode=searchposition(head,stack[top]);
+				internode = searchposition(head,stack[top]);
+				printf("Searched node = %s | Rule No: %d \n",terms[internode->value],T.table[X][a-NTER]);
 				insert_in_tree(internode,T.table[X][a-NTER],G,n);
 			}
 
 			fprintf(fs,"Entry exists in Parse Table\n");
 
-			fprintf(fs,"Rule no to use in grammar.txt: %d \n",T.table[X][a-NTER]);
+			fprintf(fs,"Rule no to use in grammar.txt: %d | X = %d | a-NTER = %d \n",T.table[X][a-NTER],X,a-NTER);
 
 			pop();
 
@@ -912,6 +909,10 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 		{
 			fprintf(fs,"%s ",terms[stack[i]]);
 		}
+		ParseTree *internode=(ParseTree *)malloc(sizeof(ParseTree));
+		internode = searchposition(head,stack[top]);
+		printf("Searched node = %s | Rule No: %d \n",terms[internode->value],6);
+		insert_in_tree(internode,6,G,n);
 		fprintf(fs,"\n\n");
 		pop();
 		fprintf(fs,"\notherModules not used hence popping it!\n\n");
@@ -984,6 +985,7 @@ void printParseTree(FILE *f)
 {
 	//printf("\n%s",terms[head->child->right->right->value]);
 	printParseTreeToFile(head,f);
+	//printf("\n\n ** Random Term: %s ** \n\n",terms[head->child->right->right->child->right->right->right->right->child->right->child->right->child->child->value]);
 }
 
 /* END Primary Functions */

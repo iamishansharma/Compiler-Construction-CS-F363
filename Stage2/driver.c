@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 					F=ComputeFollow(F,G);
 					T=createParseTable(F,T,G);
 					parseInputSourceCode(f4,T,G,f2);
-					//printParseTree(f5);
+					printParseTree(f5);
 					removedollar(argv[1]);
 					fclose(f4);
 					break;
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
 					F=ComputeFollow(F,G);
 					T=createParseTable(F,T,G);
 					calculateCPUtime(f5,T,G,f2);
-					//printParseTree(f5);
+					printParseTree(f5);
 					removedollar(argv[1]);
 					fclose(f5);
 					break;
