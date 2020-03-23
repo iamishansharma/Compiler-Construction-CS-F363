@@ -17,6 +17,9 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <sys/types.h>
+//Stage 2 header files ->
+#include "SymbolTable.c"
+#include "CodeGen.c"
 
 int truncate(const char *path, off_t length);
 int ftruncate(int fd, off_t length);
@@ -59,13 +62,13 @@ void removedollar(char *filename)
 	fclose(f);
 }
 
-void calculateCPUtime(FILE *f4, ParseTable T, Grammar G, FILE *f2)
+void calculateCPUtime(FILE *f4, ParseTable T, Grammar G)
 {
 	clock_t start_time, end_time;
 	double total_CPU_time, total_CPU_time_in_seconds;
 	start_time = clock();
 
-		parseInputSourceCode(f4,T,G,f2);
+		parseInputSourceCode(f4,T,G);
 
 	end_time = clock();
 	total_CPU_time = (double)(end_time - start_time);
@@ -88,13 +91,11 @@ int main(int argc, char *argv[])
 
 	FILE *f1=fopen(argv[1],"a"); // appending $
 
-	FILE *f5=fopen(argv[3],"w");
-
 	//ParseTree *hd;
 
 	int option=-1;
 
-	if(argc!=4)
+	if(argc!=3)
 	{
 		printf("Too few/many arguments, exiting! Please enter in format as ./stage1exe *.txt *.txt");
 		exit(1);
@@ -146,8 +147,8 @@ int main(int argc, char *argv[])
 					F=ComputeFirst(F,G);
 					F=ComputeFollow(F,G);
 					T=createParseTable(F,T,G);
-					parseInputSourceCode(f4,T,G,f2);
-					printParseTree(f5);
+					parseInputSourceCode(f4,T,G);
+					printParseTree(f2);
 					removedollar(argv[1]);
 					fclose(f4);
 					break;
@@ -161,7 +162,7 @@ int main(int argc, char *argv[])
 					F=ComputeFirst(F,G);
 					F=ComputeFollow(F,G);
 					T=createParseTable(F,T,G);
-					calculateCPUtime(f5,T,G,f2);
+					calculateCPUtime(f5,T,G);
 					printParseTree(f5);
 					removedollar(argv[1]);
 					fclose(f5);

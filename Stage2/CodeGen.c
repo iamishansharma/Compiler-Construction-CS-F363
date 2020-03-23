@@ -1,4 +1,4 @@
-/*  funSymbolTable.h 
+/*  CodeGen.c 
 	
 	Batch No: 14
 
@@ -10,5 +10,3 @@
 	Sanjeev Singla 2017A7PS0152P
 
 */
-
-#include "SymbolTable.h"

@@ -1,5 +1,15 @@
-/* 
+/*  SymbolTable.c 
+	
+	Batch No: 14
 
-	symboltable.c
+	Members: 
+
+	Ishan Sharma 2016B2A70773P
+	Sarthak Sahu 2015B5A70749P
+	Anirudh Garg 2017A7PS0142P
+	Sanjeev Singla 2017A7PS0152P
 
 */
+
+#include "tokenSymbolTable.h"
+#include "TypeChecker.c"
