@@ -242,12 +242,10 @@ void insert_in_tree(ParseTree *current, int rule, Grammar G, Node *n)
 
         if(current->child==NULL)
         {
-        	//printf("Come here when no child ! %s\n",terms[current->value]);
         	current->child = temp;
         }
         else //if current has children already
         {
-        	//printf("Come here when child ! %s\n",terms[current->value]);
             sib = current->child;
 
             while(sib->right!=NULL)
@@ -842,7 +840,7 @@ void printParseTreeToFile(ParseTree *trav, FILE *f)
 		return;
 	}
 
-	printParseTreeToFile(trav->child,f);
+	// do this following for each node by iterating and not recursively. 
 
 	char lexeme[30];
 	char valueifnumber[30];
@@ -886,7 +884,6 @@ void printParseTreeToFile(ParseTree *trav, FILE *f)
 
 	fprintf(f,"%s         %d       %s            %s            %s            %s            %s\n",lexeme,trav->n->t->lineno,trav->n->t->token,valueifnumber,parent,isleaf,nodesymbol);
 
-	printParseTreeToFile(trav->right,f);
 }
 
 void printParseTree(FILE *f)
