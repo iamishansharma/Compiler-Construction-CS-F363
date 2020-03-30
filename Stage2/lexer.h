@@ -36,6 +36,5 @@ Token* newToken();
 Node* newNode();
 Head* newHead();
 void ClearMem(char *c, int len);
-void hashkeywords();
 
 #endif

@@ -1,4 +1,4 @@
-/*  TypeChecker.c
+/*  CodeGen.h
 	
 	Batch No: 14
 
@@ -10,4 +10,3 @@
 	Sanjeev Singla 2017A7PS0152P
 
 */
-

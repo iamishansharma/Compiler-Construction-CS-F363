@@ -21,7 +21,7 @@
 FirstAndFollow ComputeFirst(FirstAndFollow F, Grammar G);
 FirstAndFollow ComputeFollow(FirstAndFollow F, Grammar G);
 ParseTable createParseTable(FirstAndFollow F, ParseTable T, Grammar G);
-void parseInputSourceCode(FILE *f, ParseTable T, Grammar G);
+void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs);
 void printParseTree(FILE *f);
 void printFF(FirstAndFollow F);
 ParseTree* searchposition(ParseTree *head, int stacktop);

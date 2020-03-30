@@ -1,4 +1,5 @@
 <<<driver program>>>
 start
-    declare num, k:integer;
-end
+    declare num, a, k:integer;
+    num := k-a;
+end$$

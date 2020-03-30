@@ -12,9 +12,6 @@
 */
 
 #include "parser.h"
-#include "hash.h"
-
-char *TermTable[MOD]; //RIP
 
 int no_firsts=0;
 int no_follows=0;
@@ -24,6 +21,7 @@ int stack_max=99;   //max value for indexing stack
 int top=-1;         // top pointer
 
 ParseTree *head;
+ParseTree *flagforID;
 
 /* **************************************************************************** */
 
@@ -217,6 +215,11 @@ void insert_in_tree(ParseTree *current, int rule, Grammar G, Node *n)
 		temp->value = rules[i];
 		temp->n=n;
 
+		if(strcmp(terms[temp->value],"ID")==0)
+		{
+			flagforID=temp;
+		}
+
 		/*printf("Inside Loop of Insert!\n");
 		printf("Lexeme: %s\n",temp->n->t->token);
 		printf("Value: %s\n",temp->n->t->value);
@@ -234,31 +237,31 @@ void insert_in_tree(ParseTree *current, int rule, Grammar G, Node *n)
 
 		temp->left = NULL;
 		temp->left = NULL;
-        temp->right = NULL;
-        temp->child = NULL;
-        temp->parent = current;
+		temp->right = NULL;
+		temp->child = NULL;
+		temp->parent = current;
 
-        temp->isVisited = 0;
+		temp->isVisited = 0;
 
-        if(current->child==NULL)
-        {
-        	current->child = temp;
-        }
-        else //if current has children already
-        {
-            sib = current->child;
+		if(current->child==NULL)
+		{
+			current->child = temp;
+		}
+		else //if current has children already
+		{
+			sib = current->child;
 
-            while(sib->right!=NULL)
-            {
-                right = sib -> right;
-                sib = right;
+			while(sib->right!=NULL)
+			{
+				right = sib->right;
+				sib = right;
 
-            }
-            sib -> right = temp;
-            temp -> left = sib;
-            sib->n=n;
-        }
-        i++;
+			}
+			sib->right = temp;
+			temp->left = sib;
+			sib->n=n;
+		}
+		i++;
 	}
 }
 
@@ -646,7 +649,7 @@ void printTable(ParseTable T)
 	}
 }
 
-void parseInputSourceCode(FILE *f, ParseTable T, Grammar G)
+void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 {
 	head=(ParseTree*)malloc(sizeof(ParseTree));
 	head->n=(Node*)malloc(sizeof(Node));
@@ -702,12 +705,15 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G)
 		{
 			//printf("Lexical Error! %s at line no: %d",n->t->value,n->t->lineno);
 			exit(0);
-		}		
-		//fprintf(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");
-		for(int i=top; i>=0; i--)
-		{
-			//fprintf(fs,"%s ",terms[stack[i]]);
 		}
+
+		//fprintf(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");
+
+		/*for(int i=top; i>=0; i--)
+		{
+			fprintf(fs,"%s ",terms[stack[i]]);
+		}*/
+
 		//fprintf(fs,"\n\n");
 		
 		int X=stack[top];
@@ -723,8 +729,12 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G)
 
 		if(X==a)
 		{
-			//fprintf(fs,"ACTION: Popping top of stack because same terminal found at input.\n");
+			//fprintf(fs,"ACTION: Popping top of stack because same terminal found at input\n");
 			pop();
+
+			if(strcmp(terms[a],"ID")==0)
+				flagforID->n = n;
+
 			n=getNextToken();
 			a=compareTerm(n->t->token);
 		}
@@ -775,7 +785,7 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G)
 
 			//fprintf(fs,"Entry exists in Parse Table\n");
 
-			//fprintf(fs,"Rule no to use in grammar.txt: %d | X = %d | a-NTER = %d \n",T.table[X][a-NTER],X,a-NTER);
+			//fprintf(fs,"Rule no to use in grammar.txt: %d | X = %s | a-NTER = %d \n",T.table[X][a-NTER],terms[X],a-NTER);
 
 			pop();
 
@@ -807,11 +817,11 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G)
 	}
 	if(stack[top]==3)
 	{
-		//fprintf(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");
+		/*fprintf(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");
 		for(int i=top; i>=0; i--)
 		{
-			//fprintf(fs,"%s ",terms[stack[i]]);
-		}
+			fprintf(fs,"%s ",terms[stack[i]]);
+		}*/
 		ParseTree *internode=(ParseTree *)malloc(sizeof(ParseTree));
 		internode = searchposition(head,stack[top]);
 		//printf("Searched node = %s | Rule No: %d \n",terms[internode->value],6);
@@ -823,10 +833,10 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G)
 	if(stack[top]==DOL)
 	{
 		//fprintf(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");
-		for(int i=top; i>=0; i--)
+		/*for(int i=top; i>=0; i--)
 		{
-			//fprintf(fs,"%s ",terms[stack[i]]);
-		}
+			fprintf(fs,"%s ",terms[stack[i]]);
+		}*/
 		//fprintf(fs,"\n");
 		printf("\n\tParsing successfully for input file....!");
 		//fprintf(fs,"\n\tParsing successfully for input file....!");
@@ -849,14 +859,20 @@ void printParseTreeToFile(ParseTree *trav, FILE *f)
 	char nodesymbol[30];
 
 	if(trav->isleaf == 0)
-        strcpy(isleaf, "No");
-    else
-        strcpy(isleaf, "Yes");
+		strcpy(isleaf, "No");
+	else
+		strcpy(isleaf, "Yes");
 
 	if(trav->value>=NTER)
 	{
 		strcpy(lexeme,terms[trav->value]);
 		strcpy(nodesymbol, "----");
+
+		if(strcmp(terms[trav->value],"ID")==0)
+		{
+			strcpy(nodesymbol, terms[trav->value]);
+			strcpy(lexeme, trav->n->t->value);
+		}
 	}
 	else
 	{
@@ -882,14 +898,16 @@ void printParseTreeToFile(ParseTree *trav, FILE *f)
 		strcpy(valueifnumber,"----");
 	}
 
-	fprintf(f,"%s         %d       %s            %s            %s            %s            %s\n",lexeme,trav->n->t->lineno,trav->n->t->token,valueifnumber,parent,isleaf,nodesymbol);
+	fprintf(f,"%s                    %s         %d       %s            %s            %s            %s\n",nodesymbol,lexeme,trav->n->t->lineno,trav->n->t->token,valueifnumber,parent,isleaf);
 
+	printParseTreeToFile(trav->child,f);
+	printParseTreeToFile(trav->right,f);
 }
 
 void printParseTree(FILE *f)
 {
 	//printf("\n%s",terms[head->child->right->right->value]);
-	fprintf(f,"Lexeme        Line No        Node Token       ValueIfNumber     Parent       isleaf       Node Symbol\n");
+	fprintf(f,"NodeSymbol                    Lexeme              Line No        Node Token       ValueIfNumber     Parent       isleaf\n");
 	printParseTreeToFile(head,f);
 	//printf("\n\n ** Random Term: %s ** \n\n",head->child->right->right->child->right->right->right->right->child->right->child->child->child->right->child->n->t->token);
 }

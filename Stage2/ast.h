@@ -20,6 +20,6 @@
 
 void ConstructAST(ParseTree *head);
 void printAST(ParseTree *head);
-void liftUpNode(ParseTree *child);
-void removeNode(ParseTree *head, ParseTree *child);
-void removePuncs(ParseTree *head);
+ParseTree* liftUpNode(ParseTree *child);
+ParseTree* removeNode(ParseTree *head, ParseTree *child);
+void removeTerminals(ParseTree *head);

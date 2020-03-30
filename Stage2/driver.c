@@ -18,11 +18,17 @@
 #include <unistd.h>
 #include <sys/types.h>
 //Stage 2 header files ->
-#include "SymbolTable.c"
-#include "CodeGen.c"
+#include "ast.h"
+#include "SymbolTable.h"
+#include "funSymbolTable.h"
+#include "tokenSymbolTable.h"
+#include "TypeChecker.h"
+#include "CodeGen.h"
 
 int truncate(const char *path, off_t length);
 int ftruncate(int fd, off_t length);
+
+ParseTree *temphead;
 
 void printLexer(char *filename)
 {
@@ -68,7 +74,7 @@ void calculateCPUtime(FILE *f4, ParseTable T, Grammar G)
 	double total_CPU_time, total_CPU_time_in_seconds;
 	start_time = clock();
 
-		parseInputSourceCode(f4,T,G);
+		//parseInputSourceCode(f4,T,G);
 
 	end_time = clock();
 	total_CPU_time = (double)(end_time - start_time);
@@ -91,11 +97,13 @@ int main(int argc, char *argv[])
 
 	FILE *f1=fopen(argv[1],"a"); // appending $
 
+	FILE *f9=fopen(argv[3],"w");
+
 	//ParseTree *hd;
 
 	int option=-1;
 
-	if(argc!=3)
+	if(argc!=4)
 	{
 		printf("Too few/many arguments, exiting! Please enter in format as ./stage1exe *.txt *.txt");
 		exit(1);
@@ -147,7 +155,12 @@ int main(int argc, char *argv[])
 					F=ComputeFirst(F,G);
 					F=ComputeFollow(F,G);
 					T=createParseTable(F,T,G);
-					parseInputSourceCode(f4,T,G);
+					parseInputSourceCode(f4,T,G,f9);
+					temphead=returnhead();
+					printParseTree(f2);
+					fprintf(f2,"\n\n *************************************************************************************** \n\n");
+					fprintf(f2, "\n AST: \n\n");
+					ConstructAST(temphead);
 					printParseTree(f2);
 					removedollar(argv[1]);
 					fclose(f4);

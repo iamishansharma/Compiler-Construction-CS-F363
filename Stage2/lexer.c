@@ -12,7 +12,6 @@
 */
 
 #include "lexer.h"
-#include "hash.h"
 #include <ctype.h>
 
 /* **************************************************************************** */
@@ -149,22 +148,6 @@ void ClearMem(char *c,int len) // To Clear Char Arrays
 	for(int i=0; i<len; i++)
 	{
 		c[i]='\0';
-	}
-}
-
-void hashkeywords()
-{
-	int hashvalue=0;
-
-	for(int i=0; i<30; i++)
-	{
-		//printf("%s ",keyword[i]);
-
-		hashvalue=insert(keyword[i],KeywordTable);
-
-		//printf("HashValue for %s is: %d HASH TABLE: %s\n",keyword[i],hashvalue,KeywordTable[hashvalue]);
-
-		//printf("%s \n",KeywordTable[1427]);
 	}
 }
 

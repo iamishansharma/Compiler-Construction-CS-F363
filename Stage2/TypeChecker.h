@@ -1,4 +1,4 @@
-/*  TypeChecker.c
+/*  TypeChecker.h
 	
 	Batch No: 14
 
