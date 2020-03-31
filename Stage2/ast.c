@@ -25,37 +25,37 @@ void ConstructAST(ParseTree *head)
 		// These are cases for which no action to be taken
 
 		/* */
-        
+		
 					break;
 
 		// Cases for which punctuations/unnecesary terminals are being removed
 
 		case 58-1:  // DECLARE
-        case 97-1:  // MODULE
-        case 98-1:  // SEMICOL
-        case 60-1:  // DRIVERDEF
-        case 99-1:  // DRIVER
-        case 100-1: // PROGRAM
-        case 101-1: // DRIVERENDDEF
-        case 59-1:  // DEF
-        case 102-1: // ENDDEF
-        case 103-1: // TAKES
-        case 104-1: // INPUT
-        case 75-1:  // SQBO
-        case 105-1: // SQBC
-        case 62-1:  // RETURNS
-        case 106-1: // COLON
-        case 64-1:  // COMMA
-        case 107-1: // OF
-        case 115-1: // RANGEOP
-        case 81-1:  // BO
-        case 109-1: // BC
-        case 70-1:  // GET_VALUE
-        case 71-1:  // PRINT
-        case 74-1:  // USE
-        case 110-1: // WITH
-        case 111-1: // PARAMETERS
-        case 113-1: // DEFAULT
+		case 97-1:  // MODULE
+		case 98-1:  // SEMICOL
+		case 60-1:  // DRIVERDEF
+		case 99-1:  // DRIVER
+		case 100-1: // PROGRAM
+		case 101-1: // DRIVERENDDEF
+		case 59-1:  // DEF
+		case 102-1: // ENDDEF
+		case 103-1: // TAKES
+		case 104-1: // INPUT
+		case 75-1:  // SQBO
+		case 105-1: // SQBC
+		case 62-1:  // RETURNS
+		case 106-1: // COLON
+		case 64-1:  // COMMA
+		case 107-1: // OF
+		case 115-1: // RANGEOP
+		case 81-1:  // BO
+		case 109-1: // BC
+		case 70-1:  // GET_VALUE
+		case 71-1:  // PRINT
+		case 74-1:  // USE
+		case 110-1: // WITH
+		case 111-1: // PARAMETERS
+		case 113-1: // DEFAULT
 
 					removeTerminals(head);
 
@@ -90,148 +90,42 @@ void ConstructAST(ParseTree *head)
 
 void printAST(ParseTree *head)
 {
-
+	// Copy from Parse Tree and change accordingly.
 }
 
 void removeTerminals(ParseTree *current)
 {
-    if(current->left == NULL)
-    {   
-        ParseTree *righttemp = current->right;
+	if(current->left == NULL)
+	{   
+		ParseTree *righttemp = current->right;
 
-        current->parent->child = righttemp;
+		current->parent->child = righttemp;
 
-        if(righttemp != NULL)
-            righttemp->left = NULL;
+		if(righttemp != NULL)
+			righttemp->left = NULL;
 
-        free(current);
-    }
-    else
-    {   
-        ParseTree *lefttemp = current->left;
-        ParseTree *righttemp = current->right;
+		free(current);
+	}
+	else
+	{   
+		ParseTree *lefttemp = current->left;
+		ParseTree *righttemp = current->right;
 
-        lefttemp->right = righttemp;
+		lefttemp->right = righttemp;
 
-        if(righttemp != NULL)
-            righttemp->left = lefttemp;
+		if(righttemp != NULL)
+			righttemp->left = lefttemp;
 
-        free(current);
-    }
+		free(current);
+	}
 }
 
 ParseTree* liftUpNode(ParseTree *head)
 {
-	if(head->left==NULL)
-    {
-        head->child->right = head->right;
-        if(head->right!=NULL)
-            head->right->left = head->child;
-        head->parent->child = head->child;
-        head->child->parent = head->parent;
-        ParseTree *temp = head->child;
-        free(head);
-        return temp;
-
-    }
-
-    else
-    {
-        head->left->right = head->child;
-        head->child->left = head->left;
-        head->child->right = head->right;
-        if(head->right!=NULL)
-            head->right->left = head->child;
-        head->child->parent = head->parent;
-        ParseTree *temp = head->child;
-        free(head);
-        return temp;
-    }
+	
 }
 
 ParseTree* removeNode(ParseTree *head, ParseTree *child)
 {
-	ParseTree *temp2 = head->child;
-
-    if(head->left==NULL)
-    {
-        ParseTree *next = head->child->right;
-        head->child->right = head->right;
-
-        if(head->right!=NULL)
-            head->right->left = head->child;
-
-        head->parent->child = head->child;
-        head->child->parent = head->parent;
-        
-        
-        if(next!=NULL)
-        {
-            temp2->child = next;
-            next->parent = temp2;
-            next->left = NULL;
-        }
-        next = next->right;
-        while(next!=NULL)
-        {
-            next->parent = temp2;
-            next = next->right;
-        }
-        //free(head);
-    }
-    else
-    {   
-        ParseTree *next = head->child->right;
-        head->left->right = head->child;
-        head->child->left = head->left;
-        head->child->right = head->right;
-
-        if(head->right!=NULL)
-            head->right->left = head->child;
-
-        head->child->parent = head->parent;
-
-        if(next!=NULL)
-        {
-            temp2->child = next;
-            next->parent = temp2;
-            next->left = NULL;
-        }
-
-        next = next->right;
-
-        while(next!=NULL)
-        {
-            next->parent = temp2;
-            next = next->right;
-        }
-        //free(head);
-    }
-
-    ParseTree *newhead = temp2->child;
-    ParseTree *X = temp2;
-    ParseTree *temp = temp2->child;
-
-    temp = temp->right;
-    int count = 100;
-
-    while(temp!=NULL)
-    {
-        if(temp->value <= NTER-1 || temp->value == 62)
-        {
-            newhead->right = temp;
-            newhead->right->left = newhead; 
-            newhead = newhead->right;
-            temp = temp->right;
-        }
-        else
-        {
-            temp = temp->right;
-            //free(temp->left);
-        }
-    }
-    //assert(0);
-    newhead->right = NULL;
-    //assert(0);
-    return X;
+	
 }
