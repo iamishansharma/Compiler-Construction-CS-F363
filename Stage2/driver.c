@@ -29,6 +29,7 @@ int truncate(const char *path, off_t length);
 int ftruncate(int fd, off_t length);
 
 ParseTree *temphead;
+ParseTree *temphead2;
 
 void printLexer(char *filename)
 {
@@ -99,7 +100,10 @@ int main(int argc, char *argv[])
 
 	FILE *f9=fopen(argv[3],"w");
 
-	//ParseTree *hd;
+	int ParseTreeCount[1]={0};
+	int ASTCount[1]={0};
+
+	float comper;
 
 	int option=-1;
 
@@ -157,10 +161,19 @@ int main(int argc, char *argv[])
 					T=createParseTable(F,T,G);
 					parseInputSourceCode(f4,T,G,f9);
 					temphead=returnhead();
+					countNodes(temphead, ParseTreeCount);
 					printParseTree(f2);
 					fprintf(f2,"\n\n *************************************************************************************** \n\n");
 					fprintf(f2, "\n AST: \n\n");
-					ConstructAST(temphead);
+					callingAST(temphead);
+					countNodes(temphead, ASTCount);
+
+					printf("\n\nNo of Parse Tree Nodes: %d\n",ParseTreeCount[0]);
+					printf("No of AST Nodes: %d\n\n", ASTCount[0]);
+					comper = (((float)ParseTreeCount[0] - (float)ASTCount[0]) / (float)ParseTreeCount[0])*100;
+
+					printf("Compression Percentage: %f\n",comper);
+
 					printParseTree(f2);
 					removedollar(argv[1]);
 					fclose(f4);

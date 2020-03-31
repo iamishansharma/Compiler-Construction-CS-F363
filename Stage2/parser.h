@@ -37,5 +37,6 @@ void make_stack();
 void push(int ele);
 int pop();
 void insert_in_tree(ParseTree *x,int rule,Grammar G,Node *n);
+void countNodes(ParseTree *head, int *count);
 
 #endif

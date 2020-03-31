@@ -912,6 +912,16 @@ void printParseTree(FILE *f)
 	//printf("\n\n ** Random Term: %s ** \n\n",head->child->right->right->child->right->right->right->right->child->right->child->child->child->right->child->n->t->token);
 }
 
+void countNodes(ParseTree *head, int *count)
+{
+	if(head==NULL)
+		return;
+
+	countNodes(head->child, count);
+	count[0]++;
+	countNodes(head->right, count); 
+}
+
 /* END Primary Functions */
 
 /* **************************************************************************** */

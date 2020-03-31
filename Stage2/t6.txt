@@ -1,3 +1,4 @@
+declare module mod1;
 <<<driver program>>>
 start
     declare num, a, k:integer; 
@@ -7,4 +8,4 @@ start
         a:=(num-k)*(num-k);
         print(a); 
     end
-end$$
+end$$$

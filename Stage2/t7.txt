@@ -2,4 +2,4 @@
 start
     declare num, a, k:integer;
     num := k-a;
-end$$
+end

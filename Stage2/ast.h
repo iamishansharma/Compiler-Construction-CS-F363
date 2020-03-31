@@ -18,8 +18,9 @@
 
 /* Function definations */
 
+void callingAST(ParseTree *head);
+void removeTerminals(ParseTree *head);
 void ConstructAST(ParseTree *head);
 void printAST(ParseTree *head);
-ParseTree* liftUpNode(ParseTree *child);
-ParseTree* removeNode(ParseTree *head, ParseTree *child);
-void removeTerminals(ParseTree *head);
+void liftUpNode(ParseTree *child);
+void removeNode(ParseTree *head);
