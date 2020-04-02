@@ -113,6 +113,8 @@ void ConstructAST(ParseTree *head)
 					case 23: // whichStmt
 					case 28: // optional
 					case 30: // idList_again
+					case 32: // unary
+					case 33: // unary_op
 					case 52: // caseStmts_again
 
 								liftUpNode(child);
@@ -125,8 +127,6 @@ void ConstructAST(ParseTree *head)
 				// Applying magic on Expressions now: 
 
 				// (This might trigger little plagirism) CHANGE LOGIC
-
-				// unary ke liye bhi karna hai
 
 				// prec2_op                prec1_op             logicalOp            relationalOp
 				if(child->value == 45 || child->value == 46 || child->value == 47 || child->value == 48)
@@ -275,9 +275,16 @@ void liftUpNode(ParseTree *current)
 	{
 		if(righttemp == NULL)
 		{
-
 			parenttemp->child = childtemp;
 			childtemp->parent = parenttemp;
+
+			ParseTree *temp = childtemp;
+
+			while(temp != NULL) // to change parent of lifted nodes
+			{
+				temp->parent = parenttemp;
+				temp = temp->right;
+			}
 		}
 		else
 		{
@@ -287,8 +294,10 @@ void liftUpNode(ParseTree *current)
 
 			righttemp->left = childtemp;
 
-			if(childtemp!=NULL)
+			if(childtemp != NULL)
 				childtemp->right = righttemp;
+
+			// Yahan parent same rahega for siblings
 		}
 
 		// free(current);
@@ -308,14 +317,12 @@ void liftUpNode(ParseTree *current)
 			// HAS SOME CHILD
 			else
 			{
-				
-
 				lefttemp->right = childtemp;
 				childtemp->left = lefttemp;
 
 				ParseTree *temp = childtemp;
 
-				while(temp!=NULL)
+				while(temp!=NULL) // to change parent of lifted nodes
 				{
 					temp->parent = parenttemp;
 					temp = temp->right;
@@ -327,7 +334,6 @@ void liftUpNode(ParseTree *current)
 		// CASE WHEN THE CURRENT NODE->RIGHT != NULL
 		else
 		{
-
 			lefttemp->right = childtemp;
 			childtemp->left = lefttemp;
 
