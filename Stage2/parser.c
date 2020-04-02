@@ -850,8 +850,6 @@ void printParseTreeToFile(ParseTree *trav, FILE *f)
 		return;
 	}
 
-	// do this following for each node by iterating and not recursively. 
-
 	char lexeme[30];
 	char valueifnumber[30];
 	char parent[30];
@@ -898,9 +896,13 @@ void printParseTreeToFile(ParseTree *trav, FILE *f)
 		strcpy(valueifnumber,"----");
 	}
 
-	fprintf(f,"%s                    %s         %d       %s            %s            %s            %s\n",nodesymbol,lexeme,trav->n->t->lineno,trav->n->t->token,valueifnumber,parent,isleaf);
+	//fprintf(f,"%s                    %s         %d       %s            %s            %s            %s\n",nodesymbol,lexeme,trav->n->t->lineno,trav->n->t->token,valueifnumber,parent,isleaf);
+	if(trav->parent!=NULL)
+		fprintf(f,"Current Node: %s \t \t \t Parent: %s\n",terms[trav->value],terms[trav->parent->value]);
+	else
+		fprintf(f,"Current Node: %s \t \t \t Parent: NULL\n",terms[trav->value]);
 
-	printParseTreeToFile(trav->child,f);
+	printParseTreeToFile(trav->child,f); 
 	printParseTreeToFile(trav->right,f);
 }
 

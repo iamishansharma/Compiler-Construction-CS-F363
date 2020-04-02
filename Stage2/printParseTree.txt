@@ -1,77 +1,111 @@
 NodeSymbol                    Lexeme              Line No        Node Token       ValueIfNumber     Parent       isleaf
-program                    ----         1       PROGRAM            ----            ROOT            No
-moduleDeclarations                    ----         1       DRIVERDEF            ----            program            No
-----                    EPSILON         1       DRIVERDEF            ----            moduleDeclarations            Yes
-otherModules                    ----         1       DRIVERDEF            ----            program            No
-----                    EPSILON         1       DRIVERDEF            ----            otherModules            Yes
-driverModule                    ----         1       DRIVERDEF            ----            program            No
-----                    DRIVERDEF         1       DRIVERDEF            ----            driverModule            Yes
-----                    DRIVER         1       DRIVERDEF            ----            driverModule            Yes
-----                    PROGRAM         1       DRIVERDEF            ----            driverModule            Yes
-----                    DRIVERENDDEF         1       DRIVERDEF            ----            driverModule            Yes
-moduleDef                    ----         1       DRIVERDEF            ----            driverModule            No
-----                    START         2       START            ----            moduleDef            Yes
-statements                    ----         2       START            ----            moduleDef            No
-statement                    ----         3       DECLARE            ----            statements            No
-declareStmt                    ----         3       DECLARE            ----            statement            No
-----                    DECLARE         3       DECLARE            ----            declareStmt            Yes
-idList                    ----         3       DECLARE            ----            declareStmt            No
-ID                    num         3       ID            ----            idList            Yes
-idList_again                    ----         3       ID            ----            idList            No
-----                    COMMA         3       COMMA            ----            idList_again            Yes
-ID                    a         3       ID            ----            idList_again            Yes
-idList_again                    ----         3       COMMA            ----            idList_again            No
-----                    COMMA         3       COMMA            ----            idList_again            Yes
-ID                    k         3       ID            ----            idList_again            Yes
-idList_again                    ----         3       COMMA            ----            idList_again            No
-----                    EPSILON         3       COLON            ----            idList_again            Yes
-----                    COLON         3       DECLARE            ----            declareStmt            Yes
-dataType                    ----         3       DECLARE            ----            declareStmt            No
-----                    INTEGER         3       INTEGER            ----            dataType            Yes
-----                    SEMICOL         3       DECLARE            ----            declareStmt            Yes
-statements                    ----         3       DECLARE            ----            statements            No
-statement                    ----         4       ID            ----            statements            No
-simpleStmt                    ----         4       ID            ----            statement            No
-assignmentStmt                    ----         4       ID            ----            simpleStmt            No
-ID                    num         4       ID            ----            assignmentStmt            Yes
-whichStmt                    ----         4       ID            ----            assignmentStmt            No
-lvalueIDStmt                    ----         4       ASSIGNOP            ----            whichStmt            No
-----                    ASSIGNOP         4       ASSIGNOP            ----            lvalueIDStmt            Yes
-expression                    ----         4       ASSIGNOP            ----            lvalueIDStmt            No
-arithmeticOrBooleanExpr                    ----         4       ID            ----            expression            No
-recTerm                    ----         4       ID            ----            arithmeticOrBooleanExpr            No
-arithmeticExpr                    ----         4       ID            ----            recTerm            No
-term                    ----         4       ID            ----            arithmeticExpr            No
-factor                    ----         4       ID            ----            term            No
-var_id_num                    ----         4       ID            ----            factor            No
-ID                    k         4       ID            ----            var_id_num            Yes
-whichId                    ----         4       ID            ----            var_id_num            No
-----                    EPSILON         4       MINUS            ----            whichId            Yes
-term_again                    ----         4       ID            ----            term            No
-----                    EPSILON         4       MINUS            ----            term_again            Yes
-arithmeticExpr_again                    ----         4       ID            ----            arithmeticExpr            No
-prec2_op                    ----         4       MINUS            ----            arithmeticExpr_again            No
-----                    MINUS         4       MINUS            ----            prec2_op            Yes
-term                    ----         4       MINUS            ----            arithmeticExpr_again            No
-factor                    ----         4       ID            ----            term            No
-var_id_num                    ----         4       ID            ----            factor            No
-ID                    a         4       ID            ----            var_id_num            Yes
-whichId                    ----         4       ID            ----            var_id_num            No
-----                    EPSILON         4       SEMICOL            ----            whichId            Yes
-term_again                    ----         4       ID            ----            term            No
-----                    EPSILON         4       SEMICOL            ----            term_again            Yes
-arithmeticExpr_again                    ----         4       MINUS            ----            arithmeticExpr_again            No
-----                    EPSILON         4       SEMICOL            ----            arithmeticExpr_again            Yes
-recTerm_again                    ----         4       ID            ----            recTerm            No
-----                    EPSILON         4       SEMICOL            ----            recTerm_again            Yes
-arithmeticOrBooleanExpr_again                    ----         4       ID            ----            arithmeticOrBooleanExpr            No
-----                    EPSILON         4       SEMICOL            ----            arithmeticOrBooleanExpr_again            Yes
-----                    SEMICOL         4       ASSIGNOP            ----            lvalueIDStmt            Yes
-statements                    ----         4       ID            ----            statements            No
-----                    EPSILON         5       END            ----            statements            Yes
-----                    END         2       START            ----            moduleDef            Yes
-otherModules                    ----         1       DRIVERDEF            ----            program            No
-----                    EPSILON         5       DOLLAR            ----            otherModules            Yes
+Current Node: program 	 	 	 Parent: NULL
+Current Node: moduleDeclarations 	 	 	 Parent: program
+Current Node: EPSILON 	 	 	 Parent: moduleDeclarations
+Current Node: otherModules 	 	 	 Parent: program
+Current Node: EPSILON 	 	 	 Parent: otherModules
+Current Node: driverModule 	 	 	 Parent: program
+Current Node: DRIVERDEF 	 	 	 Parent: driverModule
+Current Node: DRIVER 	 	 	 Parent: driverModule
+Current Node: PROGRAM 	 	 	 Parent: driverModule
+Current Node: DRIVERENDDEF 	 	 	 Parent: driverModule
+Current Node: moduleDef 	 	 	 Parent: driverModule
+Current Node: START 	 	 	 Parent: moduleDef
+Current Node: statements 	 	 	 Parent: moduleDef
+Current Node: statement 	 	 	 Parent: statements
+Current Node: declareStmt 	 	 	 Parent: statement
+Current Node: DECLARE 	 	 	 Parent: declareStmt
+Current Node: idList 	 	 	 Parent: declareStmt
+Current Node: ID 	 	 	 Parent: idList
+Current Node: idList_again 	 	 	 Parent: idList
+Current Node: COMMA 	 	 	 Parent: idList_again
+Current Node: ID 	 	 	 Parent: idList_again
+Current Node: idList_again 	 	 	 Parent: idList_again
+Current Node: COMMA 	 	 	 Parent: idList_again
+Current Node: ID 	 	 	 Parent: idList_again
+Current Node: idList_again 	 	 	 Parent: idList_again
+Current Node: EPSILON 	 	 	 Parent: idList_again
+Current Node: COLON 	 	 	 Parent: declareStmt
+Current Node: dataType 	 	 	 Parent: declareStmt
+Current Node: INTEGER 	 	 	 Parent: dataType
+Current Node: SEMICOL 	 	 	 Parent: declareStmt
+Current Node: statements 	 	 	 Parent: statements
+Current Node: statement 	 	 	 Parent: statements
+Current Node: simpleStmt 	 	 	 Parent: statement
+Current Node: assignmentStmt 	 	 	 Parent: simpleStmt
+Current Node: ID 	 	 	 Parent: assignmentStmt
+Current Node: whichStmt 	 	 	 Parent: assignmentStmt
+Current Node: lvalueIDStmt 	 	 	 Parent: whichStmt
+Current Node: ASSIGNOP 	 	 	 Parent: lvalueIDStmt
+Current Node: expression 	 	 	 Parent: lvalueIDStmt
+Current Node: arithmeticOrBooleanExpr 	 	 	 Parent: expression
+Current Node: recTerm 	 	 	 Parent: arithmeticOrBooleanExpr
+Current Node: arithmeticExpr 	 	 	 Parent: recTerm
+Current Node: term 	 	 	 Parent: arithmeticExpr
+Current Node: factor 	 	 	 Parent: term
+Current Node: BO 	 	 	 Parent: factor
+Current Node: arithmeticOrBooleanExpr 	 	 	 Parent: factor
+Current Node: recTerm 	 	 	 Parent: arithmeticOrBooleanExpr
+Current Node: arithmeticExpr 	 	 	 Parent: recTerm
+Current Node: term 	 	 	 Parent: arithmeticExpr
+Current Node: factor 	 	 	 Parent: term
+Current Node: var_id_num 	 	 	 Parent: factor
+Current Node: ID 	 	 	 Parent: var_id_num
+Current Node: whichId 	 	 	 Parent: var_id_num
+Current Node: EPSILON 	 	 	 Parent: whichId
+Current Node: term_again 	 	 	 Parent: term
+Current Node: EPSILON 	 	 	 Parent: term_again
+Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr
+Current Node: prec2_op 	 	 	 Parent: arithmeticExpr_again
+Current Node: MINUS 	 	 	 Parent: prec2_op
+Current Node: term 	 	 	 Parent: arithmeticExpr_again
+Current Node: factor 	 	 	 Parent: term
+Current Node: var_id_num 	 	 	 Parent: factor
+Current Node: ID 	 	 	 Parent: var_id_num
+Current Node: whichId 	 	 	 Parent: var_id_num
+Current Node: EPSILON 	 	 	 Parent: whichId
+Current Node: term_again 	 	 	 Parent: term
+Current Node: prec1_op 	 	 	 Parent: term_again
+Current Node: MUL 	 	 	 Parent: prec1_op
+Current Node: factor 	 	 	 Parent: term_again
+Current Node: var_id_num 	 	 	 Parent: factor
+Current Node: ID 	 	 	 Parent: var_id_num
+Current Node: whichId 	 	 	 Parent: var_id_num
+Current Node: EPSILON 	 	 	 Parent: whichId
+Current Node: term_again 	 	 	 Parent: term_again
+Current Node: EPSILON 	 	 	 Parent: term_again
+Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr_again
+Current Node: prec2_op 	 	 	 Parent: arithmeticExpr_again
+Current Node: PLUS 	 	 	 Parent: prec2_op
+Current Node: term 	 	 	 Parent: arithmeticExpr_again
+Current Node: factor 	 	 	 Parent: term
+Current Node: var_id_num 	 	 	 Parent: factor
+Current Node: ID 	 	 	 Parent: var_id_num
+Current Node: whichId 	 	 	 Parent: var_id_num
+Current Node: EPSILON 	 	 	 Parent: whichId
+Current Node: term_again 	 	 	 Parent: term
+Current Node: EPSILON 	 	 	 Parent: term_again
+Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr_again
+Current Node: EPSILON 	 	 	 Parent: arithmeticExpr_again
+Current Node: recTerm_again 	 	 	 Parent: recTerm
+Current Node: EPSILON 	 	 	 Parent: recTerm_again
+Current Node: arithmeticOrBooleanExpr_again 	 	 	 Parent: arithmeticOrBooleanExpr
+Current Node: EPSILON 	 	 	 Parent: arithmeticOrBooleanExpr_again
+Current Node: BC 	 	 	 Parent: factor
+Current Node: term_again 	 	 	 Parent: term
+Current Node: EPSILON 	 	 	 Parent: term_again
+Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr
+Current Node: EPSILON 	 	 	 Parent: arithmeticExpr_again
+Current Node: recTerm_again 	 	 	 Parent: recTerm
+Current Node: EPSILON 	 	 	 Parent: recTerm_again
+Current Node: arithmeticOrBooleanExpr_again 	 	 	 Parent: arithmeticOrBooleanExpr
+Current Node: EPSILON 	 	 	 Parent: arithmeticOrBooleanExpr_again
+Current Node: SEMICOL 	 	 	 Parent: lvalueIDStmt
+Current Node: statements 	 	 	 Parent: statements
+Current Node: EPSILON 	 	 	 Parent: statements
+Current Node: END 	 	 	 Parent: moduleDef
+Current Node: otherModules 	 	 	 Parent: program
+Current Node: EPSILON 	 	 	 Parent: otherModules
 
 
  *************************************************************************************** 
@@ -80,35 +114,29 @@ otherModules                    ----         1       DRIVERDEF            ----  
  AST: 
 
 NodeSymbol                    Lexeme              Line No        Node Token       ValueIfNumber     Parent       isleaf
-program                    ----         1       PROGRAM            ----            ROOT            No
-moduleDeclarations                    ----         1       DRIVERDEF            ----            program            No
-otherModules                    ----         1       DRIVERDEF            ----            program            No
-driverModule                    ----         1       DRIVERDEF            ----            program            No
-moduleDef                    ----         1       DRIVERDEF            ----            driverModule            No
-----                    START         2       START            ----            moduleDef            Yes
-statements                    ----         2       START            ----            moduleDef            No
-declareStmt                    ----         3       DECLARE            ----            statements            No
-idList                    ----         3       DECLARE            ----            declareStmt            No
-ID                    num         3       ID            ----            idList            Yes
-ID                    a         3       ID            ----            idList            Yes
-ID                    k         3       ID            ----            idList            Yes
-dataType                    ----         3       DECLARE            ----            declareStmt            No
-----                    INTEGER         3       INTEGER            ----            dataType            Yes
-simpleStmt                    ----         4       ID            ----            statements            No
-assignmentStmt                    ----         4       ID            ----            simpleStmt            No
-ID                    num         4       ID            ----            assignmentStmt            Yes
-lvalueIDStmt                    ----         4       ASSIGNOP            ----            assignmentStmt            No
-expression                    ----         4       ASSIGNOP            ----            lvalueIDStmt            No
-arithmeticOrBooleanExpr                    ----         4       ID            ----            expression            No
-recTerm                    ----         4       ID            ----            arithmeticOrBooleanExpr            No
-arithmeticExpr                    ----         4       ID            ----            recTerm            No
-term                    ----         4       ID            ----            arithmeticExpr            No
-factor                    ----         4       ID            ----            term            No
-ID                    k         4       ID            ----            factor            Yes
-prec2_op                    ----         4       MINUS            ----            arithmeticExpr            No
-----                    MINUS         4       MINUS            ----            prec2_op            Yes
-term                    ----         4       MINUS            ----            arithmeticExpr            No
-factor                    ----         4       ID            ----            term            No
-ID                    a         4       ID            ----            factor            Yes
-----                    END         2       START            ----            moduleDef            Yes
-otherModules                    ----         1       DRIVERDEF            ----            program            No
+Current Node: program 	 	 	 Parent: NULL
+Current Node: driverModule 	 	 	 Parent: program
+Current Node: moduleDef 	 	 	 Parent: driverModule
+Current Node: statements 	 	 	 Parent: moduleDef
+Current Node: declareStmt 	 	 	 Parent: statements
+Current Node: idList 	 	 	 Parent: declareStmt
+Current Node: ID 	 	 	 Parent: idList
+Current Node: ID 	 	 	 Parent: idList
+Current Node: ID 	 	 	 Parent: idList
+Current Node: dataType 	 	 	 Parent: declareStmt
+Current Node: INTEGER 	 	 	 Parent: dataType
+Current Node: assignmentStmt 	 	 	 Parent: statements
+Current Node: ID 	 	 	 Parent: assignmentStmt
+Current Node: lvalueIDStmt 	 	 	 Parent: assignmentStmt
+Current Node: expression 	 	 	 Parent: lvalueIDStmt
+Current Node: MINUS 	 	 	 Parent: expression
+Current Node: var_id_num 	 	 	 Parent: MINUS
+Current Node: ID 	 	 	 Parent: var_id_num
+Current Node: PLUS 	 	 	 Parent: MINUS
+Current Node: MUL 	 	 	 Parent: PLUS
+Current Node: var_id_num 	 	 	 Parent: MUL
+Current Node: ID 	 	 	 Parent: var_id_num
+Current Node: var_id_num 	 	 	 Parent: MUL
+Current Node: ID 	 	 	 Parent: var_id_num
+Current Node: var_id_num 	 	 	 Parent: PLUS
+Current Node: ID 	 	 	 Parent: var_id_num

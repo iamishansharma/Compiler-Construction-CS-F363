@@ -1,5 +1,5 @@
 <<<driver program>>>
 start
     declare num, a, k:integer;
-    num := k-a;
+    num := (k-a*a+k);
 end

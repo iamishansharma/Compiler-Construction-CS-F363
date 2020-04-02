@@ -8,4 +8,4 @@ start
         a:=(num-k)*(num-k);
         print(a); 
     end
-end$$$
+end
