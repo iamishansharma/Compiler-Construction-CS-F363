@@ -1,0 +1,32 @@
+declare module mod1;
+declare module mod2;
+<<<driver program>>>
+start
+    declare num, a, k:integer;
+    declare flag: boolean;
+    num := -(k-a*a+k);
+    switch(flag)
+    start
+    	case false: print(100);
+    				break;
+    	case true: use module mod1 with parameters a, k;
+                    break;
+    end
+end
+
+<<module mod1>>
+takes input [a: integer, b: integer]; 
+returns [x: integer, abc: real]; 
+start
+    declare c: real; 
+    c:=10.4; 
+    x:=a+b-10; 
+    abc:=b/5+c;
+end
+
+<<module mod2>>
+takes input [a: integer, b: integer]; 
+returns [x: integer, abc: real]; 
+start
+
+end

@@ -748,7 +748,7 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 		}
 		else if(T.table[X][a-NTER]==-1)
 		{
-			printf("\nSyntactical Error! Error: %s at line no: %d.\n",terms[a],n->t->lineno);
+			printf("\nSyntactical Error! Error: %s at line no: %d | Token: %s | Value: %s.\n",terms[a],n->t->lineno,n->t->token,n->t->value);
 			//fprintf(fs,"\nSyntactical Error! Error: %s at line no: %d.\n",terms[a],n->t->lineno);
 			exit(0);
 			/*while(T.table[X][a-NTER]==-1)

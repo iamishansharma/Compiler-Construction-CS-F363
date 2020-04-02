@@ -9,6 +9,8 @@
 	Anirudh Garg 2017A7PS0142P
 	Sanjeev Singla 2017A7PS0152P
 
+	NOTES: Optimise for some other cases, case statements etc
+
 */
 
 #include "ast.h"
@@ -85,7 +87,13 @@ void ConstructAST(ParseTree *head)
 				{
 					// Cases for which nodes need to be lifted up
 
-							 // moduleDeclations ??
+					case 1:  // moduleDeclarations
+
+								if(child->parent->value == 1) // DELETE THE RECURSIVE moduleDeclarations ONLY NOT FIRST PARENT moduleDeclarations
+
+									liftUpNode(child);
+
+								break;
 
 					case 3:  // otherModules
 
@@ -95,10 +103,6 @@ void ConstructAST(ParseTree *head)
 
 								break;
 
-					case 6:  // ret
-					case 8:  // input_plist_again
-					case 10: // output_plist_again
-					case 13: // type
 					case 15: // statements
 							
 								if(child->parent->value == 15) // DELETE THE RECURSIVE STATMENTS BUT NOT FIRST PARENT STATEMENTS
@@ -107,11 +111,17 @@ void ConstructAST(ParseTree *head)
 
 								break;
 
+					// Exploting fall through property, NOICE.
+
+					case 6:  // ret
+					case 8:  // input_plist_again
+					case 10: // output_plist_again
+					case 13: // type
+					case 2:  // moduleDeclarations
 					case 16: // statement 
 					case 20: // whichId
 					case 21: // simpleStmt
 					case 23: // whichStmt
-					case 28: // optional
 					case 30: // idList_again
 					case 32: // unary
 					case 33: // unary_op
@@ -123,7 +133,7 @@ void ConstructAST(ParseTree *head)
 
 					default: break;
 				}
-
+				
 				// (This might trigger little plagirism) CHANGE LOGIC
 
 				// prec2_op                prec1_op             logicalOp            relationalOp
@@ -169,7 +179,6 @@ void ConstructAST(ParseTree *head)
 				// Eliminating the last arithmeticOrBooleanExpr recTerm arithmeticExpr term factor
 				else if(child->value == 35 || child->value == 37 || child->value == 39 || child->value == 41 || child->value == 43)
 					liftUpNode(child);
-
 			}
 			child = child->right;
 		}

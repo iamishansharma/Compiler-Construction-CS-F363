@@ -163,6 +163,7 @@ int main(int argc, char *argv[])
 					printParseTree(f2);
 					fprintf(f2,"\n\n *************************************************************************************** \n\n");
 					fprintf(f2, "\n AST: \n\n");
+
 					callingAST(temphead);
 					countNodes(temphead, ASTCount);
 
