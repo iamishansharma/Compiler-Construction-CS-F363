@@ -124,8 +124,6 @@ void ConstructAST(ParseTree *head)
 					default: break;
 				}
 
-				// Applying magic on Expressions now: 
-
 				// (This might trigger little plagirism) CHANGE LOGIC
 
 				// prec2_op                prec1_op             logicalOp            relationalOp
@@ -135,10 +133,7 @@ void ConstructAST(ParseTree *head)
 				//                                          AND                             OR                   arithmeticOrBooleanExpr    arithmeticOrBooleanExpr_again  
 				else if((child->child != NULL) && (child->child->value == 84 || child->child->value == 85) && (child->parent->value == 35 || child->parent->value == 36) && (child->right == NULL))
 				{
-					child->parent->value = child->child->value;
-					child->parent->rule = child->child->rule;
-					child->parent->n = child->child->n;
-					child->child->n = NULL;
+					interchangeNode(child);
 					removeNode(child->child);
 					if(child->child->right == NULL)
 						liftUpNode(child);
@@ -147,10 +142,7 @@ void ConstructAST(ParseTree *head)
 				//                                         LT                               LE                             GT                         GE                           EQ                           NE                            anyTerm                     anyTerm_again
 				else if((child->child != NULL) && (child->child->value == 86 || child->child->value == 87 || child->child->value == 88 || child->child->value == 89 || child->child->value == 90 || child->child->value == 91) && (child->parent->value == 37 || child->parent->value == 38) && (child->right == NULL))
 				{
-					child->parent->value = child->child->value;
-					child->parent->rule = child->child->rule;
-					child->parent->n = child->child->n;
-					child->child->n = NULL;
+					interchangeNode(child);
 					removeNode(child->child);
 					if(child->child->right == NULL)
 						liftUpNode(child);
@@ -159,10 +151,7 @@ void ConstructAST(ParseTree *head)
 				//                                         MINUS                        PLUS                       arithmeticExpr               arithmeticExpr_again  
 				else if((child->child != NULL) && (child->child->value == 79 || child->child->value == 81) && (child->parent->value == 39 || child->parent->value == 40) && (child->right == NULL))
 				{
-					child->parent->value = child->child->value;
-					child->parent->rule = child->child->rule;
-					child->parent->n = child->child->n;
-					child->child->n = NULL;
+					interchangeNode(child);
 					removeNode(child->child);
 					if(child->child->right == NULL)
 						liftUpNode(child);
@@ -171,10 +160,7 @@ void ConstructAST(ParseTree *head)
 				//                                           MUL                        DIV                            term                         term_again
 				else if((child->child != NULL) && (child->child->value == 92 || child->child->value == 93) && (child->parent->value == 41 || child->parent->value == 42) && (child->right == NULL))
 				{
-					child->parent->value = child->child->value;
-					child->parent->rule = child->child->rule;
-					child->parent->n = child->child->n;
-					child->child->n = NULL;
+					interchangeNode(child);
 					removeNode(child->child);
 					if(child->child->right == NULL)
 						liftUpNode(child);
@@ -345,4 +331,12 @@ void liftUpNode(ParseTree *current)
 			// free(current);
 		}
 	}
+}
+
+void interchangeNode(ParseTree *child)
+{
+	child->parent->value = child->child->value;
+	child->parent->rule = child->child->rule;
+	child->parent->n = child->child->n;
+	child->child->n = NULL;
 }

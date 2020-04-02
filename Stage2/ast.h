@@ -25,3 +25,4 @@ void ExpressionAST(ParseTree *head);
 void printAST(ParseTree *head);
 void liftUpNode(ParseTree *child);
 void removeNode(ParseTree *head);
+void interchangeNode(ParseTree *child);
