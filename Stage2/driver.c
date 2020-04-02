@@ -20,8 +20,6 @@
 //Stage 2 header files ->
 #include "ast.h"
 #include "SymbolTable.h"
-#include "funSymbolTable.h"
-#include "tokenSymbolTable.h"
 #include "TypeChecker.h"
 #include "CodeGen.h"
 
