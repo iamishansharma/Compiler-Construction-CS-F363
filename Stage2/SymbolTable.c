@@ -13,41 +13,47 @@
 
 #include "SymbolTable.h"
 
-struct hash_table *create_table()
+TokenHash* CreateTable()
 {
-	struct hash_table *node = (struct hash_table *)malloc(sizeof(struct hash_table));
+	TokenHash *node = (TokenHash *)malloc(sizeof(TokenHash));
+
 	return node;
 }
 
-struct tokNode *create_node(char* key, char* type, char* functionname, char* ifnumvalue)
+TNode* CreateNode(char *inname, char *type, char *function, char *ifnumvalue)
 {
-	struct tokNode *node = (struct tokNode *)malloc(sizeof(struct tokNode));
-	strcpy(node->tokname,key);
+	TNode *node = (TNode *)malloc(sizeof(TNode));
+
+	strcpy(node->name,inname);
 	strcpy(node->ifnumvalue,ifnumvalue);
-	strcpy(node->scope,functionname);
 	strcpy(node->type,type);
+	strcpy(node->scope,function);
+
 	node->offset = 0;
 	node->width = 0;
 	node->next = NULL;
+
 	return node;
 }
 
-struct funcNode *create_func_node(char *lexeme, char *input_parameters, char *output_parameters)
+FNode *CreateFNode(char *functionname, char *input_parameters,char *output_parameters)
 {
-   struct funcNode *node = (struct funcNode *)malloc(sizeof(struct funcNode));
-   strcpy(node->fname,lexeme);
+   FNode *node = (FNode *)malloc(sizeof(FNode));
+
+   strcpy(node->name,functionname);
    strcpy(node->input,input_parameters);
    strcpy(node->output,output_parameters);
+
    return node;
 }
 
 int hash(char *key)
 {
-	int value = 0;
-	int i;
+    int value = 0;
+    int i;
 
-	for (i = 0; i < strlen(key); i++)
-		 value += (int)key[i];
+    for(i=0; i<strlen(key); i++)
+         value += (int)key[i];
 
-	return (value % SIZE);
+    return (value % SIZE);
 }
