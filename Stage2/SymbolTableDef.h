@@ -19,6 +19,8 @@
 #define SIZE 20
 #define HASHSIZE 20
 
+// Redefine according to you
+
 struct FuncNode
 {
 	char name[30];
@@ -29,13 +31,6 @@ struct FuncNode
 
 typedef struct FuncNode FNode;
 
-struct FuncHashTable
-{
-	struct FuncNode *table[SIZE];
-};
-
-typedef struct FuncHashTable FuncHash;
-
 struct TokenNode
 {
 	char name[30];
@@ -45,9 +40,17 @@ struct TokenNode
 	int offset;
 	int width;
 	struct TokenNode *next;
+	int isarraydynamic;
 };
 
 typedef struct TokenNode TNode;
+
+struct FuncHashTable
+{
+	struct FuncNode *table[SIZE];
+};
+
+typedef struct FuncHashTable FuncHash;
 
 struct hash_of_hash_tables
 {

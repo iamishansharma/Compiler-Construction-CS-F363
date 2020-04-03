@@ -1,5 +1,6 @@
 <<<driver program>>>
 start
     declare num, a, k:integer;
-    num := -(k-a*a+k);
+    declare A:array [1..10] of integer;
+    num := (k-a*a+k);
 end

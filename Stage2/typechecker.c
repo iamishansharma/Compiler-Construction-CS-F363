@@ -11,3 +11,9 @@
 
 */
 
+#include "TypeChecker.h"
+
+int TypeChecker(FILE *fp, ParseTree *head, char *scope)
+{
+	return 0;
+}

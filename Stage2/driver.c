@@ -98,10 +98,14 @@ int main(int argc, char *argv[])
 
 	FILE *f9=fopen(argv[3],"w");
 
+	FILE *semantic = fopen("Type&Semantics.txt","w+");
+
 	int ParseTreeCount[1]={0};
 	int ASTCount[1]={0};
 
 	float comper;
+
+	char scope[100];
 
 	int option=-1;
 
@@ -152,7 +156,6 @@ int main(int argc, char *argv[])
 					fputc('$',f1);
 					fclose(f1);
 					FILE *f4=fopen(argv[1],"r"); // now reading that file
-					//hashkeywords();
 					G=getGrammar(f3);
 					F=ComputeFirst(F,G);
 					F=ComputeFollow(F,G);
@@ -164,16 +167,26 @@ int main(int argc, char *argv[])
 					fprintf(f2,"\n\n *************************************************************************************** \n\n");
 					fprintf(f2, "\n AST: \n\n");
 
+					// Making nad printing AST here:
+
 					callingAST(temphead);
 					countNodes(temphead, ASTCount);
+					printParseTree(f2);
+
+					// Printing the compression percentage: 
 
 					printf("\n\nNo of Parse Tree Nodes: %d\n",ParseTreeCount[0]);
 					printf("No of AST Nodes: %d\n\n", ASTCount[0]);
 					comper = (((float)ParseTreeCount[0] - (float)ASTCount[0]) / (float)ParseTreeCount[0])*100;
-
 					printf("Compression Percentage: %f\n",comper);
 
-					printParseTree(f2);
+					// Type Checking and Symbol Table: 
+
+					memset(scope, '\0', sizeof(scope));
+
+					//populateSymbolTable(semantic, temphead, scope);
+					//displaySymbolTable();
+
 					removedollar(argv[1]);
 					fclose(f4);
 					break;
@@ -182,7 +195,6 @@ int main(int argc, char *argv[])
 					fputc('$',f1);
 					fclose(f1);
 					FILE *f5=fopen(argv[1],"r"); // now reading that file
-					//hashkeywords();
 					G=getGrammar(f3);
 					F=ComputeFirst(F,G);
 					F=ComputeFollow(F,G);

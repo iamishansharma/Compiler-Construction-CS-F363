@@ -11,3 +11,13 @@
 
 */
 
+#ifndef type_h
+#define type_h
+
+#include "ast.h"
+
+// Primary Functions Declarations - 
+
+int TypeChecker(FILE *fp, ParseTree *head, char *scope);
+
+#endif

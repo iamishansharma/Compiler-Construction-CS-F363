@@ -1,404 +1,134 @@
-NodeSymbol                    Lexeme              Line No        Node Token       ValueIfNumber     Parent       isleaf
-Current Node: program 	 	 	 Parent: NULL
-Current Node: moduleDeclarations 	 	 	 Parent: program
-Current Node: moduleDeclaration 	 	 	 Parent: moduleDeclarations
-Current Node: DECLARE 	 	 	 Parent: moduleDeclaration
-Current Node: MODULE 	 	 	 Parent: moduleDeclaration
-Current Node: ID 	 	 	 Parent: moduleDeclaration
-Current Node: SEMICOL 	 	 	 Parent: moduleDeclaration
-Current Node: moduleDeclarations 	 	 	 Parent: moduleDeclarations
-Current Node: moduleDeclaration 	 	 	 Parent: moduleDeclarations
-Current Node: DECLARE 	 	 	 Parent: moduleDeclaration
-Current Node: MODULE 	 	 	 Parent: moduleDeclaration
-Current Node: ID 	 	 	 Parent: moduleDeclaration
-Current Node: SEMICOL 	 	 	 Parent: moduleDeclaration
-Current Node: moduleDeclarations 	 	 	 Parent: moduleDeclarations
-Current Node: EPSILON 	 	 	 Parent: moduleDeclarations
-Current Node: otherModules 	 	 	 Parent: program
-Current Node: EPSILON 	 	 	 Parent: otherModules
-Current Node: driverModule 	 	 	 Parent: program
-Current Node: DRIVERDEF 	 	 	 Parent: driverModule
-Current Node: DRIVER 	 	 	 Parent: driverModule
-Current Node: PROGRAM 	 	 	 Parent: driverModule
-Current Node: DRIVERENDDEF 	 	 	 Parent: driverModule
-Current Node: moduleDef 	 	 	 Parent: driverModule
-Current Node: START 	 	 	 Parent: moduleDef
-Current Node: statements 	 	 	 Parent: moduleDef
-Current Node: statement 	 	 	 Parent: statements
-Current Node: declareStmt 	 	 	 Parent: statement
-Current Node: DECLARE 	 	 	 Parent: declareStmt
-Current Node: idList 	 	 	 Parent: declareStmt
-Current Node: ID 	 	 	 Parent: idList
-Current Node: idList_again 	 	 	 Parent: idList
-Current Node: COMMA 	 	 	 Parent: idList_again
-Current Node: ID 	 	 	 Parent: idList_again
-Current Node: idList_again 	 	 	 Parent: idList_again
-Current Node: COMMA 	 	 	 Parent: idList_again
-Current Node: ID 	 	 	 Parent: idList_again
-Current Node: idList_again 	 	 	 Parent: idList_again
-Current Node: EPSILON 	 	 	 Parent: idList_again
-Current Node: COLON 	 	 	 Parent: declareStmt
-Current Node: dataType 	 	 	 Parent: declareStmt
-Current Node: INTEGER 	 	 	 Parent: dataType
-Current Node: SEMICOL 	 	 	 Parent: declareStmt
-Current Node: statements 	 	 	 Parent: statements
-Current Node: statement 	 	 	 Parent: statements
-Current Node: declareStmt 	 	 	 Parent: statement
-Current Node: DECLARE 	 	 	 Parent: declareStmt
-Current Node: idList 	 	 	 Parent: declareStmt
-Current Node: ID 	 	 	 Parent: idList
-Current Node: idList_again 	 	 	 Parent: idList
-Current Node: EPSILON 	 	 	 Parent: idList_again
-Current Node: COLON 	 	 	 Parent: declareStmt
-Current Node: dataType 	 	 	 Parent: declareStmt
-Current Node: BOOLEAN 	 	 	 Parent: dataType
-Current Node: SEMICOL 	 	 	 Parent: declareStmt
-Current Node: statements 	 	 	 Parent: statements
-Current Node: statement 	 	 	 Parent: statements
-Current Node: simpleStmt 	 	 	 Parent: statement
-Current Node: assignmentStmt 	 	 	 Parent: simpleStmt
-Current Node: ID 	 	 	 Parent: assignmentStmt
-Current Node: whichStmt 	 	 	 Parent: assignmentStmt
-Current Node: lvalueIDStmt 	 	 	 Parent: whichStmt
-Current Node: ASSIGNOP 	 	 	 Parent: lvalueIDStmt
-Current Node: expression 	 	 	 Parent: lvalueIDStmt
-Current Node: unary 	 	 	 Parent: expression
-Current Node: unary_op 	 	 	 Parent: unary
-Current Node: MINUS 	 	 	 Parent: unary_op
-Current Node: new_NT 	 	 	 Parent: unary
-Current Node: BO 	 	 	 Parent: new_NT
-Current Node: arithmeticExpr 	 	 	 Parent: new_NT
-Current Node: term 	 	 	 Parent: arithmeticExpr
-Current Node: factor 	 	 	 Parent: term
-Current Node: var_id_num 	 	 	 Parent: factor
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: whichId 	 	 	 Parent: var_id_num
-Current Node: EPSILON 	 	 	 Parent: whichId
-Current Node: term_again 	 	 	 Parent: term
-Current Node: EPSILON 	 	 	 Parent: term_again
-Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr
-Current Node: prec2_op 	 	 	 Parent: arithmeticExpr_again
-Current Node: MINUS 	 	 	 Parent: prec2_op
-Current Node: term 	 	 	 Parent: arithmeticExpr_again
-Current Node: factor 	 	 	 Parent: term
-Current Node: var_id_num 	 	 	 Parent: factor
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: whichId 	 	 	 Parent: var_id_num
-Current Node: EPSILON 	 	 	 Parent: whichId
-Current Node: term_again 	 	 	 Parent: term
-Current Node: prec1_op 	 	 	 Parent: term_again
-Current Node: MUL 	 	 	 Parent: prec1_op
-Current Node: factor 	 	 	 Parent: term_again
-Current Node: var_id_num 	 	 	 Parent: factor
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: whichId 	 	 	 Parent: var_id_num
-Current Node: EPSILON 	 	 	 Parent: whichId
-Current Node: term_again 	 	 	 Parent: term_again
-Current Node: EPSILON 	 	 	 Parent: term_again
-Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr_again
-Current Node: prec2_op 	 	 	 Parent: arithmeticExpr_again
-Current Node: PLUS 	 	 	 Parent: prec2_op
-Current Node: term 	 	 	 Parent: arithmeticExpr_again
-Current Node: factor 	 	 	 Parent: term
-Current Node: var_id_num 	 	 	 Parent: factor
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: whichId 	 	 	 Parent: var_id_num
-Current Node: EPSILON 	 	 	 Parent: whichId
-Current Node: term_again 	 	 	 Parent: term
-Current Node: EPSILON 	 	 	 Parent: term_again
-Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr_again
-Current Node: EPSILON 	 	 	 Parent: arithmeticExpr_again
-Current Node: BC 	 	 	 Parent: new_NT
-Current Node: SEMICOL 	 	 	 Parent: lvalueIDStmt
-Current Node: statements 	 	 	 Parent: statements
-Current Node: statement 	 	 	 Parent: statements
-Current Node: conditionalStmt 	 	 	 Parent: statement
-Current Node: SWITCH 	 	 	 Parent: conditionalStmt
-Current Node: BO 	 	 	 Parent: conditionalStmt
-Current Node: ID 	 	 	 Parent: conditionalStmt
-Current Node: BC 	 	 	 Parent: conditionalStmt
-Current Node: START 	 	 	 Parent: conditionalStmt
-Current Node: caseStmts 	 	 	 Parent: conditionalStmt
-Current Node: CASE 	 	 	 Parent: caseStmts
-Current Node: value 	 	 	 Parent: caseStmts
-Current Node: booleanConstants 	 	 	 Parent: value
-Current Node: FALSE 	 	 	 Parent: booleanConstants
-Current Node: COLON 	 	 	 Parent: caseStmts
-Current Node: statements 	 	 	 Parent: caseStmts
-Current Node: statement 	 	 	 Parent: statements
-Current Node: ioStmt 	 	 	 Parent: statement
-Current Node: PRINT 	 	 	 Parent: ioStmt
-Current Node: BO 	 	 	 Parent: ioStmt
-Current Node: var 	 	 	 Parent: ioStmt
-Current Node: var_id_num 	 	 	 Parent: var
-Current Node: NUM 	 	 	 Parent: var_id_num
-Current Node: BC 	 	 	 Parent: ioStmt
-Current Node: SEMICOL 	 	 	 Parent: ioStmt
-Current Node: statements 	 	 	 Parent: statements
-Current Node: EPSILON 	 	 	 Parent: statements
-Current Node: BREAK 	 	 	 Parent: caseStmts
-Current Node: SEMICOL 	 	 	 Parent: caseStmts
-Current Node: caseStmts_again 	 	 	 Parent: caseStmts
-Current Node: CASE 	 	 	 Parent: caseStmts_again
-Current Node: value 	 	 	 Parent: caseStmts_again
-Current Node: booleanConstants 	 	 	 Parent: value
-Current Node: TRUE 	 	 	 Parent: booleanConstants
-Current Node: COLON 	 	 	 Parent: caseStmts_again
-Current Node: statements 	 	 	 Parent: caseStmts_again
-Current Node: statement 	 	 	 Parent: statements
-Current Node: simpleStmt 	 	 	 Parent: statement
-Current Node: moduleReuseStmt 	 	 	 Parent: simpleStmt
-Current Node: optional 	 	 	 Parent: moduleReuseStmt
-Current Node: EPSILON 	 	 	 Parent: optional
-Current Node: USE 	 	 	 Parent: moduleReuseStmt
-Current Node: MODULE 	 	 	 Parent: moduleReuseStmt
-Current Node: ID 	 	 	 Parent: moduleReuseStmt
-Current Node: WITH 	 	 	 Parent: moduleReuseStmt
-Current Node: PARAMETERS 	 	 	 Parent: moduleReuseStmt
-Current Node: idList 	 	 	 Parent: moduleReuseStmt
-Current Node: ID 	 	 	 Parent: idList
-Current Node: idList_again 	 	 	 Parent: idList
-Current Node: COMMA 	 	 	 Parent: idList_again
-Current Node: ID 	 	 	 Parent: idList_again
-Current Node: idList_again 	 	 	 Parent: idList_again
-Current Node: EPSILON 	 	 	 Parent: idList_again
-Current Node: SEMICOL 	 	 	 Parent: moduleReuseStmt
-Current Node: statements 	 	 	 Parent: statements
-Current Node: EPSILON 	 	 	 Parent: statements
-Current Node: BREAK 	 	 	 Parent: caseStmts_again
-Current Node: SEMICOL 	 	 	 Parent: caseStmts_again
-Current Node: caseStmts_again 	 	 	 Parent: caseStmts_again
-Current Node: EPSILON 	 	 	 Parent: caseStmts_again
-Current Node: default 	 	 	 Parent: conditionalStmt
-Current Node: EPSILON 	 	 	 Parent: default
-Current Node: END 	 	 	 Parent: conditionalStmt
-Current Node: statements 	 	 	 Parent: statements
-Current Node: EPSILON 	 	 	 Parent: statements
-Current Node: END 	 	 	 Parent: moduleDef
-Current Node: otherModules 	 	 	 Parent: program
-Current Node: module 	 	 	 Parent: otherModules
-Current Node: DEF 	 	 	 Parent: module
-Current Node: MODULE 	 	 	 Parent: module
-Current Node: ID 	 	 	 Parent: module
-Current Node: ENDDEF 	 	 	 Parent: module
-Current Node: TAKES 	 	 	 Parent: module
-Current Node: INPUT 	 	 	 Parent: module
-Current Node: SQBO 	 	 	 Parent: module
-Current Node: input_plist 	 	 	 Parent: module
-Current Node: ID 	 	 	 Parent: input_plist
-Current Node: COLON 	 	 	 Parent: input_plist
-Current Node: dataType 	 	 	 Parent: input_plist
-Current Node: INTEGER 	 	 	 Parent: dataType
-Current Node: input_plist_again 	 	 	 Parent: input_plist
-Current Node: COMMA 	 	 	 Parent: input_plist_again
-Current Node: ID 	 	 	 Parent: input_plist_again
-Current Node: COLON 	 	 	 Parent: input_plist_again
-Current Node: dataType 	 	 	 Parent: input_plist_again
-Current Node: INTEGER 	 	 	 Parent: dataType
-Current Node: input_plist_again 	 	 	 Parent: input_plist_again
-Current Node: EPSILON 	 	 	 Parent: input_plist_again
-Current Node: SQBC 	 	 	 Parent: module
-Current Node: SEMICOL 	 	 	 Parent: module
-Current Node: ret 	 	 	 Parent: module
-Current Node: RETURNS 	 	 	 Parent: ret
-Current Node: SQBO 	 	 	 Parent: ret
-Current Node: output_plist 	 	 	 Parent: ret
-Current Node: ID 	 	 	 Parent: output_plist
-Current Node: COLON 	 	 	 Parent: output_plist
-Current Node: type 	 	 	 Parent: output_plist
-Current Node: INTEGER 	 	 	 Parent: type
-Current Node: output_plist_again 	 	 	 Parent: output_plist
-Current Node: COMMA 	 	 	 Parent: output_plist_again
-Current Node: ID 	 	 	 Parent: output_plist_again
-Current Node: COLON 	 	 	 Parent: output_plist_again
-Current Node: type 	 	 	 Parent: output_plist_again
-Current Node: REAL 	 	 	 Parent: type
-Current Node: output_plist_again 	 	 	 Parent: output_plist_again
-Current Node: EPSILON 	 	 	 Parent: output_plist_again
-Current Node: SQBC 	 	 	 Parent: ret
-Current Node: SEMICOL 	 	 	 Parent: ret
-Current Node: moduleDef 	 	 	 Parent: module
-Current Node: START 	 	 	 Parent: moduleDef
-Current Node: statements 	 	 	 Parent: moduleDef
-Current Node: statement 	 	 	 Parent: statements
-Current Node: declareStmt 	 	 	 Parent: statement
-Current Node: DECLARE 	 	 	 Parent: declareStmt
-Current Node: idList 	 	 	 Parent: declareStmt
-Current Node: ID 	 	 	 Parent: idList
-Current Node: idList_again 	 	 	 Parent: idList
-Current Node: EPSILON 	 	 	 Parent: idList_again
-Current Node: COLON 	 	 	 Parent: declareStmt
-Current Node: dataType 	 	 	 Parent: declareStmt
-Current Node: REAL 	 	 	 Parent: dataType
-Current Node: SEMICOL 	 	 	 Parent: declareStmt
-Current Node: statements 	 	 	 Parent: statements
-Current Node: statement 	 	 	 Parent: statements
-Current Node: simpleStmt 	 	 	 Parent: statement
-Current Node: assignmentStmt 	 	 	 Parent: simpleStmt
-Current Node: ID 	 	 	 Parent: assignmentStmt
-Current Node: whichStmt 	 	 	 Parent: assignmentStmt
-Current Node: lvalueIDStmt 	 	 	 Parent: whichStmt
-Current Node: ASSIGNOP 	 	 	 Parent: lvalueIDStmt
-Current Node: expression 	 	 	 Parent: lvalueIDStmt
-Current Node: arithmeticOrBooleanExpr 	 	 	 Parent: expression
-Current Node: recTerm 	 	 	 Parent: arithmeticOrBooleanExpr
-Current Node: arithmeticExpr 	 	 	 Parent: recTerm
-Current Node: term 	 	 	 Parent: arithmeticExpr
-Current Node: factor 	 	 	 Parent: term
-Current Node: var_id_num 	 	 	 Parent: factor
-Current Node: RNUM 	 	 	 Parent: var_id_num
-Current Node: term_again 	 	 	 Parent: term
-Current Node: EPSILON 	 	 	 Parent: term_again
-Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr
-Current Node: EPSILON 	 	 	 Parent: arithmeticExpr_again
-Current Node: recTerm_again 	 	 	 Parent: recTerm
-Current Node: EPSILON 	 	 	 Parent: recTerm_again
-Current Node: arithmeticOrBooleanExpr_again 	 	 	 Parent: arithmeticOrBooleanExpr
-Current Node: EPSILON 	 	 	 Parent: arithmeticOrBooleanExpr_again
-Current Node: SEMICOL 	 	 	 Parent: lvalueIDStmt
-Current Node: statements 	 	 	 Parent: statements
-Current Node: statement 	 	 	 Parent: statements
-Current Node: simpleStmt 	 	 	 Parent: statement
-Current Node: assignmentStmt 	 	 	 Parent: simpleStmt
-Current Node: ID 	 	 	 Parent: assignmentStmt
-Current Node: whichStmt 	 	 	 Parent: assignmentStmt
-Current Node: lvalueIDStmt 	 	 	 Parent: whichStmt
-Current Node: ASSIGNOP 	 	 	 Parent: lvalueIDStmt
-Current Node: expression 	 	 	 Parent: lvalueIDStmt
-Current Node: arithmeticOrBooleanExpr 	 	 	 Parent: expression
-Current Node: recTerm 	 	 	 Parent: arithmeticOrBooleanExpr
-Current Node: arithmeticExpr 	 	 	 Parent: recTerm
-Current Node: term 	 	 	 Parent: arithmeticExpr
-Current Node: factor 	 	 	 Parent: term
-Current Node: var_id_num 	 	 	 Parent: factor
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: whichId 	 	 	 Parent: var_id_num
-Current Node: EPSILON 	 	 	 Parent: whichId
-Current Node: term_again 	 	 	 Parent: term
-Current Node: EPSILON 	 	 	 Parent: term_again
-Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr
-Current Node: prec2_op 	 	 	 Parent: arithmeticExpr_again
-Current Node: PLUS 	 	 	 Parent: prec2_op
-Current Node: term 	 	 	 Parent: arithmeticExpr_again
-Current Node: factor 	 	 	 Parent: term
-Current Node: var_id_num 	 	 	 Parent: factor
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: whichId 	 	 	 Parent: var_id_num
-Current Node: EPSILON 	 	 	 Parent: whichId
-Current Node: term_again 	 	 	 Parent: term
-Current Node: EPSILON 	 	 	 Parent: term_again
-Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr_again
-Current Node: prec2_op 	 	 	 Parent: arithmeticExpr_again
-Current Node: MINUS 	 	 	 Parent: prec2_op
-Current Node: term 	 	 	 Parent: arithmeticExpr_again
-Current Node: factor 	 	 	 Parent: term
-Current Node: var_id_num 	 	 	 Parent: factor
-Current Node: NUM 	 	 	 Parent: var_id_num
-Current Node: term_again 	 	 	 Parent: term
-Current Node: EPSILON 	 	 	 Parent: term_again
-Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr_again
-Current Node: EPSILON 	 	 	 Parent: arithmeticExpr_again
-Current Node: recTerm_again 	 	 	 Parent: recTerm
-Current Node: EPSILON 	 	 	 Parent: recTerm_again
-Current Node: arithmeticOrBooleanExpr_again 	 	 	 Parent: arithmeticOrBooleanExpr
-Current Node: EPSILON 	 	 	 Parent: arithmeticOrBooleanExpr_again
-Current Node: SEMICOL 	 	 	 Parent: lvalueIDStmt
-Current Node: statements 	 	 	 Parent: statements
-Current Node: statement 	 	 	 Parent: statements
-Current Node: simpleStmt 	 	 	 Parent: statement
-Current Node: assignmentStmt 	 	 	 Parent: simpleStmt
-Current Node: ID 	 	 	 Parent: assignmentStmt
-Current Node: whichStmt 	 	 	 Parent: assignmentStmt
-Current Node: lvalueIDStmt 	 	 	 Parent: whichStmt
-Current Node: ASSIGNOP 	 	 	 Parent: lvalueIDStmt
-Current Node: expression 	 	 	 Parent: lvalueIDStmt
-Current Node: arithmeticOrBooleanExpr 	 	 	 Parent: expression
-Current Node: recTerm 	 	 	 Parent: arithmeticOrBooleanExpr
-Current Node: arithmeticExpr 	 	 	 Parent: recTerm
-Current Node: term 	 	 	 Parent: arithmeticExpr
-Current Node: factor 	 	 	 Parent: term
-Current Node: var_id_num 	 	 	 Parent: factor
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: whichId 	 	 	 Parent: var_id_num
-Current Node: EPSILON 	 	 	 Parent: whichId
-Current Node: term_again 	 	 	 Parent: term
-Current Node: prec1_op 	 	 	 Parent: term_again
-Current Node: DIV 	 	 	 Parent: prec1_op
-Current Node: factor 	 	 	 Parent: term_again
-Current Node: var_id_num 	 	 	 Parent: factor
-Current Node: NUM 	 	 	 Parent: var_id_num
-Current Node: term_again 	 	 	 Parent: term_again
-Current Node: EPSILON 	 	 	 Parent: term_again
-Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr
-Current Node: prec2_op 	 	 	 Parent: arithmeticExpr_again
-Current Node: PLUS 	 	 	 Parent: prec2_op
-Current Node: term 	 	 	 Parent: arithmeticExpr_again
-Current Node: factor 	 	 	 Parent: term
-Current Node: var_id_num 	 	 	 Parent: factor
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: whichId 	 	 	 Parent: var_id_num
-Current Node: EPSILON 	 	 	 Parent: whichId
-Current Node: term_again 	 	 	 Parent: term
-Current Node: EPSILON 	 	 	 Parent: term_again
-Current Node: arithmeticExpr_again 	 	 	 Parent: arithmeticExpr_again
-Current Node: EPSILON 	 	 	 Parent: arithmeticExpr_again
-Current Node: recTerm_again 	 	 	 Parent: recTerm
-Current Node: EPSILON 	 	 	 Parent: recTerm_again
-Current Node: arithmeticOrBooleanExpr_again 	 	 	 Parent: arithmeticOrBooleanExpr
-Current Node: EPSILON 	 	 	 Parent: arithmeticOrBooleanExpr_again
-Current Node: SEMICOL 	 	 	 Parent: lvalueIDStmt
-Current Node: statements 	 	 	 Parent: statements
-Current Node: EPSILON 	 	 	 Parent: statements
-Current Node: END 	 	 	 Parent: moduleDef
-Current Node: otherModules 	 	 	 Parent: otherModules
-Current Node: module 	 	 	 Parent: otherModules
-Current Node: DEF 	 	 	 Parent: module
-Current Node: MODULE 	 	 	 Parent: module
-Current Node: ID 	 	 	 Parent: module
-Current Node: ENDDEF 	 	 	 Parent: module
-Current Node: TAKES 	 	 	 Parent: module
-Current Node: INPUT 	 	 	 Parent: module
-Current Node: SQBO 	 	 	 Parent: module
-Current Node: input_plist 	 	 	 Parent: module
-Current Node: ID 	 	 	 Parent: input_plist
-Current Node: COLON 	 	 	 Parent: input_plist
-Current Node: dataType 	 	 	 Parent: input_plist
-Current Node: INTEGER 	 	 	 Parent: dataType
-Current Node: input_plist_again 	 	 	 Parent: input_plist
-Current Node: COMMA 	 	 	 Parent: input_plist_again
-Current Node: ID 	 	 	 Parent: input_plist_again
-Current Node: COLON 	 	 	 Parent: input_plist_again
-Current Node: dataType 	 	 	 Parent: input_plist_again
-Current Node: INTEGER 	 	 	 Parent: dataType
-Current Node: input_plist_again 	 	 	 Parent: input_plist_again
-Current Node: EPSILON 	 	 	 Parent: input_plist_again
-Current Node: SQBC 	 	 	 Parent: module
-Current Node: SEMICOL 	 	 	 Parent: module
-Current Node: ret 	 	 	 Parent: module
-Current Node: RETURNS 	 	 	 Parent: ret
-Current Node: SQBO 	 	 	 Parent: ret
-Current Node: output_plist 	 	 	 Parent: ret
-Current Node: ID 	 	 	 Parent: output_plist
-Current Node: COLON 	 	 	 Parent: output_plist
-Current Node: type 	 	 	 Parent: output_plist
-Current Node: INTEGER 	 	 	 Parent: type
-Current Node: output_plist_again 	 	 	 Parent: output_plist
-Current Node: COMMA 	 	 	 Parent: output_plist_again
-Current Node: ID 	 	 	 Parent: output_plist_again
-Current Node: COLON 	 	 	 Parent: output_plist_again
-Current Node: type 	 	 	 Parent: output_plist_again
-Current Node: REAL 	 	 	 Parent: type
-Current Node: output_plist_again 	 	 	 Parent: output_plist_again
-Current Node: EPSILON 	 	 	 Parent: output_plist_again
-Current Node: SQBC 	 	 	 Parent: ret
-Current Node: SEMICOL 	 	 	 Parent: ret
-Current Node: moduleDef 	 	 	 Parent: module
-Current Node: START 	 	 	 Parent: moduleDef
-Current Node: statements 	 	 	 Parent: moduleDef
-Current Node: EPSILON 	 	 	 Parent: statements
-Current Node: END 	 	 	 Parent: moduleDef
-Current Node: otherModules 	 	 	 Parent: otherModules
-Current Node: EPSILON 	 	 	 Parent: otherModules
+NodeSymbol			Lexeme			Line No			Node Token			ValueIfNumber			Parent			isleaf
+program 			 ---- 			 1 			 PROGRAM 			 ---- 			 ROOT 			 No
+moduleDeclarations 			 ---- 			 1 			 DRIVERDEF 			 ---- 			 program 			 No
+---- 			 EPSILON 			 1 			 DRIVERDEF 			 ---- 			 moduleDeclarations 			 Yes
+otherModules 			 ---- 			 1 			 DRIVERDEF 			 ---- 			 program 			 No
+---- 			 EPSILON 			 1 			 DRIVERDEF 			 ---- 			 otherModules 			 Yes
+driverModule 			 ---- 			 1 			 DRIVERDEF 			 ---- 			 program 			 No
+---- 			 DRIVERDEF 			 1 			 DRIVERDEF 			 ---- 			 driverModule 			 Yes
+---- 			 DRIVER 			 1 			 DRIVERDEF 			 ---- 			 driverModule 			 Yes
+---- 			 PROGRAM 			 1 			 DRIVERDEF 			 ---- 			 driverModule 			 Yes
+---- 			 DRIVERENDDEF 			 1 			 DRIVERDEF 			 ---- 			 driverModule 			 Yes
+moduleDef 			 ---- 			 1 			 DRIVERDEF 			 ---- 			 driverModule 			 No
+---- 			 START 			 2 			 START 			 ---- 			 moduleDef 			 Yes
+statements 			 ---- 			 2 			 START 			 ---- 			 moduleDef 			 No
+statement 			 ---- 			 3 			 DECLARE 			 ---- 			 statements 			 No
+declareStmt 			 ---- 			 3 			 DECLARE 			 ---- 			 statement 			 No
+---- 			 DECLARE 			 3 			 DECLARE 			 ---- 			 declareStmt 			 Yes
+idList 			 ---- 			 3 			 DECLARE 			 ---- 			 declareStmt 			 No
+ID 			 num 			 3 			 ID 			 ---- 			 idList 			 Yes
+idList_again 			 ---- 			 3 			 ID 			 ---- 			 idList 			 No
+---- 			 COMMA 			 3 			 COMMA 			 ---- 			 idList_again 			 Yes
+ID 			 a 			 3 			 ID 			 ---- 			 idList_again 			 Yes
+idList_again 			 ---- 			 3 			 COMMA 			 ---- 			 idList_again 			 No
+---- 			 COMMA 			 3 			 COMMA 			 ---- 			 idList_again 			 Yes
+ID 			 k 			 3 			 ID 			 ---- 			 idList_again 			 Yes
+idList_again 			 ---- 			 3 			 COMMA 			 ---- 			 idList_again 			 No
+---- 			 EPSILON 			 3 			 COLON 			 ---- 			 idList_again 			 Yes
+---- 			 COLON 			 3 			 DECLARE 			 ---- 			 declareStmt 			 Yes
+dataType 			 ---- 			 3 			 DECLARE 			 ---- 			 declareStmt 			 No
+---- 			 INTEGER 			 3 			 INTEGER 			 ---- 			 dataType 			 Yes
+---- 			 SEMICOL 			 3 			 DECLARE 			 ---- 			 declareStmt 			 Yes
+statements 			 ---- 			 3 			 DECLARE 			 ---- 			 statements 			 No
+statement 			 ---- 			 4 			 DECLARE 			 ---- 			 statements 			 No
+declareStmt 			 ---- 			 4 			 DECLARE 			 ---- 			 statement 			 No
+---- 			 DECLARE 			 4 			 DECLARE 			 ---- 			 declareStmt 			 Yes
+idList 			 ---- 			 4 			 DECLARE 			 ---- 			 declareStmt 			 No
+ID 			 A 			 4 			 ID 			 ---- 			 idList 			 Yes
+idList_again 			 ---- 			 4 			 ID 			 ---- 			 idList 			 No
+---- 			 EPSILON 			 4 			 COLON 			 ---- 			 idList_again 			 Yes
+---- 			 COLON 			 4 			 DECLARE 			 ---- 			 declareStmt 			 Yes
+dataType 			 ---- 			 4 			 DECLARE 			 ---- 			 declareStmt 			 No
+---- 			 ARRAY 			 4 			 ARRAY 			 ---- 			 dataType 			 Yes
+---- 			 SQBO 			 4 			 ARRAY 			 ---- 			 dataType 			 Yes
+range_arrays 			 ---- 			 4 			 ARRAY 			 ---- 			 dataType 			 No
+index 			 ---- 			 4 			 NUM 			 1 			 range_arrays 			 No
+---- 			 NUM 			 4 			 NUM 			 1 			 index 			 Yes
+---- 			 RANGEOP 			 4 			 NUM 			 1 			 range_arrays 			 Yes
+index 			 ---- 			 4 			 NUM 			 1 			 range_arrays 			 No
+---- 			 NUM 			 4 			 NUM 			 10 			 index 			 Yes
+---- 			 SQBC 			 4 			 ARRAY 			 ---- 			 dataType 			 Yes
+---- 			 OF 			 4 			 ARRAY 			 ---- 			 dataType 			 Yes
+type 			 ---- 			 4 			 ARRAY 			 ---- 			 dataType 			 No
+---- 			 INTEGER 			 4 			 INTEGER 			 ---- 			 type 			 Yes
+---- 			 SEMICOL 			 4 			 DECLARE 			 ---- 			 declareStmt 			 Yes
+statements 			 ---- 			 4 			 DECLARE 			 ---- 			 statements 			 No
+statement 			 ---- 			 5 			 ID 			 ---- 			 statements 			 No
+simpleStmt 			 ---- 			 5 			 ID 			 ---- 			 statement 			 No
+assignmentStmt 			 ---- 			 5 			 ID 			 ---- 			 simpleStmt 			 No
+ID 			 num 			 5 			 ID 			 ---- 			 assignmentStmt 			 Yes
+whichStmt 			 ---- 			 5 			 ID 			 ---- 			 assignmentStmt 			 No
+lvalueIDStmt 			 ---- 			 5 			 ASSIGNOP 			 ---- 			 whichStmt 			 No
+---- 			 ASSIGNOP 			 5 			 ASSIGNOP 			 ---- 			 lvalueIDStmt 			 Yes
+expression 			 ---- 			 5 			 ASSIGNOP 			 ---- 			 lvalueIDStmt 			 No
+arithmeticOrBooleanExpr 			 ---- 			 5 			 BO 			 ---- 			 expression 			 No
+recTerm 			 ---- 			 5 			 BO 			 ---- 			 arithmeticOrBooleanExpr 			 No
+arithmeticExpr 			 ---- 			 5 			 BO 			 ---- 			 recTerm 			 No
+term 			 ---- 			 5 			 BO 			 ---- 			 arithmeticExpr 			 No
+factor 			 ---- 			 5 			 BO 			 ---- 			 term 			 No
+---- 			 BO 			 5 			 BO 			 ---- 			 factor 			 Yes
+arithmeticOrBooleanExpr 			 ---- 			 5 			 BO 			 ---- 			 factor 			 No
+recTerm 			 ---- 			 5 			 ID 			 ---- 			 arithmeticOrBooleanExpr 			 No
+arithmeticExpr 			 ---- 			 5 			 ID 			 ---- 			 recTerm 			 No
+term 			 ---- 			 5 			 ID 			 ---- 			 arithmeticExpr 			 No
+factor 			 ---- 			 5 			 ID 			 ---- 			 term 			 No
+var_id_num 			 ---- 			 5 			 ID 			 ---- 			 factor 			 No
+ID 			 k 			 5 			 ID 			 ---- 			 var_id_num 			 Yes
+whichId 			 ---- 			 5 			 ID 			 ---- 			 var_id_num 			 No
+---- 			 EPSILON 			 5 			 MINUS 			 ---- 			 whichId 			 Yes
+term_again 			 ---- 			 5 			 ID 			 ---- 			 term 			 No
+---- 			 EPSILON 			 5 			 MINUS 			 ---- 			 term_again 			 Yes
+arithmeticExpr_again 			 ---- 			 5 			 ID 			 ---- 			 arithmeticExpr 			 No
+prec2_op 			 ---- 			 5 			 MINUS 			 ---- 			 arithmeticExpr_again 			 No
+---- 			 MINUS 			 5 			 MINUS 			 ---- 			 prec2_op 			 Yes
+term 			 ---- 			 5 			 MINUS 			 ---- 			 arithmeticExpr_again 			 No
+factor 			 ---- 			 5 			 ID 			 ---- 			 term 			 No
+var_id_num 			 ---- 			 5 			 ID 			 ---- 			 factor 			 No
+ID 			 a 			 5 			 ID 			 ---- 			 var_id_num 			 Yes
+whichId 			 ---- 			 5 			 ID 			 ---- 			 var_id_num 			 No
+---- 			 EPSILON 			 5 			 MUL 			 ---- 			 whichId 			 Yes
+term_again 			 ---- 			 5 			 ID 			 ---- 			 term 			 No
+prec1_op 			 ---- 			 5 			 MUL 			 ---- 			 term_again 			 No
+---- 			 MUL 			 5 			 MUL 			 ---- 			 prec1_op 			 Yes
+factor 			 ---- 			 5 			 MUL 			 ---- 			 term_again 			 No
+var_id_num 			 ---- 			 5 			 ID 			 ---- 			 factor 			 No
+ID 			 a 			 5 			 ID 			 ---- 			 var_id_num 			 Yes
+whichId 			 ---- 			 5 			 ID 			 ---- 			 var_id_num 			 No
+---- 			 EPSILON 			 5 			 PLUS 			 ---- 			 whichId 			 Yes
+term_again 			 ---- 			 5 			 MUL 			 ---- 			 term_again 			 No
+---- 			 EPSILON 			 5 			 PLUS 			 ---- 			 term_again 			 Yes
+arithmeticExpr_again 			 ---- 			 5 			 MINUS 			 ---- 			 arithmeticExpr_again 			 No
+prec2_op 			 ---- 			 5 			 PLUS 			 ---- 			 arithmeticExpr_again 			 No
+---- 			 PLUS 			 5 			 PLUS 			 ---- 			 prec2_op 			 Yes
+term 			 ---- 			 5 			 PLUS 			 ---- 			 arithmeticExpr_again 			 No
+factor 			 ---- 			 5 			 ID 			 ---- 			 term 			 No
+var_id_num 			 ---- 			 5 			 ID 			 ---- 			 factor 			 No
+ID 			 k 			 5 			 ID 			 ---- 			 var_id_num 			 Yes
+whichId 			 ---- 			 5 			 ID 			 ---- 			 var_id_num 			 No
+---- 			 EPSILON 			 5 			 BC 			 ---- 			 whichId 			 Yes
+term_again 			 ---- 			 5 			 ID 			 ---- 			 term 			 No
+---- 			 EPSILON 			 5 			 BC 			 ---- 			 term_again 			 Yes
+arithmeticExpr_again 			 ---- 			 5 			 PLUS 			 ---- 			 arithmeticExpr_again 			 No
+---- 			 EPSILON 			 5 			 BC 			 ---- 			 arithmeticExpr_again 			 Yes
+recTerm_again 			 ---- 			 5 			 ID 			 ---- 			 recTerm 			 No
+---- 			 EPSILON 			 5 			 BC 			 ---- 			 recTerm_again 			 Yes
+arithmeticOrBooleanExpr_again 			 ---- 			 5 			 ID 			 ---- 			 arithmeticOrBooleanExpr 			 No
+---- 			 EPSILON 			 5 			 BC 			 ---- 			 arithmeticOrBooleanExpr_again 			 Yes
+---- 			 BC 			 5 			 BO 			 ---- 			 factor 			 Yes
+term_again 			 ---- 			 5 			 BO 			 ---- 			 term 			 No
+---- 			 EPSILON 			 5 			 SEMICOL 			 ---- 			 term_again 			 Yes
+arithmeticExpr_again 			 ---- 			 5 			 BO 			 ---- 			 arithmeticExpr 			 No
+---- 			 EPSILON 			 5 			 SEMICOL 			 ---- 			 arithmeticExpr_again 			 Yes
+recTerm_again 			 ---- 			 5 			 BO 			 ---- 			 recTerm 			 No
+---- 			 EPSILON 			 5 			 SEMICOL 			 ---- 			 recTerm_again 			 Yes
+arithmeticOrBooleanExpr_again 			 ---- 			 5 			 BO 			 ---- 			 arithmeticOrBooleanExpr 			 No
+---- 			 EPSILON 			 5 			 SEMICOL 			 ---- 			 arithmeticOrBooleanExpr_again 			 Yes
+---- 			 SEMICOL 			 5 			 ASSIGNOP 			 ---- 			 lvalueIDStmt 			 Yes
+statements 			 ---- 			 5 			 ID 			 ---- 			 statements 			 No
+---- 			 EPSILON 			 6 			 END 			 ---- 			 statements 			 Yes
+---- 			 END 			 2 			 START 			 ---- 			 moduleDef 			 Yes
+otherModules 			 ---- 			 1 			 DRIVERDEF 			 ---- 			 program 			 No
+---- 			 EPSILON 			 6 			 DOLLAR 			 ---- 			 otherModules 			 Yes
 
 
  *************************************************************************************** 
@@ -406,132 +136,41 @@ Current Node: EPSILON 	 	 	 Parent: otherModules
 
  AST: 
 
-NodeSymbol                    Lexeme              Line No        Node Token       ValueIfNumber     Parent       isleaf
-Current Node: program 	 	 	 Parent: NULL
-Current Node: moduleDeclarations 	 	 	 Parent: program
-Current Node: ID 	 	 	 Parent: moduleDeclarations
-Current Node: ID 	 	 	 Parent: moduleDeclarations
-Current Node: driverModule 	 	 	 Parent: program
-Current Node: moduleDef 	 	 	 Parent: driverModule
-Current Node: statements 	 	 	 Parent: moduleDef
-Current Node: declareStmt 	 	 	 Parent: statements
-Current Node: idList 	 	 	 Parent: declareStmt
-Current Node: ID 	 	 	 Parent: idList
-Current Node: ID 	 	 	 Parent: idList
-Current Node: ID 	 	 	 Parent: idList
-Current Node: dataType 	 	 	 Parent: declareStmt
-Current Node: INTEGER 	 	 	 Parent: dataType
-Current Node: declareStmt 	 	 	 Parent: statements
-Current Node: idList 	 	 	 Parent: declareStmt
-Current Node: ID 	 	 	 Parent: idList
-Current Node: dataType 	 	 	 Parent: declareStmt
-Current Node: BOOLEAN 	 	 	 Parent: dataType
-Current Node: assignmentStmt 	 	 	 Parent: statements
-Current Node: ID 	 	 	 Parent: assignmentStmt
-Current Node: lvalueIDStmt 	 	 	 Parent: assignmentStmt
-Current Node: expression 	 	 	 Parent: lvalueIDStmt
-Current Node: MINUS 	 	 	 Parent: expression
-Current Node: new_NT 	 	 	 Parent: expression
-Current Node: MINUS 	 	 	 Parent: new_NT
-Current Node: var_id_num 	 	 	 Parent: MINUS
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: PLUS 	 	 	 Parent: MINUS
-Current Node: MUL 	 	 	 Parent: PLUS
-Current Node: var_id_num 	 	 	 Parent: MUL
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: var_id_num 	 	 	 Parent: MUL
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: var_id_num 	 	 	 Parent: PLUS
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: conditionalStmt 	 	 	 Parent: statements
-Current Node: SWITCH 	 	 	 Parent: conditionalStmt
-Current Node: ID 	 	 	 Parent: conditionalStmt
-Current Node: caseStmts 	 	 	 Parent: conditionalStmt
-Current Node: CASE 	 	 	 Parent: caseStmts
-Current Node: value 	 	 	 Parent: caseStmts
-Current Node: booleanConstants 	 	 	 Parent: value
-Current Node: FALSE 	 	 	 Parent: booleanConstants
-Current Node: statements 	 	 	 Parent: caseStmts
-Current Node: ioStmt 	 	 	 Parent: statements
-Current Node: PRINT 	 	 	 Parent: ioStmt
-Current Node: var 	 	 	 Parent: ioStmt
-Current Node: var_id_num 	 	 	 Parent: var
-Current Node: NUM 	 	 	 Parent: var_id_num
-Current Node: BREAK 	 	 	 Parent: caseStmts
-Current Node: CASE 	 	 	 Parent: caseStmts
-Current Node: value 	 	 	 Parent: caseStmts
-Current Node: booleanConstants 	 	 	 Parent: value
-Current Node: TRUE 	 	 	 Parent: booleanConstants
-Current Node: statements 	 	 	 Parent: caseStmts
-Current Node: moduleReuseStmt 	 	 	 Parent: statements
-Current Node: ID 	 	 	 Parent: moduleReuseStmt
-Current Node: idList 	 	 	 Parent: moduleReuseStmt
-Current Node: ID 	 	 	 Parent: idList
-Current Node: ID 	 	 	 Parent: idList
-Current Node: BREAK 	 	 	 Parent: caseStmts
-Current Node: otherModules 	 	 	 Parent: program
-Current Node: module 	 	 	 Parent: otherModules
-Current Node: ID 	 	 	 Parent: module
-Current Node: input_plist 	 	 	 Parent: module
-Current Node: ID 	 	 	 Parent: input_plist
-Current Node: dataType 	 	 	 Parent: input_plist
-Current Node: INTEGER 	 	 	 Parent: dataType
-Current Node: ID 	 	 	 Parent: input_plist
-Current Node: dataType 	 	 	 Parent: input_plist
-Current Node: INTEGER 	 	 	 Parent: dataType
-Current Node: output_plist 	 	 	 Parent: module
-Current Node: ID 	 	 	 Parent: output_plist
-Current Node: INTEGER 	 	 	 Parent: output_plist
-Current Node: ID 	 	 	 Parent: output_plist
-Current Node: REAL 	 	 	 Parent: output_plist
-Current Node: moduleDef 	 	 	 Parent: module
-Current Node: statements 	 	 	 Parent: moduleDef
-Current Node: declareStmt 	 	 	 Parent: statements
-Current Node: idList 	 	 	 Parent: declareStmt
-Current Node: ID 	 	 	 Parent: idList
-Current Node: dataType 	 	 	 Parent: declareStmt
-Current Node: REAL 	 	 	 Parent: dataType
-Current Node: assignmentStmt 	 	 	 Parent: statements
-Current Node: ID 	 	 	 Parent: assignmentStmt
-Current Node: lvalueIDStmt 	 	 	 Parent: assignmentStmt
-Current Node: expression 	 	 	 Parent: lvalueIDStmt
-Current Node: var_id_num 	 	 	 Parent: expression
-Current Node: RNUM 	 	 	 Parent: var_id_num
-Current Node: assignmentStmt 	 	 	 Parent: statements
-Current Node: ID 	 	 	 Parent: assignmentStmt
-Current Node: lvalueIDStmt 	 	 	 Parent: assignmentStmt
-Current Node: expression 	 	 	 Parent: lvalueIDStmt
-Current Node: PLUS 	 	 	 Parent: expression
-Current Node: var_id_num 	 	 	 Parent: PLUS
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: MINUS 	 	 	 Parent: PLUS
-Current Node: var_id_num 	 	 	 Parent: MINUS
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: var_id_num 	 	 	 Parent: MINUS
-Current Node: NUM 	 	 	 Parent: var_id_num
-Current Node: assignmentStmt 	 	 	 Parent: statements
-Current Node: ID 	 	 	 Parent: assignmentStmt
-Current Node: lvalueIDStmt 	 	 	 Parent: assignmentStmt
-Current Node: expression 	 	 	 Parent: lvalueIDStmt
-Current Node: PLUS 	 	 	 Parent: expression
-Current Node: DIV 	 	 	 Parent: PLUS
-Current Node: var_id_num 	 	 	 Parent: DIV
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: var_id_num 	 	 	 Parent: DIV
-Current Node: NUM 	 	 	 Parent: var_id_num
-Current Node: var_id_num 	 	 	 Parent: PLUS
-Current Node: ID 	 	 	 Parent: var_id_num
-Current Node: module 	 	 	 Parent: otherModules
-Current Node: ID 	 	 	 Parent: module
-Current Node: input_plist 	 	 	 Parent: module
-Current Node: ID 	 	 	 Parent: input_plist
-Current Node: dataType 	 	 	 Parent: input_plist
-Current Node: INTEGER 	 	 	 Parent: dataType
-Current Node: ID 	 	 	 Parent: input_plist
-Current Node: dataType 	 	 	 Parent: input_plist
-Current Node: INTEGER 	 	 	 Parent: dataType
-Current Node: output_plist 	 	 	 Parent: module
-Current Node: ID 	 	 	 Parent: output_plist
-Current Node: INTEGER 	 	 	 Parent: output_plist
-Current Node: ID 	 	 	 Parent: output_plist
-Current Node: REAL 	 	 	 Parent: output_plist
+NodeSymbol			Lexeme			Line No			Node Token			ValueIfNumber			Parent			isleaf
+program 			 ---- 			 1 			 PROGRAM 			 ---- 			 ROOT 			 No
+driverModule 			 ---- 			 1 			 DRIVERDEF 			 ---- 			 program 			 No
+moduleDef 			 ---- 			 1 			 DRIVERDEF 			 ---- 			 driverModule 			 No
+statements 			 ---- 			 2 			 START 			 ---- 			 moduleDef 			 No
+declareStmt 			 ---- 			 3 			 DECLARE 			 ---- 			 statements 			 No
+idList 			 ---- 			 3 			 DECLARE 			 ---- 			 declareStmt 			 No
+ID 			 num 			 3 			 ID 			 ---- 			 idList 			 Yes
+ID 			 a 			 3 			 ID 			 ---- 			 idList 			 Yes
+ID 			 k 			 3 			 ID 			 ---- 			 idList 			 Yes
+dataType 			 ---- 			 3 			 DECLARE 			 ---- 			 declareStmt 			 No
+---- 			 INTEGER 			 3 			 INTEGER 			 ---- 			 dataType 			 Yes
+declareStmt 			 ---- 			 4 			 DECLARE 			 ---- 			 statements 			 No
+idList 			 ---- 			 4 			 DECLARE 			 ---- 			 declareStmt 			 No
+ID 			 A 			 4 			 ID 			 ---- 			 idList 			 Yes
+dataType 			 ---- 			 4 			 DECLARE 			 ---- 			 declareStmt 			 No
+---- 			 ARRAY 			 4 			 ARRAY 			 ---- 			 dataType 			 Yes
+range_arrays 			 ---- 			 4 			 ARRAY 			 ---- 			 dataType 			 No
+index 			 ---- 			 4 			 NUM 			 1 			 range_arrays 			 No
+---- 			 NUM 			 4 			 NUM 			 1 			 index 			 Yes
+index 			 ---- 			 4 			 NUM 			 1 			 range_arrays 			 No
+---- 			 NUM 			 4 			 NUM 			 10 			 index 			 Yes
+---- 			 INTEGER 			 4 			 INTEGER 			 ---- 			 dataType 			 Yes
+assignmentStmt 			 ---- 			 5 			 ID 			 ---- 			 statements 			 No
+ID 			 num 			 5 			 ID 			 ---- 			 assignmentStmt 			 Yes
+lvalueIDStmt 			 ---- 			 5 			 ASSIGNOP 			 ---- 			 assignmentStmt 			 No
+expression 			 ---- 			 5 			 ASSIGNOP 			 ---- 			 lvalueIDStmt 			 No
+---- 			 MINUS 			 5 			 MINUS 			 ---- 			 expression 			 No
+var_id_num 			 ---- 			 5 			 ID 			 ---- 			 MINUS 			 No
+ID 			 k 			 5 			 ID 			 ---- 			 var_id_num 			 Yes
+---- 			 PLUS 			 5 			 PLUS 			 ---- 			 MINUS 			 No
+---- 			 MUL 			 5 			 MUL 			 ---- 			 PLUS 			 No
+var_id_num 			 ---- 			 5 			 ID 			 ---- 			 MUL 			 No
+ID 			 a 			 5 			 ID 			 ---- 			 var_id_num 			 Yes
+var_id_num 			 ---- 			 5 			 ID 			 ---- 			 MUL 			 No
+ID 			 a 			 5 			 ID 			 ---- 			 var_id_num 			 Yes
+var_id_num 			 ---- 			 5 			 ID 			 ---- 			 PLUS 			 No
+ID 			 k 			 5 			 ID 			 ---- 			 var_id_num 			 Yes

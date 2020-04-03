@@ -850,6 +850,8 @@ void printParseTreeToFile(ParseTree *trav, FILE *f)
 		return;
 	}
 
+	
+
 	char lexeme[30];
 	char valueifnumber[30];
 	char parent[30];
@@ -896,20 +898,21 @@ void printParseTreeToFile(ParseTree *trav, FILE *f)
 		strcpy(valueifnumber,"----");
 	}
 
-	//fprintf(f,"%s                    %s         %d       %s            %s            %s            %s\n",nodesymbol,lexeme,trav->n->t->lineno,trav->n->t->token,valueifnumber,parent,isleaf);
-	if(trav->parent!=NULL)
+	fprintf(f,"%s \t\t\t %s \t\t\t %d \t\t\t %s \t\t\t %s \t\t\t %s \t\t\t %s\n",nodesymbol,lexeme,trav->n->t->lineno,trav->n->t->token,valueifnumber,parent,isleaf);
+	
+	/*if(trav->parent!=NULL)
 		fprintf(f,"Current Node: %s \t \t \t Parent: %s\n",terms[trav->value],terms[trav->parent->value]);
 	else
-		fprintf(f,"Current Node: %s \t \t \t Parent: NULL\n",terms[trav->value]);
+		fprintf(f,"Current Node: %s \t \t \t Parent: NULL\n",terms[trav->value]);*/
 
-	printParseTreeToFile(trav->child,f); 
+	printParseTreeToFile(trav->child,f);
 	printParseTreeToFile(trav->right,f);
 }
 
 void printParseTree(FILE *f)
 {
 	//printf("\n%s",terms[head->child->right->right->value]);
-	fprintf(f,"NodeSymbol                    Lexeme              Line No        Node Token       ValueIfNumber     Parent       isleaf\n");
+	fprintf(f,"NodeSymbol\t\t\tLexeme\t\t\tLine No\t\t\tNode Token\t\t\tValueIfNumber\t\t\tParent\t\t\tisleaf\n");
 	printParseTreeToFile(head,f);
 	//printf("\n\n ** Random Term: %s ** \n\n",head->child->right->right->child->right->right->right->right->child->right->child->child->child->right->child->n->t->token);
 }
