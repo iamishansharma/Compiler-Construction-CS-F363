@@ -1,4 +1,6 @@
-/*  SymbolTableDef.h 
+/*  
+
+	SymbolTableDef.h 
 	
 	Batch No: 14
 
@@ -11,59 +13,103 @@
 
 */
 
+/* START COLOR DEFINE */
+
+#ifndef RESET
+#define RESET   "\033[0m"
+#endif
+
+#ifndef BOLDBLACK
+#define BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
+#endif
+
+#ifndef BOLDRED
+#define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
+#endif
+
+#ifndef BOLDGREEN
+#define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
+#endif
+
+#ifndef BOLDYELLOW
+#define BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
+#endif
+
+#ifndef BOLDBLUE
+#define BOLDBLUE    "\033[1m\033[34m"      /* Bold Blue */
+#endif
+
+#ifndef BOLDMAGENTA
+#define BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
+#endif
+
+#ifndef BOLDCYAN
+#define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
+#endif
+
+#ifndef BOLDWHITE
+#define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
+#endif
+
+/* END COLOR DEFINE */
+
 #ifndef ST_DEFH
 #define ST_DEFH
 
-#include "ast.h"
-
-#define SIZE 20
-#define HASHSIZE 20
-
-// Redefine according to you
-
-struct FuncNode
+struct index
 {
-	char name[30];
-	char input[100];
-	char output[100];
-	struct FuncNode *next;
+	int isused;
+	char id[30];
+	int ifnumvalue;
+	int isDynamic;
 };
 
-typedef struct FuncNode FNode;
+typedef struct index Index;
 
-struct TokenNode
+struct symbolnode
 {
-	char name[30];
-	char ifnumvalue[30];
-	char scope[15];
-	char type[15];
+	char idname[30];
+
+	int usage;
+	// ^^^^^^^^^^^
+	// 1: Variable
+	// 2. Function Def
+	// 3. Input Parameters
+	// 4. Output Parameters
+	// 5. Function Declaration
+	// 6. Function Def and Dec
+
+	char type[25];
+
+	int isArray;
+
+	Index *startindex;
+	Index *endindex;
+
 	int offset;
 	int width;
-	struct TokenNode *next;
-	int isarraydynamic;
+
+	int lineno;
+
+	struct symbolnode *next;
+
+	struct symboltable *scope; // Gets which scope this node is in
 };
 
-typedef struct TokenNode TNode;
+typedef struct symbolnode SymbolEntry;
 
-struct FuncHashTable
+struct symboltable
 {
-	struct FuncNode *table[SIZE];
+	char name[30];
+
+	struct symboltable *parent;
+	struct symboltable *child;
+	struct symboltable *left;
+	struct symboltable *right;
+
+	struct symbolnode *nodehead;
 };
 
-typedef struct FuncHashTable FuncHash;
-
-struct hash_of_hash_tables
-{
-	struct hash_table *functable[HASHSIZE];
-};
-
-typedef struct hash_of_hash_tables HashOfHash;
-
-struct hash_table
-{
-	TNode *table[SIZE];
-};
-
-typedef struct hash_table TokenHash;
+typedef struct symboltable SymbolTable;
 
 #endif

@@ -1,4 +1,6 @@
-/*	driver.c 
+/*	
+
+	driver.c 
 	
 	Batch No: 14
 
@@ -61,9 +63,9 @@ void removedollar(char *filename)
 	//printf("Comes here");
 	FILE *f=fopen(filename,"a");
 	int charsToDelete = 1;
-    fseeko(f,-charsToDelete,SEEK_END);
-    int position = ftello(f);
-    ftruncate(fileno(f), position);
+	fseeko(f,-charsToDelete,SEEK_END);
+	int position = ftello(f);
+	ftruncate(fileno(f), position);
 	fclose(f);
 }
 
@@ -111,7 +113,7 @@ int main(int argc, char *argv[])
 
 	if(argc!=4)
 	{
-		printf("Too few/many arguments, exiting! Please enter in format as ./stage1exe *.txt *.txt");
+		printf("Too few/many arguments, exiting! Please enter in format as ./compiler *.txt {<- test case file} *.asm {<- machine code file}");
 		exit(1);
 	}
 
@@ -119,20 +121,17 @@ int main(int argc, char *argv[])
 	{
 		printf("\n\n********* ERPlAG Compiler Stage1 *********\n\n");
 		printf("Status:  \n");
-		printf("\t1. Remove Comments is working.\n");
-		printf("\t2. Lexer is working.\n");
-		printf("\t3. ParseInputSourceCode is working.\n");
-		printf("\t4. ParseTree isn't being printed correctly. Thats why skipping the call to printParseTree\n");
-		printf("\t   We are instead printing whole information of parseInputSourceCode i.e. stack (left most term is \n");
-		printf("\t   top of stack), input symbol, rule number in grammar.txt used, elements to push onto stack now \n");
-		printf("\t   in the file given as ./stage1exe *.txt \"*.txt\" <- this file the i.e. second argument.\n\n");
+		printf("\t1. AST is being generated as required\n");
+		printf("\t2. Symbol Table is being populated as required.\n");
+		printf("\t3. Type Checking and Semantic Check are working as required. \n");
+		printf("\t4. Code Gen?\n\n");
 		printf("Please select one of the following options -\n\n");
-		printf("0. Exit the program.\n");
-		printf("1. Remove Comments and display on console.\n");
-		printf("2. Display token list on console.\n");
-		printf("3. Parse the input file and write the Parse Tree into a file.\n");
-		printf("4. Print the total time taken for parsing the input file.\n");
-		printf("5. Clear the Screen.\n\n");
+		printf("\t0. Exit the program.\n");
+		printf("\t1. Remove Comments and display on console.\n");
+		printf("\t2. Display token list on console.\n");
+		printf("\t3. Parse the input file and write the Parse Tree into a file.\n");
+		printf("\t4. Print the total time taken for parsing the input file.\n");
+		printf("\t5. Clear the Screen.\n\n");
 		printf("Enter your option here: ");
 		scanf("%d",&option);
 
@@ -182,10 +181,7 @@ int main(int argc, char *argv[])
 
 					// Type Checking and Symbol Table: 
 
-					memset(scope, '\0', sizeof(scope));
-
-					//populateSymbolTable(semantic, temphead, scope);
-					//displaySymbolTable();
+					// CallingSymbolTable(ParseTree *head, int *errors)
 
 					removedollar(argv[1]);
 					fclose(f4);

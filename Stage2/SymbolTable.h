@@ -20,54 +20,29 @@
 
 // Functions Declatations -> 
 
-/***************************************/
+/********************************************************************************************************************************/
+/********************************************************************************************************************************/
 
-/* GROUND LEVEL FUNCTIONS */
+/* Auxilary Functions */
 
-TokenHash* CreateTable();
-TNode* CreateNode(char *inname, char *type, char *function, char *ifnumvalue);
-FNode *CreateFNode(char *functionname, char *input_parameters,char *output_parameters);
-int hash(char *key);
+SymbolTable *ScopeEntry(SymbolTable *parent, char *st);
+SymbolEntry *FindEntry(char *id, SymbolTable *scope, int line, int isFunc, int *errors);
+void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, Index *endindex, int line, SymbolTable *scope, int *errors);
+SymbolTable *GetScope(SymbolTable *current);
 
-/* GROUND LEVEL FUNCTIONS END*/
+/* Auxilary Functions END */
 
-/***************************************/
-
-/* FIRST LEVEL (FOR FUNCTIONS) Functions */
-
-int HashInsertFunc(char *key, char* input_parameters, char* output_parameters);
-int GetFuncHashValue(char* functionname);
-void FuncDisplay();
-void GetFuncInputType(char* functionname);
-void GetFuncOutputType(char* functionname);
-char *GetFunctionInputType(char* functionname);
-char *GetFunctionInputType(char* functionname);
-int CheckFuncPresent(char* functionname);
-FNode *DirectFunctionPointer(char* functionname);
-
-/* FIRST LEVEL (FOR FUNCTIONS) Functions END*/
-
-/***************************************/
-
-/* SECOND LEVEL (FOR TOKENS) Functions */
-
-int HashInsert(char* key,char* type,char* functionname,char* ifnumvalue);
-int CheckSymbolPresent(char* key,char* functionname);
-int GetOffset(char* key,char* functionname);
-char *GetType(char* key,char* functionname);
-void AutomateOffset(char* functionname);
-TNode *GetDirectPointer(char* key,char* functionname);
-
-/* SECOND LEVEL (FOR TOKENS) Functions END*/
-
-/***************************************/
+/********************************************************************************************************************************/
+/********************************************************************************************************************************/
 
 /* MAIN Functions */ 
 
-void populateSymbolTable(FILE *semantic, ParseTree *head,char *scope);
-void displaySymbolTable();
+void printSymbolTable(SymbolTable *head);
+SymbolTable *CallingSymbolTable(ParseTree *head, int *errors);
+void ConstructSymbolTable(ParseTree *head, SymbolTable *scope, int *errors);
 
 /* MAIN Functions END */ 
 
-/***************************************/
+/********************************************************************************************************************************/
+/********************************************************************************************************************************/
 #endif

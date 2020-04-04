@@ -1,4 +1,6 @@
-/*  ast.h 
+/*  
+
+	ast.h 
 	
 	Batch No: 14
 
@@ -10,6 +12,8 @@
 	Sanjeev Singla 2017A7PS0152P
 
 */
+#ifndef AST_H
+#define AST_H
 
 #include "lexer.h"
 #include "lexerDef.h"
@@ -26,3 +30,5 @@ void printAST(ParseTree *head);
 void liftUpNode(ParseTree *child);
 void removeNode(ParseTree *head);
 void interchangeNode(ParseTree *child);
+
+#endif

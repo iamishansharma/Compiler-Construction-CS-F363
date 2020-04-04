@@ -1,4 +1,6 @@
-/*	parserDef.h 
+/*	
+
+	parserDef.h 
 
 	Batch No: 14
 
@@ -15,6 +17,7 @@
 #define PARSER_DEF_H
 
 #include "lexer.h"
+#include "SymbolTableDef.h"
 
 #define GR 105
 #define NTER 57
@@ -25,6 +28,7 @@
 struct parsetree
 {				
 	Node* n;
+
 	int value;
 	int rule;
 	struct parsetree *child;
@@ -33,6 +37,12 @@ struct parsetree
 	struct parsetree *left;
 	int isVisited;
 	int isleaf;
+
+	SymbolTable *scope;
+	SymbolTable *node;
+
+	char type[30];
+
 };
 
 typedef struct parsetree ParseTree;

@@ -1,4 +1,6 @@
-/*  parser.c 
+/*  
+
+	parser.c 
 	
 	Batch No: 14
 
@@ -195,72 +197,57 @@ void printstack()
 void insert_in_tree(ParseTree *current, int rule, Grammar G, Node *n)
 {
 
-	//NEEDS PLAGIRISM CHECK
-
-	int *rules=G.gnum[rule];
-
 	int i=1;
 
-	ParseTree *temp, *sib, *right, *left;
+	ParseTree *childtemp, *lchild;
 
 	current->isVisited = 1;
 	current->rule = rule;
 
-	while(rules[i]!=-1)
+	while(G.gnum[rule][i]!=-1)
 	{
+		// Creating the child node 
 
-		temp = (ParseTree *)malloc(sizeof(ParseTree));
-		temp->n = (Node*)malloc(sizeof(Node));
-		temp->n->t = (Token*)malloc(sizeof(Token));
-		temp->value = rules[i];
-		temp->n=n;
+		childtemp = (ParseTree *)malloc(sizeof(ParseTree));
+		childtemp->n = (Node*)malloc(sizeof(Node));
+		childtemp->n->t = (Token*)malloc(sizeof(Token));
+		childtemp->value = G.gnum[rule][i];
+		childtemp->n = n;
+		childtemp->left = NULL;
+		childtemp->left = NULL;
+		childtemp->right = NULL;
+		childtemp->child = NULL;
+		childtemp->parent = current;
 
-		if(strcmp(terms[temp->value],"ID")==0)
+		if(childtemp->value >= NTER)
+			childtemp->isleaf = 1;
+		else
+			childtemp->isleaf = 0;
+
+		childtemp->isVisited = 0;
+
+		if(strcmp(terms[childtemp->value],"ID")==0)
+			flagforID=childtemp;
+
+		// Inserting the child node now inside current 
+
+		if(current->child == NULL)
 		{
-			flagforID=temp;
-		}
-
-		/*printf("Inside Loop of Insert!\n");
-		printf("Lexeme: %s\n",temp->n->t->token);
-		printf("Value: %s\n",temp->n->t->value);
-		printf("Line No: %d\n",temp->n->t->lineno);
-		printf("***************************\n");*/
-
-		if(rules[i] >= NTER)
-		{
-			temp->isleaf = 1;
+			current->child = childtemp;
+			childtemp->parent = current;
 		}
 		else
 		{
-			temp->isleaf = 0;
+			lchild = current->child;
+
+			while(lchild->right != NULL)
+				lchild = lchild->right;
+
+			lchild->right = childtemp;
+			childtemp->left = lchild;
+			lchild->n = n;
 		}
 
-		temp->left = NULL;
-		temp->left = NULL;
-		temp->right = NULL;
-		temp->child = NULL;
-		temp->parent = current;
-
-		temp->isVisited = 0;
-
-		if(current->child==NULL)
-		{
-			current->child = temp;
-		}
-		else //if current has children already
-		{
-			sib = current->child;
-
-			while(sib->right!=NULL)
-			{
-				right = sib->right;
-				sib = right;
-
-			}
-			sib->right = temp;
-			temp->left = sib;
-			sib->n=n;
-		}
 		i++;
 	}
 }

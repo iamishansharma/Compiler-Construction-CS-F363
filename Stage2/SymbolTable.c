@@ -1,4 +1,6 @@
-/*  SymbolTable.c 
+/*  
+
+	SymbolTable.c 
 	
 	Batch No: 14
 
@@ -11,284 +13,200 @@
 
 */
 
+#include "ast.h"
 #include "SymbolTable.h"
 
 /********************************************************************************************************************************/
 /********************************************************************************************************************************/
 
-/* Global Variables */
+/* Auxilary Functions */
 
-int offseter = 0;
-int sequencenumber = 1;
-int offset = 0;
-HashOfHash *ht;
-FuncHash *functable;
-int count, funcnum = 0;
-char funcarr[100][100]; // Stores all the function names
-
-/* Global Variables END */
- 
-/********************************************************************************************************************************/
-/********************************************************************************************************************************/
-
-/* GROUND LEVEL FUNCTIONS */
-
-TokenHash* CreateTable()
+SymbolTable *ScopeEntry(SymbolTable *table, char *scopename)
 {
-	TokenHash *node = (TokenHash *)malloc(sizeof(TokenHash));
+	SymbolTable *newTable = (SymbolTable *)malloc(sizeof(SymbolTable));
 
-	return node;
+	newTable->parent = NULL;
+	newTable->child = NULL;
+	newTable->right = NULL;
+	newTable->left = NULL;
+	newTable->nodehead = NULL;
+
+	strcpy(newTable->name, scopename);
+
+	// Insert scope in tree
+
+	if(table != NULL)
+	{
+		if(table->child == NULL)
+			table->child = newTable;
+		else
+		{
+			SymbolTable *sib = table->child;
+
+			while(sib->right != NULL)
+				sib = sib->right;
+
+			sib->right = newTable;
+			newTable->left = sib;
+		}
+		newTable->parent = table;
+	}
+
+	return newTable;
+
 }
 
-TNode* CreateNode(char *inname, char *type, char *function, char *ifnumvalue)
+SymbolEntry *FindEntry(char *id, SymbolTable *scope, int line, int isFunc, int *errors)
 {
-	TNode *node = (TNode *)malloc(sizeof(TNode));
-
-	strcpy(node->name,inname);
-	strcpy(node->ifnumvalue,ifnumvalue);
-	strcpy(node->type,type);
-	strcpy(node->scope,function);
-
-	node->offset = 0;
-	node->width = 0;
-	node->next = NULL;
-
-	return node;
+	SymbolEntry *FoundEntry = NULL;
+	return FoundEntry;
 }
 
-FNode *CreateFNode(char *functionname, char *input_parameters,char *output_parameters)
+void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, Index *endindex, int line, SymbolTable *scope, int *errors)
 {
-   FNode *node = (FNode *)malloc(sizeof(FNode));
+	// Search the current identifier in the scopes
 
-   strcpy(node->name,functionname);
-   strcpy(node->input,input_parameters);
-   strcpy(node->output,output_parameters);
+		// If found, error do 
 
-   return node;
+		// Else ghusao 
 }
 
-int hash(char *key)
+SymbolTable *GetScope(SymbolTable *current)
 {
-	int value = 0;
-	int i;
-
-	for(i=0; i<strlen(key); i++)
-		 value += (int)key[i];
-
-	return (value % SIZE);
+	SymbolTable *FoundScope = NULL;
+	return FoundScope;
 }
 
-/* GROUND LEVEL FUNCTIONS END*/
-
-/********************************************************************************************************************************/
-/********************************************************************************************************************************/
-
-/* FIRST LEVEL (FOR FUNCTIONS) Functions */
-
-int HashInsertFunc(char *key, char* inputplist, char* outputplist)
-{
-	return 0;
-}
-
-int GetFuncHashValue(char* functionname)
-{
-	return 0;
-}
-
-void FuncDisplay()
-{
-	
-}
-
-void GetFuncInputType(char* functionname)
-{
-	
-}
-
-void GetFuncOutputType(char* functionname)
-{
-	
-}
-
-char *GetFunctionInputType(char* functionname)
-{
-	return NULL;
-}
-
-char *GetFunctionOutputType(char* functionname)
-{
-	return NULL;
-}
-
-int CheckFuncPresent(char* functionname)
-{
-	return 0;
-}
-
-FNode *DirectFunctionPointer(char* functionname)
-{
-	return NULL;
-}
-
-/* FIRST LEVEL (FOR FUNCTIONS) Functions END*/
-
-/********************************************************************************************************************************/
-/********************************************************************************************************************************/
-
-/* SECOND LEVEL (FOR TOKENS) Functions */
-int HashInsert(char* key,char* type,char* functionname,char* ifnumvalue)
-{
-	return 0;
-}
-int CheckSymbolPresent(char* key,char* functionname)
-{
-	return 0;
-}
-int GetOffset(char* key,char* functionname)
-{
-	return 0;
-}
-char *GetType(char* key,char* functionname)
-{
-	return NULL;
-}
-void AutomateOffset(char* functionname)
-{
-	
-}
-TNode *GetDirectPointer(char* key,char* functionname)
-{
-	return NULL;
-}
-/* SECOND LEVEL (FOR TOKENS Functions END*/
+/* Auxilary Functions END */
 
 /********************************************************************************************************************************/
 /********************************************************************************************************************************/
 
 /* MAIN Functions */ 
 
-void populateSymbolTable(FILE *semantic, ParseTree *head, char *scope)
+SymbolTable *CallingSymbolTable(ParseTree *head, int *errors)
+{
+	SymbolTable *table;
+	table = ScopeEntry(NULL, "program");
+	ConstructSymbolTable(head, table, errors);
+	return table;
+}
+
+void ConstructSymbolTable(ParseTree *head, SymbolTable *scope, int *errors)
 {
 	if(head == NULL)
 		return;
 
-	populateSymbolTable(semantic, head->child, scope);
+	SymbolTable *newScope;
+	SymbolEntry *newEntry;
 
-	if(head->value==4) // driverModule
-	{
-		HashInsertFunc("driver","-", "-");
-		strcpy(scope,"driver");
-	}
+	//head->scope = scope;
 
-	// Current Ndoe is an ID
-	if(head->value == 62)
+	ConstructSymbolTable(head->child, scope, errors);
+
+	// ID
+	if(strcmp(terms[(head->value)],"ID") == 0)
 	{
-		// declareStmts ke IDs ki Entry
-		if((strcmp("idList",terms[head->parent->value])==0) && (strcmp("declareStmt",terms[head->parent->parent->value])==0))
+		if((strcmp(terms[(head->parent->value)],"idList") == 0) && (strcmp(terms[(head->parent->value)],"declareStmt") == 0))
 		{
-			ParseTree *idtemp = head;
+			ParseTree *datatype = head->parent->right->child;
 
-			while(idtemp != NULL)
+			if(strcmp(terms[(datatype->value)],"ARRAY") == 0)
 			{
-				if(CheckSymbolPresent(idtemp->n->t->value, scope))
+				ParseTree *index1 = head->parent->right->child->child->child->child;
+				ParseTree *index2 = head->parent->right->child->child->child->right->child;
+				ParseTree *datatypearray = head->parent->right->child->right;
+
+				Index *i1 = (Index *)malloc(sizeof(Index));
+				Index *i2 = (Index *)malloc(sizeof(Index));
+
+				i1->isused = 1;
+				i2->isused = 1;
+
+				if(strcmp(terms[index1->value],"ID") == 0)
 				{
-					fprintf(semantic,"Error 1: Redeclaration of variable %s in the same scope at line no: %d\n",idtemp->n->t->value,idtemp->n->t->lineno);
+					strcpy(i1->id,index1->n->t->value);
+					i1->ifnumvalue = -1;
+					i1->isDynamic = 1;
 				}
-				else
+				else // INDEX1 is num
 				{
-					if(strcmp("INTEGER",terms[head->parent->right->child->value])==0)
-					{
-						HashInsert(head->n->t->value,"INTEGER",scope,"-");
-					}
-					else if(strcmp("REAL",terms[head->parent->right->child->value])==0)
-					{
-						HashInsert(head->n->t->value,"REAL",scope,"-");
-					}
-					else if(strcmp("BOOLEAN",terms[head->parent->right->child->value])==0)
-					{
-						HashInsert(head->n->t->value,"BOOLEAN",scope,"-");
-					}
-					else if(strcmp("ARRAY",terms[head->parent->right->child->value])==0)
-					{
-						int flagIndex1=0; // Zero is static
-						int flagIndex2=0; // One if dynamic
-
-						ParseTree *index1 = head->parent->right->child->child->child->child;
-						ParseTree *index2 = head->parent->right->child->child->child->right->child;
-
-						if(strcmp("ID",terms[index1->value])==0)
-							flagIndex1=1;
-						else
-							flagIndex1=0;
-
-						if(strcmp("ID",terms[index2->value])==0)
-							flagIndex1=1;
-						else
-							flagIndex1=0;
-
-						// if array is static
-						if((flagIndex1 == 0) && (flagIndex2 == 0))
-						{
-							int i1 = atoi(index1->n->t->value);
-							int i2 = atoi(index2->n->t->value);
-
-							int arrayrange = i2 - i1 + 1;
-
-							char arrayrangestring[10];
-
-							sprintf(arrayrangestring,"%d",arrayrange);
-
-							char type[30];
-
-							ParseTree *arraytype = head->parent->right->child->right;
-
-							if(strcmp("INTEGER",terms[arraytype->value])==0)
-							{
-								strcat(type, "ARRAY(INTEGER, ");
-								strcat(type, arrayrangestring);
-								strcat(type, ")");
-								HashInsert(head->n->t->value,type,scope,"-");
-							}
-							else if(strcmp("REAL",terms[arraytype->value])==0)
-							{
-								strcat(type, "ARRAY(REAL, ");
-								strcat(type, arrayrangestring);
-								strcat(type, ")");
-								HashInsert(head->n->t->value,type,scope,"-");
-							}
-							else if(strcmp("BOOLEAN",terms[arraytype->value])==0)
-							{
-								strcat(type, "ARRAY(BOOLEAN, ");
-								strcat(type, arrayrangestring);
-								strcat(type, ")");
-								HashInsert(head->n->t->value,type,scope,"-");
-							}
-						}
-						// if array is dynamic
-						else
-						{
-
-						}
-					}
+					int value = atoi(index1->n->t->value);
+					strcpy(i1->id,"NUM");
+					i1->ifnumvalue = value;
+					i1->isDynamic = 0;
 				}
-				idtemp = idtemp->right;
+
+				if(strcmp(terms[index2->value],"ID") == 0)
+				{
+					strcpy(i2->id,index2->n->t->value);
+					i2->ifnumvalue = -1;
+					i2->isDynamic = 1;
+				}
+				else // INDEX2 is num
+				{
+					int value = atoi(index2->n->t->value);
+					strcpy(i2->id,"NUM");
+					i2->ifnumvalue = value;
+					i2->isDynamic = 0;
+				}
+
+				//             ID name   Usage: Variable  Datatype  isArray
+				AddEntry(head->n->t->value, 1, terms[datatype->value], 1, i1, i2, head->n->t->lineno, scope, errors);
+
 			}
+			else // Non array INTEGER | REAL | BOOLEAN 
+			{	
+				Index *i1 = (Index *)malloc(sizeof(Index));
+				Index *i2 = (Index *)malloc(sizeof(Index));
+
+				i1->isused = 0;
+				i2->isused = 0;
+
+				//              ID name  Usage: Variable  Datatype  Not array 
+				AddEntry(head->n->t->value, 1, terms[datatype->value], 0, i1, i2, head->n->t->lineno, scope, errors);
+			}
+		}
+		else if(strcmp(terms[(head->parent->value)],"input_plist") == 0)
+		{
 
 		}
+		else if(strcmp(terms[(head->parent->value)],"output_plist") == 0)
+		{
 
-		// inputplist
+		}
+		else if(strcmp(terms[(head->parent->value)],"module") == 0)
+		{
 
-		// outputplist
+		}
+		else if(strcmp(terms[(head->parent->value)],"moduleDeclarations") == 0)
+		{
 
-		// moduleReuseStmt
-
-		// expression Type Checker 
+		}
+		else
+		{
+			// moduleReuseStmt
+		}
+		// some condition
 	}
-	populateSymbolTable(semantic, head->right, scope);
+	else
+	{
+		// Statements 
+
+		// caseStmts
+
+		// module 
+
+		// driverModule
+
+		// iterativeStmt
+	}
+	ConstructSymbolTable(head->right, scope, errors);
 }
-void displaySymbolTable()
+
+void printSymbolTable(SymbolTable *head)
 {
-	
+
 }
 
 /* MAIN Functions END */ 
