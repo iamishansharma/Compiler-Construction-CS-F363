@@ -73,6 +73,16 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 
 }
 
+void CheckVariableinST(ParseTree *Var, int *errors)
+{
+
+}
+
+void CheckFunctioninST(ParseTree *Func, int *errors)
+{
+	
+}
+
 void TypeChecker(ParseTree *head, SymbolTable *table, int *errors)
 {
 
