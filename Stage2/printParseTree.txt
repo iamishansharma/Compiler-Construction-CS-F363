@@ -398,7 +398,7 @@ statements 			 ---- 			 30 			 START 			 ---- 			 moduleDef 			 No
 ---- 			 EPSILON 			 32 			 END 			 ---- 			 statements 			 Yes
 ---- 			 END 			 30 			 START 			 ---- 			 moduleDef 			 Yes
 otherModules 			 ---- 			 27 			 DEF 			 ---- 			 otherModules 			 No
----- 			 EPSILON 			 43 			 DOLLAR 			 ---- 			 otherModules 			 Yes
+---- 			 EPSILON 			 32 			 DOLLAR 			 ---- 			 otherModules 			 Yes
 
 
 *************************************************************************************** 

@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 
 	SymbolTable *Table;
 
-	int scopeError;
+	int scopeError = 0;
 
 	if(argc!=4)
 	{
@@ -129,8 +129,8 @@ int main(int argc, char *argv[])
 	do
 	{
 		printf("\n\n************************* %sERPLAG Compiler Stage2%s ***************************\n",BOLDYELLOW,RESET);
-		printf("%sBatch 14:%s Ishan Sharma 2016B2A70773P | Sarthak Sahu 2015B5A70749P\n",BOLDRED,RESET);
-		printf("\t  Anirudh Garg 2017A7PS0142P | Sanjeev Singla 2017A7PS0152P\n\n");
+		printf("%sBatch 14:%s | Ishan Sharma 2016B2A70773P | Sarthak Sahu 2015B5A70749P   |\n",BOLDRED,RESET);
+		printf("\t  | Anirudh Garg 2017A7PS0142P | Sanjeev Singla 2017A7PS0152P |\n\n");
 		printf("Status:  \n");
 		printf("\t1. AST is being generated as required\n");
 		printf("\t2. Symbol Table is being populated as required.\n");
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 					printf("\n\nNo of Parse Tree Nodes: %d\n",ParseTreeCount[0]);
 					printf("No of AST Nodes: %d\n\n", ASTCount[0]);
 					comper = (((float)ParseTreeCount[0] - (float)ASTCount[0]) / (float)ParseTreeCount[0])*100;
-					printf("Compression Percentage: %f\n",comper);
+					printf("Compression Percentage: %f",comper);
 
 					// Symbol Table: 
 

@@ -104,16 +104,9 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 			}
 			else
 			{
-				if(scope->parent != NULL)
-				{
-					printf("%sError: %s The identifier '%s' at line no %d cannot declared multiple times in the same scope.\n", BOLDRED, RESET, id, line);
-					foundornot = 0;
-				}
-				else
-				{
-					printf("%sError: %s Module Overloading for module '%s' at line no %d is not supported.\n", BOLDRED, RESET, id, line);
-					foundornot = 0;
-				}
+				printf("%sError: %s The identifier '%s' at line no %d cannot declared multiple times in the same scope.\n", BOLDRED, RESET, id, line);
+				foundornot = 1; // FOUND already, therefore don't insert in table
+				errors++;
 			}
 		}
 		entrylist = entrylist->next;
@@ -347,7 +340,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 
 					if(strcmp(terms[(datatype->value)],"ARRAY") == 0)
 					{
-						printf("\n\nARRAY ID: %s | Scope: %s", head->n->t->value, scope->name);
+						//printf("\n\nARRAY ID: %s | Scope: %s", head->n->t->value, scope->name);
 						//printf("\n\nInside array\n\n");
 
 						ParseTree *index1 = head->parent->right->child->right->child->child;
@@ -395,7 +388,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					else // Non array INTEGER | REAL | BOOLEAN 
 					{	
 						//printf("\nHello Sar Inside Datatype \n");
-						printf("\n\n%s ID: %s | Scope: %s",terms[datatype->value], head->n->t->value, scope->name);
+						//printf("\n\n%s ID: %s | Scope: %s",terms[datatype->value], head->n->t->value, scope->name);
 
 						Index *i1 = (Index *)malloc(sizeof(Index));
 						Index *i2 = (Index *)malloc(sizeof(Index));
@@ -419,7 +412,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 
 					if(strcmp(terms[(datatype->value)],"ARRAY") == 0)
 					{
-						printf("\n\nARRAY IPL: %s | Scope: %s",head->n->t->value, scope->name);
+						//printf("\n\nARRAY IPL: %s | Scope: %s",head->n->t->value, scope->name);
 						//printf("\n\nInside array\n\n");
 
 						ParseTree *index1 = head->parent->right->child->right->child->child;
@@ -465,7 +458,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					}
 					else // Non array INTEGER | REAL | BOOLEAN 
 					{	
-						printf("\n\n%s IPL: %s | Scope: %s | ScopeParent: %s", terms[datatype->value], head->n->t->value, scope->name, scope->parent->name);
+						//printf("\n\n%s IPL: %s | Scope: %s | ScopeParent: %s", terms[datatype->value], head->n->t->value, scope->name, scope->parent->name);
 
 						//printf("\nHello Sar Inside Datatype \n");
 						Index *i1 = (Index *)malloc(sizeof(Index));
@@ -499,7 +492,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					i1->ifnumvalue = -1;
 					i2->ifnumvalue = -1;
 
-					printf("\n\n%s OPL: %s | Scope: %s | ScopeParent: %s", terms[datatype->value], head->n->t->value, scope->name, scope->parent->name);
+					//printf("\n\n%s OPL: %s | Scope: %s | ScopeParent: %s", terms[datatype->value], head->n->t->value, scope->name, scope->parent->name);
 
 					//printf("\n\nID: %s | Datatype: %s | Scopename: %s\n\n",head->n->t->value, terms[datatype->value], scope->name);
 					
@@ -519,7 +512,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					i2->ifnumvalue = -1;
 
 					AddEntry(head->n->t->value, 2, "N.A", 0, i1, i2, head->n->t->lineno, scope, errors);
-					printf("\n\nModuleDef: %s | Scope: %s | ScopeParent: %s", head->n->t->value, scope->name, scope->parent->name);
+					//printf("\n\nModuleDef: %s | Scope: %s | ScopeParent: %s", head->n->t->value, scope->name, scope->parent->name);
 				}
 				else if(strcmp(terms[(head->parent->value)],"moduleDeclarations") == 0)
 				{
@@ -534,11 +527,12 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 
 					AddEntry(head->n->t->value, 5, "N.A", 0, i1, i2, head->n->t->lineno, scope, errors);
 
-					printf("\n\nModuleDec: %s | Scope: %s | ScopeParent: %s", head->n->t->value, scope->name, scope->parent->name);
+					//printf("\n\nModuleDec: %s | Scope: %s | ScopeParent: %s", head->n->t->value, scope->name, scope->parent->name);
 				}
 				else
 				{
 					int found;
+
 					if(strcmp(terms[(head->parent->value)],"moduleReuseStmt") == 0)
 					{
 						found = FindEntry(head->n->t->value, scope, head->n->t->lineno, 1, errors);
@@ -554,25 +548,25 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 				if(strcmp(terms[(head->value)],"conditionalStmt") == 0)
 				{
 					newScope = ScopeEntry(scope, head->child->n->t->value);
-					printf("\n\nConditional change -> newScope: %s", newScope->name);
+					//printf("\n\nConditional change -> newScope: %s", newScope->name);
 					ConstructSymbolTable(head, newScope, errors);
 				}
 				else if(strcmp(terms[(head->value)],"module") == 0)
 				{
 					newScope = ScopeEntry(scope, head->child->n->t->value);
-					printf("\n\nFunctional change -> newScope: %s", newScope->name);
+					//printf("\n\nFunctional change -> newScope: %s", newScope->name);
 					ConstructSymbolTable(head, newScope, errors);
 				}
 				else if(strcmp(terms[(head->value)],"driverModule") == 0)
 				{
 					newScope = ScopeEntry(scope, "DRIVER");
-					printf("\n\nDriver change -> newScope: %s", newScope->name);
+					//printf("\n\nDriver change -> newScope: %s", newScope->name);
 					ConstructSymbolTable(head, newScope, errors);
 				}
 				else if(strcmp(terms[(head->value)],"iterativeStmt") == 0)
 				{
 					newScope = ScopeEntry(scope, head->child->n->t->value);
-					printf("\n\nIterative -> newScope: %s", newScope->name);
+					//printf("\n\nIterative -> newScope: %s", newScope->name);
 					ConstructSymbolTable(head, newScope, errors);
 					//printf("\n\nFOR change -> Scope: %s | ScopeParent: %s", scope->name, scope->parent->name);
 				}
