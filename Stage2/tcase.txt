@@ -30,3 +30,14 @@ returns [x: integer, abc: real];
 start
 
 end
+
+** symbol table entries -> 
+
+num, a, k, flag -> driver
+a, b -> mod1
+x, abc -> mod1
+a, b -> mod2
+x, abc -> mod2
+
+mod1 -> global
+mod2 -> global **

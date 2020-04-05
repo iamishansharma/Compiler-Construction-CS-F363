@@ -13,6 +13,46 @@
 
 */
 
+/* START COLOR DEFINE */
+
+#ifndef RESET
+#define RESET   "\033[0m"
+#endif
+
+#ifndef BOLDBLACK
+#define BOLDBLACK   "\033[0m\033[30m"      /* Bold Black */
+#endif
+
+#ifndef BOLDRED
+#define BOLDRED     "\033[0m\033[31m"      /* Bold Red */
+#endif
+
+#ifndef BOLDGREEN
+#define BOLDGREEN   "\033[0m\033[32m"      /* Bold Green */
+#endif
+
+#ifndef BOLDYELLOW
+#define BOLDYELLOW  "\033[0m\033[33m"      /* Bold Yellow */
+#endif
+
+#ifndef BOLDBLUE
+#define BOLDBLUE    "\033[0m\033[34m"      /* Bold Blue */
+#endif
+
+#ifndef BOLDMAGENTA
+#define BOLDMAGENTA "\033[0m\033[35m"      /* Bold Magenta */
+#endif
+
+#ifndef BOLDCYAN
+#define BOLDCYAN    "\033[0;36m"      /* Bold Cyan */
+#endif
+
+#ifndef BOLDWHITE
+#define BOLDWHITE   "\033[0m\033[37m"      /* Bold White */
+#endif
+
+/* END COLOR DEFINE */
+
 #ifndef LEXER_DEF_H
 #define LEXER_DEF_H
 

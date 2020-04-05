@@ -1,6 +1,9 @@
 <<<driver program>>>
 start
-    declare num, a, k:integer;
-    declare A:array [1..10] of integer;
+    declare num:integer;
+    declare k:real;
+    declare a:boolean;
+    declare A:array [a..k] of integer;
+
     num := (k-a*a+k);
 end

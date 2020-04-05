@@ -13,13 +13,17 @@
 
 */
 
+// Stage 1 header files ->
+
 #include "parser.h"
 #include "lexer.h"
 #include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include <sys/types.h>
-//Stage 2 header files ->
+
+// Stage 2 header files ->
+
 #include "ast.h"
 #include "SymbolTable.h"
 #include "TypeChecker.h"
@@ -103,6 +107,7 @@ int main(int argc, char *argv[])
 	FILE *semantic = fopen("Type&Semantics.txt","w+");
 
 	int ParseTreeCount[1]={0};
+
 	int ASTCount[1]={0};
 
 	float comper;
@@ -110,6 +115,10 @@ int main(int argc, char *argv[])
 	char scope[100];
 
 	int option=-1;
+
+	SymbolTable *Table;
+
+	int scopeError;
 
 	if(argc!=4)
 	{
@@ -119,7 +128,9 @@ int main(int argc, char *argv[])
 
 	do
 	{
-		printf("\n\n********* ERPlAG Compiler Stage1 *********\n\n");
+		printf("\n\n************************* %sERPLAG Compiler Stage2%s ***************************\n",BOLDYELLOW,RESET);
+		printf("%sBatch 14:%s Ishan Sharma 2016B2A70773P | Sarthak Sahu 2015B5A70749P\n",BOLDRED,RESET);
+		printf("\t  Anirudh Garg 2017A7PS0142P | Sanjeev Singla 2017A7PS0152P\n\n");
 		printf("Status:  \n");
 		printf("\t1. AST is being generated as required\n");
 		printf("\t2. Symbol Table is being populated as required.\n");
@@ -137,7 +148,7 @@ int main(int argc, char *argv[])
 
 		switch(option)
 		{
-			case 0: 
+			case 0: printf("%sExiting, Thank you for using the compiler!\n%s",BOLDGREEN,RESET);
 					break;
 
 			case 1:
@@ -159,12 +170,13 @@ int main(int argc, char *argv[])
 					F=ComputeFirst(F,G);
 					F=ComputeFollow(F,G);
 					T=createParseTable(F,T,G);
+					printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
 					parseInputSourceCode(f4,T,G,f9);
 					temphead=returnhead();
 					countNodes(temphead, ParseTreeCount);
 					printParseTree(f2);
-					fprintf(f2,"\n\n *************************************************************************************** \n\n");
-					fprintf(f2, "\n AST: \n\n");
+					fprintf(f2,"\n\n*************************************************************************************** \n\n");
+					fprintf(f2, "\nAST: \n\n");
 
 					// Making nad printing AST here:
 
@@ -179,9 +191,18 @@ int main(int argc, char *argv[])
 					comper = (((float)ParseTreeCount[0] - (float)ASTCount[0]) / (float)ParseTreeCount[0])*100;
 					printf("Compression Percentage: %f\n",comper);
 
-					// Type Checking and Symbol Table: 
+					// Symbol Table: 
 
-					// CallingSymbolTable(ParseTree *head, int *errors)
+					Table = CallingSymbolTable(temphead, &scopeError);
+
+					printf("\n\n**********************************   %sSYMBOL TABLE%s   ******************************************\n", BOLDRED, RESET);
+					printf("----------------------------------------------------------------------------------------------\n");
+					printf("IDENTIFIER \t USAGE \t\t TYPE \t     LINE NO. \t SCOPE \t     NESTING   WIDTH   OFFSET\n");
+					printf("----------------------------------------------------------------------------------------------\n");
+
+					printSymbolTable(Table);
+
+					printf("**********************************************************************************************\n");
 
 					removedollar(argv[1]);
 					fclose(f4);

@@ -68,7 +68,7 @@ typedef struct index Index;
 
 struct symbolnode
 {
-	char idname[30];
+	char name[30];
 
 	int usage;
 	// ^^^^^^^^^^^
@@ -79,7 +79,7 @@ struct symbolnode
 	// 5. Function Declaration
 	// 6. Function Def and Dec
 
-	char type[25];
+	char type[30];
 
 	int isArray;
 

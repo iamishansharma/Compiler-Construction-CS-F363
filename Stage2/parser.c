@@ -825,7 +825,7 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 			fprintf(fs,"%s ",terms[stack[i]]);
 		}*/
 		//fprintf(fs,"\n");
-		printf("\n\tParsing successfully for input file....!");
+		printf("\n%s\t1. No Lexical or Syntactical Errors Found.%s",BOLDMAGENTA,RESET);
 		//fprintf(fs,"\n\tParsing successfully for input file....!");
 	}
 }
