@@ -1,5 +1,5 @@
 NodeSymbol			Lexeme			Line No			Node Token			ValueIfNumber			Parent			isleaf
-program 			 ---- 			 1 			 PROGRAM 			 ---- 			 ROOT 			 Yes
+program 			 ---- 			 1 			 PROGRAM 			 ---- 			 ROOT 			 No
 moduleDeclarations 			 ---- 			 1 			 DECLARE 			 ---- 			 program 			 No
 moduleDeclaration 			 ---- 			 1 			 DECLARE 			 ---- 			 moduleDeclarations 			 No
 ---- 			 DECLARE 			 1 			 DECLARE 			 ---- 			 moduleDeclaration 			 Yes
@@ -144,7 +144,7 @@ otherModules 			 ---- 			 10 			 DEF 			 ---- 			 otherModules 			 No
 AST: 
 
 NodeSymbol			Lexeme			Line No			Node Token			ValueIfNumber			Parent			isleaf
-program 			 ---- 			 1 			 PROGRAM 			 ---- 			 ROOT 			 Yes
+program 			 ---- 			 1 			 PROGRAM 			 ---- 			 ROOT 			 No
 moduleDeclarations 			 ---- 			 1 			 DECLARE 			 ---- 			 program 			 No
 ID 			 mod1 			 1 			 ID 			 ---- 			 moduleDeclarations 			 Yes
 driverModule 			 ---- 			 1 			 DECLARE 			 ---- 			 program 			 No
