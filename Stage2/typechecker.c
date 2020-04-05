@@ -11,6 +11,11 @@
 	Anirudh Garg 2017A7PS0142P
 	Sanjeev Singla 2017A7PS0152P
 
+	Type Checking Semantics ->
+	
+	1. Every variable should be in symbol table during use.
+	2. Every module should have defination / declaration during use.
+	3.
 */
 
 #include "TypeChecker.h"
