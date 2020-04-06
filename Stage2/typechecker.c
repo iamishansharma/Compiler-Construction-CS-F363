@@ -23,6 +23,11 @@
 #include "SymbolTableDef.h"
 #include "SymbolTable.h"
 
+/********************************************************************************************************************************/
+/********************************************************************************************************************************/
+
+/* Auxilary Functions */
+
 void CheckArray(ParseTree *arrayid, int *errors)
 {
 
@@ -53,11 +58,6 @@ void CheckOPL(SymbolEntry *mod, SymbolTable *table, ParseTree *OPL, int *errors)
 
 }
 
-void CallingTypeChecker(ParseTree *head, SymbolTable *table, int *errors)
-{
-
-}
-
 void CheckIOStmt(ParseTree *IO, int *errors)
 {
 
@@ -83,7 +83,24 @@ void CheckFunctioninST(ParseTree *Func, int *errors)
 	
 }
 
+/* Auxilary Functions END */
+
+/********************************************************************************************************************************/
+/********************************************************************************************************************************/
+
+/* MAIN Functions */
+
+void CallingTypeChecker(ParseTree *head, SymbolTable *table, int *errors)
+{
+
+}
+
 void TypeChecker(ParseTree *head, SymbolTable *table, int *errors)
 {
 
 }
+
+/* MAIN Functions END */
+
+/********************************************************************************************************************************/
+/********************************************************************************************************************************/

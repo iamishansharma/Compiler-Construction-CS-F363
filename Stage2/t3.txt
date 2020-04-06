@@ -11,5 +11,5 @@ end
 takes input [a: integer, b: integer]; 
 returns [x: integer, abc: real]; 
 start
-    
+    declare a
 end

@@ -7,7 +7,8 @@ start
     num := -(k-a*a+k);
     switch(flag)
     start
-    	case false: print(100);
+    	case false: declare k:real;
+                    print(100);
     				break;
     	case true: use module mod1 with parameters a, k;
                     break;
@@ -28,5 +29,5 @@ end
 takes input [a: integer, b: integer]; 
 returns [x: integer, abc: real]; 
 start
-
+    declare B:array [1..10] of integer;
 end

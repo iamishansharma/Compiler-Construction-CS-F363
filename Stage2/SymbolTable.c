@@ -16,6 +16,7 @@
 #include "ast.h"
 #include "SymbolTable.h"
 
+SymbolTable *globaltable;
 int offset = 0;
 
 /********************************************************************************************************************************/
@@ -32,9 +33,6 @@ SymbolTable *ScopeEntry(SymbolTable *table, char *scopename)
 	newTable->right = NULL;
 	newTable->left = NULL;
 	newTable->nodehead = NULL;
-
-	if(table != NULL && table->parent == NULL)
-		offset = 0;
 
 	// Insert scope in tree
 
@@ -100,13 +98,13 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 			// pehle Se Table mei entry hai for function declaration
 			{
 				entrylist->usage = 6;
-				entrylist->lineno = line;
+				foundornot = 1;
 			}
 			else
 			{
-				printf("%sError: %s The identifier '%s' at line no %d cannot declared multiple times in the same scope.\n", BOLDRED, RESET, id, line);
+				printf("%s\tError: %s The identifier '%s' at line no %d cannot declared multiple times in the same scope.\n", BOLDRED, RESET, id, line);
 				foundornot = 1; // FOUND already, therefore don't insert in table
-				errors++;
+				*errors = 1;
 			}
 		}
 		entrylist = entrylist->next;
@@ -306,7 +304,9 @@ SymbolTable *CallingSymbolTable(ParseTree *head, int *errors)
 {
 	SymbolTable *table;
 
-	table = ScopeEntry(NULL, "GLOBAL");
+	table = ScopeEntry(NULL, "global");
+
+	globaltable = table;
 
 	printf("\n\n");
 
@@ -511,7 +511,8 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					i1->ifnumvalue = -1;
 					i2->ifnumvalue = -1;
 
-					AddEntry(head->n->t->value, 2, "N.A", 0, i1, i2, head->n->t->lineno, scope, errors);
+					//printf("\n\nModuleDef: %s | Scope: %s | ScopeParent: %s", head->n->t->value, scope->name, scope->parent->name);
+					AddEntry(head->n->t->value, 2, "N.A", 0, i1, i2, head->n->t->lineno, globaltable, errors);
 					//printf("\n\nModuleDef: %s | Scope: %s | ScopeParent: %s", head->n->t->value, scope->name, scope->parent->name);
 				}
 				else if(strcmp(terms[(head->parent->value)],"moduleDeclarations") == 0)
@@ -531,7 +532,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 				}
 				else
 				{
-					int found;
+					/*int found;
 
 					if(strcmp(terms[(head->parent->value)],"moduleReuseStmt") == 0)
 					{
@@ -540,7 +541,9 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					else
 					{
 						found = FindEntry(head->n->t->value, scope, head->n->t->lineno, 0, errors);
-					}
+					}*/
+
+					// ^ Yeh Type Checking mei karenge. 
 				}
 			}
 			else
@@ -559,7 +562,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 				}
 				else if(strcmp(terms[(head->value)],"driverModule") == 0)
 				{
-					newScope = ScopeEntry(scope, "DRIVER");
+					newScope = ScopeEntry(scope, "driver");
 					//printf("\n\nDriver change -> newScope: %s", newScope->name);
 					ConstructSymbolTable(head, newScope, errors);
 				}

@@ -698,14 +698,14 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 			exit(0);
 		}
 
-		fprintf(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");
+		//(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");
 
 		for(int i=top; i>=0; i--)
 		{
-			fprintf(fs,"%s ",terms[stack[i]]);
+			//fprintf(fs,"%s ",terms[stack[i]]);
 		}
 
-		fprintf(fs,"\n\n");
+		//fprintf(fs,"\n\n");
 		
 		int X=stack[top];
 
@@ -716,11 +716,11 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 
 		int a=compareTerm(n->t->token);
 
-		fprintf(fs,"Top of stack: %s | Input Token: %s | Input Token Lexeme: %s\n",terms[X],terms[a],n->t->value);
+		//fprintf(fs,"Top of stack: %s | Input Token: %s | Input Token Lexeme: %s\n",terms[X],terms[a],n->t->value);
 
 		if(X==a)
 		{
-			fprintf(fs,"ACTION: Popping top of stack because same terminal found at input\n");
+			//fprintf(fs,"ACTION: Popping top of stack because same terminal found at input\n");
 			pop();
 
 			if(strcmp(terms[a],"ID")==0)
@@ -781,9 +781,9 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 				insert_in_tree(internode,T.table[X][a-NTER],G,n);
 			}
 
-			fprintf(fs,"Entry exists in Parse Table\n");
+			//fprintf(fs,"Entry exists in Parse Table\n");
 
-			fprintf(fs,"Rule no to use in grammar.txt: %d | X = %s | a-NTER = %d \n",T.table[X][a-NTER],terms[X],a-NTER);
+			//fprintf(fs,"Rule no to use in grammar.txt: %d | X = %s | a-NTER = %d \n",T.table[X][a-NTER],terms[X],a-NTER);
 
 			pop();
 
@@ -794,7 +794,7 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 
 			int glno=T.table[X][a-NTER];
 
-			fprintf(fs,"\nPushing these on stack now: \n");
+			//fprintf(fs,"\nPushing these on stack now: \n");
 
 			for(int f=29; f>0 ;f--)
 			{
@@ -805,39 +805,39 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 				else
 				{
 					push(G.gnum[glno][f]);
-					fprintf(fs,"%s ",terms[G.gnum[glno][f]]);
+					//fprintf(fs,"%s ",terms[G.gnum[glno][f]]);
 				}
-				fprintf(fs,"\n");
+				//fprintf(fs,"\n");
 			}
 		}
 		X=stack[top];
-		fprintf(fs,"\n");
+		//fprintf(fs,"\n");
 	}
 	if(stack[top]==3)
 	{
-		fprintf(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");
+		//fprintf(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");
 		for(int i=top; i>=0; i--)
 		{
-			fprintf(fs,"%s ",terms[stack[i]]);
+			//fprintf(fs,"%s ",terms[stack[i]]);
 		}
 		ParseTree *internode=(ParseTree *)malloc(sizeof(ParseTree));
 		internode = searchposition(head,stack[top]);
 		//printf("Searched node = %s | Rule No: %d \n",terms[internode->value],6);
 		insert_in_tree(internode,6,G,n);
-		fprintf(fs,"\n\n");
+		//fprintf(fs,"\n\n");
 		pop();
-		fprintf(fs,"\notherModules not used hence popping it!\n\n");
+		//fprintf(fs,"\notherModules not used hence popping it!\n\n");
 	}
 	if(stack[top]==DOL)
 	{
-		fprintf(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");
+		//fprintf(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");
 		for(int i=top; i>=0; i--)
 		{
-			fprintf(fs,"%s ",terms[stack[i]]);
+			//fprintf(fs,"%s ",terms[stack[i]]);
 		}
-		fprintf(fs,"\n");
-		printf("\n%s\t1. No Lexical or Syntactical Errors Found.%s",BOLDMAGENTA,RESET);
-		fprintf(fs,"\n\tParsing successfully for input file....!");
+		//fprintf(fs,"\n");
+		printf("\n%s\t1. No Lexical or Syntactical Errors Found.%s",BOLDWHITE,RESET);
+		//fprintf(fs,"\n\tParsing successfully for input file....!");
 	}
 }
 
