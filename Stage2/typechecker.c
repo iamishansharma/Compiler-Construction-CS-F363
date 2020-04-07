@@ -13,9 +13,7 @@
 
 	Type Checking Semantics ->
 	
-	1. Every variable should be in symbol table during use.
-	2. Every module should have defination / declaration during use.
-	3.
+	1.
 */
 
 #include "TypeChecker.h"
@@ -73,14 +71,17 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 
 }
 
-void CheckVariableinST(ParseTree *Var, int *errors)
+int CheckVariableinST(ParseTree *Var, int *errors)
 {
-
+	int found = 0; 
+	// 0 - not found
+	// 1 - found as variable
+	return 0;
 }
 
-void CheckFunctioninST(ParseTree *Func, int *errors)
+int CheckFunctioninST(ParseTree *Func, int *errors)
 {
-	
+	return 0;
 }
 
 /* Auxilary Functions END */
@@ -92,12 +93,21 @@ void CheckFunctioninST(ParseTree *Func, int *errors)
 
 void CallingTypeChecker(ParseTree *head, SymbolTable *table, int *errors)
 {
-
+	TypeChecker(head, table, errors);
 }
 
 void TypeChecker(ParseTree *head, SymbolTable *table, int *errors)
 {
+	if(head == NULL)
+		return;
 
+	if(strcmp(terms[head->value],"ID") == 0)
+	{
+		//printf("\n ID: %s | IDParent: %s | Scope: %s | ParentScope: %s", head->entry->name, terms[head->parent->value], head->entry->scope->name, head->entry->scope->parent->name);
+	}
+
+	TypeChecker(head->child, table, errors);
+	TypeChecker(head->right, table, errors);
 }
 
 /* MAIN Functions END */

@@ -122,6 +122,9 @@ int main(int argc, char *argv[])
 
 	int typeErrors = 0;
 
+	int sizePT = 0;
+	int sizeAST = 0;
+
 	if(argc!=4)
 	{
 		printf("Too few/many arguments, exiting! Please enter in format as ./compiler *.txt {<- test case file} *.asm {<- machine code file}");
@@ -145,7 +148,7 @@ int main(int argc, char *argv[])
 		printf("\t2. Parse the input file and write the Parse Tree into a file.\n");
 		printf("\t3. Create Abstract Syntax Tree and print it in a file.\n");
 		printf("\t4. Display the sizes and compression percentage for Parse Tree and AST.\n");
-		printf("\t5. Create and display the Symbol Table. (Also displays variable defination errors {if any}).\n");
+		printf("\t5. Create and display the Symbol Table. (Also displays identifier declaration errors {if any}).\n");
 		printf("\t6. Parse the file for type checking and semantic analysis. (Displays errors {if any}).\n");
 		printf("\t7. Generate Assembly Code.\n\n");
 		printf("Enter your option here: ");
@@ -184,7 +187,6 @@ int main(int argc, char *argv[])
 			case 3: 
 					fputc('$',f1);
 					fclose(f1);
-					//FILE *f4=fopen(argv[1],"r"); // now reading that file
 					G=getGrammar(f3);
 					F=ComputeFirst(F,G);
 					F=ComputeFollow(F,G);
@@ -211,7 +213,6 @@ int main(int argc, char *argv[])
 			case 4: 
 					fputc('$',f1);
 					fclose(f1);
-					//FILE *f4=fopen(argv[1],"r"); // now reading that file
 					G=getGrammar(f3);
 					F=ComputeFirst(F,G);
 					F=ComputeFollow(F,G);
@@ -222,6 +223,8 @@ int main(int argc, char *argv[])
 					countNodes(temphead, ParseTreeCount);
 					//printParseTree(f2);
 
+					sizePT = sizeof(temphead);
+
 					// Making and printing AST here:
 
 					callingAST(temphead);
@@ -230,10 +233,14 @@ int main(int argc, char *argv[])
 
 					// Printing the compression percentage: 
 
-					printf("\n\nNo of Parse Tree Nodes: %d\n",ParseTreeCount[0]);
-					printf("No of AST Nodes: %d\n\n", ASTCount[0]);
+					sizeAST = sizeof(temphead);
+
+					printf("\n\n****************************************************************************");
+					printf("\n\tNo of Parse Tree Nodes: %d || Size of ParseTree: %d bytes\n",ParseTreeCount[0], ParseTreeCount[0]*sizePT);
+					printf("\tNo of AST Nodes: %d || Size of AST: %d bytes\n", ASTCount[0], ASTCount[0]*sizeAST);
 					comper = (((float)ParseTreeCount[0] - (float)ASTCount[0]) / (float)ParseTreeCount[0])*100;
-					printf("%sCompression Percentage:%s %0.2f %s",BOLDCYAN,RESET,comper,"%");
+					printf("%s\tCompression Percentage:%s %0.2f %s",BOLDCYAN,RESET,comper,"%");
+					printf("\n****************************************************************************");
 
 					removedollar(argv[1]);
 					fclose(f4);
@@ -243,7 +250,6 @@ int main(int argc, char *argv[])
 			case 5:
 					fputc('$',f1);
 					fclose(f1);
-					//FILE *f4=fopen(argv[1],"r"); // now reading that file
 					G=getGrammar(f3);
 					F=ComputeFirst(F,G);
 					F=ComputeFollow(F,G);
@@ -289,7 +295,6 @@ int main(int argc, char *argv[])
 
 					fputc('$',f1);
 					fclose(f1);
-					//FILE *f4=fopen(argv[1],"r"); // now reading that file
 					G=getGrammar(f3);
 					F=ComputeFirst(F,G);
 					F=ComputeFollow(F,G);
@@ -330,7 +335,8 @@ int main(int argc, char *argv[])
 					// Type Checking:
 
 					printf("\n%sType Checking Analysis:%s \n",BOLDCYAN,RESET);
-					CallingTypeChecker(temphead, Table, &scopeError);
+
+						CallingTypeChecker(temphead, Table, &typeErrors);
 
 					if(typeErrors == 0)
 						printf("\n%s\t3. No errors found during Type Checking and Semantic Analysis.%s\n", BOLDWHITE, RESET);
@@ -344,7 +350,6 @@ int main(int argc, char *argv[])
 
 					fputc('$',f1);
 					fclose(f1);
-					//FILE *f4=fopen(argv[1],"r"); // now reading that file
 					G=getGrammar(f3);
 					F=ComputeFirst(F,G);
 					F=ComputeFollow(F,G);
@@ -386,7 +391,7 @@ int main(int argc, char *argv[])
 
 					printf("\n%sType Checking Analysis:%s \n",BOLDCYAN,RESET);
 
-					CallingTypeChecker(temphead, Table, &typeErrors);
+						CallingTypeChecker(temphead, Table, &typeErrors);
 
 					if(typeErrors == 0)
 						printf("\n%s\t3. No errors found during Type Checking and Semantic Analysis.%s\n", BOLDWHITE, RESET);
@@ -395,7 +400,6 @@ int main(int argc, char *argv[])
 
 					removedollar(argv[1]);
 					fclose(f4);
-
 					break;
 
 			case 8: 

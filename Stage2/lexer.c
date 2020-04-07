@@ -515,7 +515,7 @@ Node* getNextToken()
 						else
 						{
 							strcpy(newToken->t->token,"Error");
-							newToken->t->value[0]=ch;
+							strcpy(newToken->t->value,"=");
 							newToken->t->lineno=line;
 							//printf("Lexical Error: = at line no: %d\n",line);
 							state = 1;

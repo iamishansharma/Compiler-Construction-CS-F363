@@ -1,5 +1,15 @@
-declare module mod1;
 declare module mod2;
+
+<<module mod1>>
+takes input [a: integer, b: integer]; 
+returns [x: integer, abc: real]; 
+start
+    declare c: real; 
+    c:=10.4; 
+    x:=a+b-10; 
+    abc:=b/5+c;
+end
+
 <<<driver program>>>
 start
     declare num, a, k:integer;
@@ -13,16 +23,6 @@ start
     	case true: use module mod1 with parameters a, k;
                     break;
     end
-end
-
-<<module mod1>>
-takes input [a: integer, b: integer]; 
-returns [x: integer, abc: real]; 
-start
-    declare c: real; 
-    c:=10.4; 
-    x:=a+b-10; 
-    abc:=b/5+c;
 end
 
 <<module mod2>>

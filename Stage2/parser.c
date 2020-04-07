@@ -694,7 +694,7 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 
 		if((strcmp(n->t->token,"Error")==0) || (strcmp(n->t->token,"Error,Id size>20")==0))
 		{
-			//printf("Lexical Error! %s at line no: %d",n->t->value,n->t->lineno);
+			printf("Lexical Error '%s' at line no: %d", n->t->value, n->t->lineno);
 			exit(0);
 		}
 

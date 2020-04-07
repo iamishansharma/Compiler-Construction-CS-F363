@@ -38,8 +38,8 @@ struct parsetree
 	int isVisited;
 	int isleaf;
 
+	SymbolEntry *entry;
 	SymbolTable *scope;
-	SymbolTable *node;
 
 	char type[30];
 
