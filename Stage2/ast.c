@@ -127,6 +127,7 @@ void ConstructAST(ParseTree *head)
 					case 30: // idList_again
 					case 32: // unary
 					case 33: // unary_op
+					case 44: // booleanConstants
 					case 52: // caseStmts_again
 
 								liftUpNode(child);

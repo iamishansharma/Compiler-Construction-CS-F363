@@ -8,6 +8,12 @@ start
     c:=10.4; 
     x:=a+b-10; 
     abc:=b/5+c;
+    declare n,k: integer;
+    for(k in 1..10)
+    start
+        n := x;
+    end
+
 end
 
 <<<driver program>>>
@@ -30,4 +36,10 @@ takes input [a: integer, b: integer];
 returns [x: integer, abc: real]; 
 start
     declare B:array [1..10] of integer;
+    declare flag1:boolean;
+    while(flag1)
+    start
+        declare j:real;
+        flag1 := flag1 + 1;
+    end
 end

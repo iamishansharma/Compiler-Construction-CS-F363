@@ -284,7 +284,8 @@ int main(int argc, char *argv[])
 
 					printSymbolTable(Table);
 
-					printf("***********************************************************************************************\n\n");
+					printf("***********************************************************************************************\n");
+					printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n\n");
 
 					removedollar(argv[1]);
 					fclose(f4);

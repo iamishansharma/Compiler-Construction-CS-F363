@@ -116,19 +116,19 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 
 	if(checkEntry == 1 || checkEntry == 2 || checkEntry == 6)
 	{
-		printf("%s\tError: %s The identifier '%s' at line no %d cannot declared multiple times in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
+		printf("%s\tError: %s The identifier '%s' at line no: %d cannot declared multiple times in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
 		foundornot = 1; // FOUND already, therefore don't insert in table
 		*errors = 1;
 	}
 	else if(checkEntry == 3)
 	{
-		printf("%s\tError: %s The identifier '%s' at line no %d cannot be declared as it is being used as Input Parameters in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
+		printf("%s\tError: %s The identifier '%s' at line no: %d cannot be declared as it is being used as Input Parameters in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
 		foundornot = 1; // FOUND already, therefore don't insert in table
 		*errors = 1;
 	}
 	else if(checkEntry == 4)
 	{
-		printf("%s\tError: %s The identifier '%s' at line no %d cannot be declared as it is being used as Output Parameters in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
+		printf("%s\tError: %s The identifier '%s' at line no: %d cannot be declared as it is being used as Output Parameters in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
 		foundornot = 1; // FOUND already, therefore don't insert in table
 		*errors = 1;
 	}
@@ -149,7 +149,7 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 		}
 		else
 		{
-			printf("%s\tError: %s The identifier '%s' at line no %d cannot declared multiple times in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
+			printf("%s\tError: %s The identifier '%s' at line no: %d cannot declared multiple times in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
 			foundornot = 1; // FOUND already, therefore don't insert in table
 			*errors = 1;
 		}
@@ -590,7 +590,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 
 						if(found == NULL)
 						{
-							printf("%s\tError: %s The module '%s' at line no %d should be declared or defined before its use.\n", BOLDRED, RESET, head->n->t->value, head->n->t->lineno);
+							printf("%s\tError: %s The module '%s' at line no: %d should be declared or defined before its use.\n", BOLDRED, RESET, head->n->t->value, head->n->t->lineno);
 							*errors = 1;
 						}
 						else
@@ -607,7 +607,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 						
 						if(found == NULL)
 						{
-							printf("%s\tError: %s The identifier '%s' at line no %d should be declared before its use.\n", BOLDRED, RESET, head->n->t->value, head->n->t->lineno);
+							printf("%s\tError: %s The identifier '%s' at line no: %d should be declared before its use.\n", BOLDRED, RESET, head->n->t->value, head->n->t->lineno);
 							*errors = 1;
 						}
 						else
