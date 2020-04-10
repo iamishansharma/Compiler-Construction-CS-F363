@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 
 	if(argc!=4)
 	{
-		printf("Too few/many arguments, exiting! Please enter in format as ./compiler *.txt {<- test case file} *.asm {<- machine code file}");
+		printf("Too few/many arguments, exiting! Please enter in format as ./compiler *.txt {<- test case file} *.txt {<- file to print AST/ParseTree} *.asm {<- machine code file}");
 		exit(1);
 	}
 
@@ -159,10 +159,12 @@ int main(int argc, char *argv[])
 			case 0: printf("\n***********************************************\n");
 					printf("%s* Exiting, Thank you for using the compiler! *\n%s",BOLDWHITE,RESET);
 					printf("***********************************************\n");
+					exit(0);
 					break;
 
 			case 1: 
 					printLexer(argv[1]);
+					exit(0);
 					break;
 
 			case 2: 
@@ -181,7 +183,7 @@ int main(int argc, char *argv[])
 
 					removedollar(argv[1]);
 					fclose(f4);
-
+					exit(0);
 					break;
 
 			case 3: 
@@ -207,7 +209,7 @@ int main(int argc, char *argv[])
 
 					removedollar(argv[1]);
 					fclose(f4);
-
+					exit(0);
 					break;
 
 			case 4: 
@@ -244,7 +246,7 @@ int main(int argc, char *argv[])
 
 					removedollar(argv[1]);
 					fclose(f4);
-
+					exit(0);
 					break;
 
 			case 5:
@@ -278,18 +280,20 @@ int main(int argc, char *argv[])
 						printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
 
 					printf("\n**********************************   %sSYMBOL TABLE%s   ******************************************\n", BOLDRED, RESET);
-					printf("----------------------------------------------------------------------------------------------\n");
-					printf("IDENTIFIER \t USAGE \t\t TYPE \t     LINE NO. \t SCOPE \t     NESTING   WIDTH   OFFSET\n");
-					printf("----------------------------------------------------------------------------------------------\n");
+					printf("------------------------------------------------------------------------------------------------------------------------------\n");
+					printf("IDENTIFIER \t USAGE \t\t TYPE \t\tisARRAY      LINE NO. \t SCOPE \t      ParentSCOPE     NESTING   WIDTH   OFFSET\n");
+					printf("------------------------------------------------------------------------------------------------------------------------------\n");
 
 					printSymbolTable(Table);
 
-					printf("***********************************************************************************************\n");
-					printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n\n");
+					printf("------------------------------------------------------------------------------------------------------------------------------\n");
+					printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n");
+					printf("%s** NOTE **%s Symbol Table will be constructed wrong if you have declaration errors.\n",BOLDRED,RESET);
+					printf("\t   Please sort all the above errors before moving forward to TypeChecking and Semantic Analysis.\n\n");
 
 					removedollar(argv[1]);
 					fclose(f4);
-
+					exit(0);
 					break;
 
 			case 6: 
@@ -340,11 +344,11 @@ int main(int argc, char *argv[])
 						CallingTypeChecker(temphead, Table, &typeErrors);
 
 					if(typeErrors == 0)
-						printf("\n%s\t3. No errors found during Type Checking and Semantic Analysis.%s\n", BOLDWHITE, RESET);
+						printf("\n%s\t3. No errors found during Type Checking and Semantic Analysis.%s\n\n", BOLDWHITE, RESET);
 
 					removedollar(argv[1]);
 					fclose(f4);
-
+					exit(0);
 					break;
 
 			case 7: 
@@ -401,14 +405,17 @@ int main(int argc, char *argv[])
 
 					removedollar(argv[1]);
 					fclose(f4);
+					exit(0);
 					break;
 
 			case 8: 
 					system("clear");
+					exit(0);
 					break;
 
 			default:
 					printf("\nWrong option, try again!\n");
+					exit(0);
 					break;
 		}
 
@@ -416,3 +423,5 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+
+

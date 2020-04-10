@@ -1,4 +1,4 @@
-declare module mod2;
+declare module mod1;
 
 <<module mod1>>
 takes input [a: integer, b: integer]; 
@@ -7,7 +7,7 @@ start
     declare c: real; 
     c:=10.4; 
     x:=a+b-10; 
-    abc:=b/5+c;
+    abc:= abc + 1.0;
     declare n,k: integer;
     for(k in 1..10)
     start
@@ -36,10 +36,14 @@ takes input [a: integer, b: integer];
 returns [x: integer, abc: real]; 
 start
     declare B:array [1..10] of integer;
-    declare flag1:boolean;
-    while(flag1)
+    declare C:array [1..10] of integer;
+    declare b1,b2:boolean;
+    x := x - C[2];
+    B := C;
+    B[x] := x;
+    B[3] := C[4] + 3;
+    while(b1)
     start
-        declare j:real;
-        flag1 := flag1 + 1;
+        a := a+1;
     end
 end

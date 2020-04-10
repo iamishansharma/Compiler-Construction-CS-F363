@@ -11,6 +11,8 @@
 	Anirudh Garg 2017A7PS0142P
 	Sanjeev Singla 2017A7PS0152P
 
+	// OFFSET / WIDTH / NESTING CHANGE KARNA HAI
+
 */
 
 #include "ast.h"
@@ -181,8 +183,6 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 
 			if(strcmp(type,"INTEGER") == 0)
 			{
-				//printf("\nHello Sar Inside INTEGER DATATYPE ENTRY\n");
-
 				offset += 2;
 				newEntry->width = 2;
 			}
@@ -284,10 +284,13 @@ void printSymbolTable(SymbolTable *table)
 		}
 
 		char type[30];
+		strcpy(type, EntryList->type);
+
+		char arraytype[30];
 
 		if(EntryList->isArray == 1)
 		{
-			strcpy(type,"ARRAY");
+			strcpy(arraytype,"ARR");
 
 			char index1[10];
 			char index2[10];
@@ -295,14 +298,14 @@ void printSymbolTable(SymbolTable *table)
 			if(EntryList->startindex->isDynamic == 0)
 			{
 				//printf(" \n\n1. Comes here\n\n");
-				sprintf(index1,"(%d..",EntryList->startindex->ifnumvalue);
+				sprintf(index1,"(%d,",EntryList->startindex->ifnumvalue);
 				//printf("\n\n Index1: %s \n\n",index1);
 			}
 			else
 			{
 				strcpy(index1,"(");
 				strcat(index1,EntryList->startindex->id);
-				strcat(index1,"..");
+				strcat(index1,",");
 			}
 			if(EntryList->endindex->isDynamic == 0)
 			{
@@ -321,11 +324,11 @@ void printSymbolTable(SymbolTable *table)
 
 			strcpy(cominx,index1);
 			strcat(cominx,index2);
-			strcat(type,cominx);
+			strcat(arraytype,cominx);
 		}
 		else
 		{
-			strcpy(type, EntryList->type);
+			strcpy(arraytype,"--------");
 		}
 
 		int lineno = EntryList->lineno;
@@ -333,10 +336,17 @@ void printSymbolTable(SymbolTable *table)
 		char scopename[30];
 		strcpy(scopename,EntryList->scope->name);
 
+		char scopeparent[30];
+
+		if(EntryList->scope->parent == NULL)
+			strcpy(scopeparent, "NULL");
+		else
+			strcpy(scopeparent, EntryList->scope->parent->name);
+
 		int width = EntryList->width;
 		int offset = EntryList->offset;
 
-		printf("%s\t\t%s\t%s\t\t%d\t%s\t\t%d\t %d\t% d\n",idname,usagename,type,lineno,scopename,nesting,width,offset);
+		printf("%s\t\t%s\t%s\t\t%s\t%d\t%s\t\t%s\t\t%d\t %d\t% d\n",idname,usagename,type,arraytype,lineno,scopename,scopeparent,nesting,width,offset);
 
 		EntryList = EntryList->next;
 	}
@@ -346,8 +356,21 @@ void printSymbolTable(SymbolTable *table)
 
 }
 
+void TypeNULLinit(ParseTree *head)
+{
+	if(head == NULL)
+		return;
+
+	strcpy(head->type,"NULL");
+
+	TypeNULLinit(head->child);
+	TypeNULLinit(head->right);
+}
+
 SymbolTable *CallingSymbolTable(ParseTree *head, int *errors)
 {
+	TypeNULLinit(head);
+
 	SymbolTable *table;
 
 	table = ScopeEntry(NULL, "global");
@@ -430,6 +453,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 						//             ID name   Usage: Variable  Datatype  isArray
 						AddEntry(head->n->t->value, 1, terms[datatypearray->value], 1, i1, i2, head->n->t->lineno, scope, errors);
 						head->entry = AddEntryWala;
+						strcpy(head->type, AddEntryWala->type);
 					}
 					else // Non array INTEGER | REAL | BOOLEAN 
 					{	
@@ -450,6 +474,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 						//              ID name  Usage: Variable  Datatype  Not array 
 						AddEntry(head->n->t->value, 1, terms[datatype->value], 0, i1, i2, head->n->t->lineno, scope, errors);
 						head->entry = AddEntryWala;
+						strcpy(head->type, AddEntryWala->type);
 					}
 				}
 				else if(strcmp(terms[(head->parent->value)],"input_plist") == 0)
@@ -503,6 +528,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 						//             ID name   Usage: input_plist  Datatype  isArray
 						AddEntry(head->n->t->value, 1, terms[datatypearray->value], 1, i1, i2, head->n->t->lineno, scope, errors);
 						head->entry = AddEntryWala;
+						strcpy(head->type, AddEntryWala->type);
 					}
 					else // Non array INTEGER | REAL | BOOLEAN 
 					{	
@@ -523,6 +549,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 						//              ID name  Usage: input_plist  Datatype  Not array 
 						AddEntry(head->n->t->value, 3, terms[datatype->value], 0, i1, i2, head->n->t->lineno, scope, errors);
 						head->entry = AddEntryWala;
+						strcpy(head->type, AddEntryWala->type);
 					}
 				}
 				else if(strcmp(terms[(head->parent->value)],"output_plist") == 0)
@@ -548,6 +575,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					//              ID name  Usage: output_plist  Datatype  Not array 
 					AddEntry(head->n->t->value, 4, terms[datatype->value], 0, i1, i2, head->n->t->lineno, scope, errors);
 					head->entry = AddEntryWala;
+					strcpy(head->type, AddEntryWala->type);
 				}
 				
 				else if(strcmp(terms[(head->parent->value)],"module") == 0)
@@ -564,6 +592,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					//printf("\n\nModuleDef: %s | Scope: %s | ScopeParent: %s", head->n->t->value, scope->name, scope->parent->name);
 					AddEntry(head->n->t->value, 2, "N.A", 0, i1, i2, head->n->t->lineno, globaltable, errors);
 					head->entry = AddEntryWala;
+					strcpy(head->type, AddEntryWala->type);
 				}
 				else if(strcmp(terms[(head->parent->value)],"moduleDeclarations") == 0)
 				{
@@ -578,6 +607,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 
 					AddEntry(head->n->t->value, 5, "N.A", 0, i1, i2, head->n->t->lineno, scope, errors);
 					head->entry = AddEntryWala;
+					strcpy(head->type, AddEntryWala->type);
 					//printf("\n\nModuleDec: %s | Scope: %s | ScopeParent: %s", head->n->t->value, scope->name, scope->parent->name);
 				}
 				else
@@ -613,6 +643,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 						else
 						{
 							head->entry = found;
+							strcpy(head->type,found->type);
 						}
 					} 
 				}

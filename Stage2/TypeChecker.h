@@ -20,16 +20,13 @@
 
 // Checking Functions ->
 
-void CheckArray(ParseTree *arrayid, int *errors);
 void CheckExpRec(ParseTree *expr, int *errors);
-void CheckExpCall(ParseTree *expr, int *errors);
 void CheckSwitch(ParseTree *swt, int *errors);
 void CheckIPL(SymbolEntry *mod, SymbolTable *table, ParseTree *IPL, int *errors);
 void CheckOPL(SymbolEntry *mod, SymbolTable *table, ParseTree *OPL, int *errors);
 void CheckIOStmt(ParseTree *IO, int *errors);
 void CheckIterStmt(ParseTree *Iter, int *errors);
 void CheckAssignStmt(ParseTree *Ass, int *errors);
-void CheckVariableinST(ParseTree *Var, int *errors);
 void CheckFunctioninST(ParseTree *Func, int *errors);
 void AssignType(ParseTree *head);
 
