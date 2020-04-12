@@ -115,7 +115,7 @@ void ConstructAST(ParseTree *head)
 
 					// Exploting fall through property, NOICE.
 
-					case 6:  // ret
+					//case 6:  // ret
 					case 8:  // input_plist_again
 					case 10: // output_plist_again
 					case 13: // type

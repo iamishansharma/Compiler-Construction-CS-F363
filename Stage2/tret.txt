@@ -1,0 +1,13 @@
+declare module mod1;
+
+<<<driver program>>>
+start
+    declare num, a, k:integer;
+end
+
+<<module mod1>>
+takes input [a: integer, b: integer];
+start
+    declare a:integer;
+    declare c: real;
+end

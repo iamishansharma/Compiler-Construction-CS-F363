@@ -198,6 +198,7 @@ int main(int argc, char *argv[])
 					temphead=returnhead();
 					countNodes(temphead, ParseTreeCount);
 					//printParseTree(f2);
+
 					fprintf(f2,"\n\n*************************************************************************************** \n\n");
 					fprintf(f2, "\nAST: \n\n");
 
@@ -205,7 +206,7 @@ int main(int argc, char *argv[])
 
 					callingAST(temphead);
 					countNodes(temphead, ASTCount);
-					printParseTree(f2); // Printing AST here.
+					printParseTree(f2); // Printing AST here. */
 
 					removedollar(argv[1]);
 					fclose(f4);
@@ -279,7 +280,7 @@ int main(int argc, char *argv[])
 					if(scopeError == 0)
 						printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
 
-					printf("\n**********************************   %sSYMBOL TABLE%s   ******************************************\n", BOLDRED, RESET);
+					printf("\n******************************************************   %sSYMBOL TABLE%s   ******************************************************\n", BOLDRED, RESET);
 					printf("------------------------------------------------------------------------------------------------------------------------------\n");
 					printf("IDENTIFIER \t USAGE \t\t TYPE \t\tisARRAY      LINE NO. \t SCOPE \t      ParentSCOPE     NESTING   WIDTH   OFFSET\n");
 					printf("------------------------------------------------------------------------------------------------------------------------------\n");
@@ -309,6 +310,7 @@ int main(int argc, char *argv[])
 					temphead=returnhead();
 					countNodes(temphead, ParseTreeCount);
 					printParseTree(f2);
+
 					fprintf(f2,"\n\n*************************************************************************************** \n\n");
 					fprintf(f2, "\nAST: \n\n");
 
@@ -339,9 +341,19 @@ int main(int argc, char *argv[])
 
 					// Type Checking:
 
-					printf("\n%sType Checking Analysis:%s \n",BOLDCYAN,RESET);
+					printf("\n%sType Checking Analysis:%s\n",BOLDCYAN,RESET);
 
+					if(scopeError == 0)
 						CallingTypeChecker(temphead, Table, &typeErrors);
+					else
+					{
+						printf("\n\t%sPlease rectify the declaration errors during SymbolTable creation before \n\tproceeding forward with semantic analysis as it may contain undeclared variables.%s\n",BOLDRED,RESET);
+
+						removedollar(argv[1]);
+						fclose(f4);
+						exit(0);
+						break;
+					}
 
 					if(typeErrors == 0)
 						printf("\n%s\t3. No errors found during Type Checking and Semantic Analysis.%s\n\n", BOLDWHITE, RESET);
@@ -423,5 +435,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-
-

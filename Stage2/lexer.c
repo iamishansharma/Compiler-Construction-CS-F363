@@ -124,8 +124,8 @@ char *tokens[60] =
 	"COMMENTMARK"
 }; */
 
-char buffer[4000];
-int buflen=4000;
+char buffer[10000];
+int buflen=10000;
 
 Token* newToken()
 {

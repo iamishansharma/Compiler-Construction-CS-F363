@@ -1,0 +1,11 @@
+b4 array 100 150 boolean
+v2 real
+p int
+v3 int -> error
+u int
+
+data array 100 150 boolean
+weight real
+length int
+b array 35 50 real
+q int

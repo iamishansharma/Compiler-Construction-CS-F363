@@ -716,7 +716,7 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 
 		int a=compareTerm(n->t->token);
 
-		//fprintf(fs,"Top of stack: %s | Input Token: %s | Input Token Lexeme: %s\n",terms[X],terms[a],n->t->value);
+		//printf("Top of stack: %s | Input Token: %s | Input Token Lexeme: %s | Line No: %d\n", terms[X], terms[a], n->t->value, n->t->lineno);
 
 		if(X==a)
 		{
@@ -810,9 +810,12 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 				//fprintf(fs,"\n");
 			}
 		}
+		//printf("\n4.0\n");
 		X=stack[top];
 		//fprintf(fs,"\n");
+		//printf("\n4.5\n");
 	}
+	//printf("\n5.0\n");
 	if(stack[top]==3)
 	{
 		//fprintf(fs,"\nStack (TOP OF STACK IS LEFT MOST ELEMENT: \n");

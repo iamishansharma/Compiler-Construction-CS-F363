@@ -11,7 +11,7 @@
 	Anirudh Garg 2017A7PS0142P
 	Sanjeev Singla 2017A7PS0152P
 
-	// OFFSET / WIDTH / NESTING CHANGE KARNA HAI
+	// NESTING CHANGE KARNA HAI
 
 */
 
@@ -37,6 +37,9 @@ SymbolTable *ScopeEntry(SymbolTable *table, char *scopename)
 	newTable->right = NULL;
 	newTable->left = NULL;
 	newTable->nodehead = NULL;
+
+	if(table != NULL && table->parent == NULL)
+		offset=0;
 
 	// Insert scope in tree
 
@@ -72,18 +75,41 @@ SymbolEntry *FindEntryEverywhere(char *id, SymbolTable *scope, int line, int isF
 
 	while(temptable != NULL)
 	{
+		//printf("\nCame for ID: %s | Line No: %d | Temptable: %s | Tempparent: %s\n", id, line, temptable->name, temptable->parent->name);
+
+		if(strcmp(temptable->name,"global") == 0 && isFunc == 0)
+		{
+			break;
+		}
+
 		templist = temptable->nodehead;
 
 		while(templist != NULL)
 		{
-			//printf("\nAll templist: %s | Scope: %s\n", templist->name, temptable->name);
-
+			
 			if(strcmp(templist->name, id) == 0)
 			{
-				//printf("\n** Found ID: %s | Scope: %s | ID: %s\n", templist->name, templist->scope->name, id);
 				return templist;
 			}
 			templist = templist->next;
+		} 
+
+		// Agar function mei nahi mila tabh check karega inputlist mei 
+
+		if(isFunc == 0 && (strcmp(temptable->name,"driver")!=0) && (strcmp(temptable->parent->name,"global")==0)) // Here are all functions, this is to search in inputplist
+		{
+
+			SymbolTable *tempIPL = temptable->child; // inputplist
+			SymbolEntry *temp = tempIPL->nodehead;
+
+			while(temp != NULL)
+			{
+				if(strcmp(temp->name, id) == 0)
+				{
+					return temp;
+				}
+				temp = temp->next;
+			}
 		}
 		temptable = temptable->parent;
 	}
@@ -118,19 +144,27 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 
 	if(checkEntry == 1 || checkEntry == 2 || checkEntry == 6)
 	{
-		printf("%s\tError: %s The identifier '%s' at line no: %d cannot declared multiple times in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
-		foundornot = 1; // FOUND already, therefore don't insert in table
-		*errors = 1;
+		if(strcmp(type,"N.A")==0)
+		{
+			printf("\t%sLine No: %d%s (Error) %sThe function '%s' cannot be overloaded in the same scope (%s).\n", BOLDWHITE, line, BOLDRED, RESET, id, scope->name);
+			foundornot = 0; // FOUND already, therefore don't insert in table
+		}
+		else
+		{
+			printf("\t%sLine No: %d%s (Error) %sThe identifier '%s' cannot declared multiple times in the same scope (%s).\n", BOLDWHITE, line, BOLDRED, RESET, id,scope->name);
+			foundornot = 1; // FOUND already, therefore don't insert in table
+			*errors = 1;
+		}
 	}
 	else if(checkEntry == 3)
 	{
-		printf("%s\tError: %s The identifier '%s' at line no: %d cannot be declared as it is being used as Input Parameters in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
+		printf("\t%sLine No: %d%s (Error) %sThe identifier '%s' cannot be declared as it is being used as Input Parameters in the same scope (%s).\n", BOLDWHITE, line, BOLDRED, RESET, id,scope->name);
 		foundornot = 1; // FOUND already, therefore don't insert in table
 		*errors = 1;
 	}
 	else if(checkEntry == 4)
 	{
-		printf("%s\tError: %s The identifier '%s' at line no: %d cannot be declared as it is being used as Output Parameters in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
+		printf("\t%sLine No: %d%s (Error) %sThe identifier '%s' cannot be declared as it is being used as Output Parameters in the same scope (%s).\n", BOLDWHITE, line, BOLDRED, RESET, id,scope->name);
 		foundornot = 1; // FOUND already, therefore don't insert in table
 		*errors = 1;
 	}
@@ -148,16 +182,18 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 				}
 				entrylist1 = entrylist1->next;
 			}
+			//foundornot = 0;
 		}
 		else
 		{
-			printf("%s\tError: %s The identifier '%s' at line no: %d cannot declared multiple times in the same scope (%s).\n", BOLDRED, RESET, id, line,scope->name);
+			printf("\t%sLine No: %d%s (Error) %sThe identifier '%s' cannot declared multiple times in the same scope (%s).\n", BOLDWHITE, line, BOLDRED, RESET, id, scope->name);
 			foundornot = 1; // FOUND already, therefore don't insert in table
 			*errors = 1;
 		}
 	}
 
 	// Flag trigger nahi hua isslie ghusao
+
 	if(foundornot == 0) // Entry not found in table
 	{
 		// printf("\nHello Sar Inside Entry Not Found\n");
@@ -181,20 +217,23 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 		{
 			newEntry->offset = offset;
 
+			int ei = endindex->ifnumvalue;
+			int si = startindex->ifnumvalue;
+
 			if(strcmp(type,"INTEGER") == 0)
 			{
-				offset += 2;
-				newEntry->width = 2;
+				offset += (ei-si+1)*2;
+				newEntry->width = (ei-si+1)*2;
 			}
 			else if(strcmp(type,"REAL") == 0)
 			{
-				offset += 4;
-				newEntry->width = 4;
+				offset += (ei-si+1)*4;
+				newEntry->width = (ei-si+1)*4;
 			}
 			else if(strcmp(type,"BOOLEAN") == 0)
 			{
-				offset += 1;
-				newEntry->width = 1;
+				offset += (ei-si+1)*1;
+				newEntry->width = (ei-si+1)*1;
 			}
 			else if(strcmp(type,"ARRAY") == 0)
 			{
@@ -227,8 +266,25 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 				newEntry->width = -1;
 			}
 		}
-		newEntry->next = scope->nodehead;
-		scope->nodehead = newEntry;
+
+		SymbolEntry *nh = scope->nodehead;
+
+		if(nh == NULL)
+		{
+			scope->nodehead = newEntry;
+			newEntry->next = NULL;
+		}
+		else
+		{
+			SymbolEntry *temp = nh;
+
+			while(temp->next != NULL)
+				temp = temp->next;
+
+			temp->next = newEntry;
+			newEntry->next = NULL;
+		}
+
 		AddEntryWala = newEntry;
 	}
 }
@@ -250,6 +306,14 @@ void printSymbolTable(SymbolTable *table)
 	int nesting = 0;
 
 	EntryList = table->nodehead;
+
+	SymbolTable *nest = table;
+
+	while(nest->parent != NULL)
+	{
+		nesting++;
+		nest = nest->parent;
+	}
 
 	while(EntryList != NULL)
 	{
@@ -379,7 +443,11 @@ SymbolTable *CallingSymbolTable(ParseTree *head, int *errors)
 
 	printf("\n\n");
 
+	//printf("\n1. Error here\n");
+
 	ConstructSymbolTable(head, table, errors);
+
+	//printf("\n2. Error here\n");
 
 	return table;
 }
@@ -400,6 +468,9 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 
 		while(head != NULL)
 		{
+			head->scope = scope;
+			//printf("\nHead: %s | Scope: %s | ScopeP: %s\n",terms[head->value],head->scope->name, head->scope->parent->name);
+
 			if(strcmp(terms[(head->value)],"ID") == 0)
 			{
 				if((strcmp(terms[(head->parent->value)],"idList") == 0) && (strcmp(terms[(head->parent->parent->value)],"declareStmt") == 0))
@@ -484,12 +555,10 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 
 					if(strcmp(terms[(datatype->value)],"ARRAY") == 0)
 					{
-						//printf("\n\nARRAY IPL: %s | Scope: %s",head->n->t->value, scope->name);
-						//printf("\n\nInside array\n\n");
 
-						ParseTree *index1 = head->parent->right->child->right->child->child;
-						ParseTree *index2 = head->parent->right->child->right->child->right->child;
-						ParseTree *datatypearray = head->parent->right->child->right->right;
+						ParseTree *index1 = head->right->child->right->child->child;
+						ParseTree *index2 = head->right->child->right->child->right->child;
+						ParseTree *datatypearray = head->right->child->right->right;
 
 						Index *i1 = (Index *)malloc(sizeof(Index));
 						Index *i2 = (Index *)malloc(sizeof(Index));
@@ -529,6 +598,8 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 						AddEntry(head->n->t->value, 1, terms[datatypearray->value], 1, i1, i2, head->n->t->lineno, scope, errors);
 						head->entry = AddEntryWala;
 						strcpy(head->type, AddEntryWala->type);
+
+						//printf("\nyahan end hoke bakchodi ho rahi hai\n");
 					}
 					else // Non array INTEGER | REAL | BOOLEAN 
 					{	
@@ -617,27 +688,22 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					if(strcmp(terms[(head->parent->value)],"moduleReuseStmt") == 0)
 					{
 						found = FindEntryEverywhere(head->n->t->value, scope, head->n->t->lineno, 1, errors);
-
-						if(found == NULL)
-						{
-							printf("%s\tError: %s The module '%s' at line no: %d should be declared or defined before its use.\n", BOLDRED, RESET, head->n->t->value, head->n->t->lineno);
-							*errors = 1;
-						}
-						else
-						{
-							//printf("\n ID: %s | IDParent: %s | FoundID: %s | FScope: %s | FParent: %s\n", head->n->t->value, terms[head->parent->value],found->name, found->scope->name, found->scope->parent->name);
-							head->entry = found;
-						}
+						head->entry = found;
 					}
 					else
 					{
+
+						//printf("\nYahan bakchodi hai\n");
+
 						//printf("\n This is going inside: ID: %s | Scope: %s | Parent: %s \n",head->n->t->value, scope->name, terms[head->parent->value]);
 						
 						found = FindEntryEverywhere(head->n->t->value, scope, head->n->t->lineno, 0, errors);
+
+						//printf("\nYahan tak aaya, bakchodi hai?\n");
 						
 						if(found == NULL)
 						{
-							printf("%s\tError: %s The identifier '%s' at line no: %d should be declared before its use.\n", BOLDRED, RESET, head->n->t->value, head->n->t->lineno);
+							printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, head->n->t->lineno,BOLDRED, RESET, head->n->t->value);
 							*errors = 1;
 						}
 						else
@@ -675,6 +741,11 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					//printf("\n\nIterative -> newScope: %s", newScope->name);
 					ConstructSymbolTable(head, newScope, errors);
 					//printf("\n\nFOR change -> Scope: %s | ScopeParent: %s", scope->name, scope->parent->name);
+				}
+				else if(strcmp(terms[(head->value)],"input_plist") == 0)
+				{
+					newScope = ScopeEntry(scope, "inplist");
+					ConstructSymbolTable(head, newScope, errors);
 				}
 				else
 				{

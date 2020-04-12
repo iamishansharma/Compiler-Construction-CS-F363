@@ -1,15 +1,98 @@
-declare module mod1;
-<<<driver program>>> 
+** Test case 3: Testing symbol table creation for variable declaration and redeclaration checks**
+** Multiple level nesting using primitive data types**
+** Variant of test case 1 **
+
+
+<<module var_demo>>
+takes input [x:integer, w: boolean, p:real];
+returns [m:integer, n:integer, u: boolean];
 start
-	declare r:integer;
-	declare m:real;
-	declare v, w:integer;
-    [r,m] := use module mod1 with parameters v, w; 
+	declare a,b:integer; 
+	m:= 56;
+        n:= 20;
+	declare m,n: boolean;  ** Should be error, redeclaration of outputplist ** ** YUP **
+	get_value(b);
+	declare value, q, r: real;
+	get_value(q);
+	r:= 23.67e+2;
+	for(a in 1..10)
+	start
+		declare b, q: integer;
+		declare r: boolean;		
+		get_value(b);
+		q:= 18;
+		r:= b+q*a+x < 100 AND w OR m;   	**not an error as r, w, m, a and x are found in the static parent scope** ** YUP **
+		print(a);
+		declare q,r: real;			** ERROR: variables q and r are re-declared** ** YUP **
+		print(r);
+		q:= b-a*x+y*20;                 	** ERROR: variable y is not declared** ** YUP **
+	end
+	value:= p+q*r; 
+	m:=a <= x AND true;
+	u:= true AND false OR v;			** ERROR: variable v is not declared** ** YUP **
+	u:= a<=b;
+	declare w: integer;				** Not an error as a local variable can shadow the input parameter**
+	w:= 23;                                 	** not an error as type of w is integer now ** ** YUP **
+	n:= a*25+100;
+	declare b, c: real;				**ERROR: variable b is re-declared** ** YUP **
+	c:= value-q+r;
+	w:= w + 5;					**No type error as well as type of w is now taken as integer;** ** YUP **
 end
 
-<<module mod1>>
-takes input [a: integer, b: integer]; 
-returns [x: integer, abc: real]; 
+<<module compute>>
+takes input[a:integer, b:integer, s: real, c:integer];
+returns [res_1:boolean, res_2_a:integer, res_2_b:real];
 start
-    declare a
+	declare new:boolean;
+	declare abc_1, pqr_2: integer;
+	pqr_2:= abc_1 + 6;
+	declare abc_1: real;					**ERROR: variable abc_1 is re-declared** ** YUP **
+	res_2_a:= -(a*b-c/pqr_2);
+	declare s: integer;					**Not an error as a local variable can shadow the input parameter** 
+	declare q4, q5: real;
+	res_2_b:= (res_2_b + p)*12+22.34E-2*q5;		**ERROR variable p is not declared** ** YUP **
+	declare m,n: boolean;
+	s:= 12;
+	res_1 := a <=  b AND c >= a OR  a<0 AND false;
+	
+	m:= n AND (abc_1<=pqr_2);
+	while(m OR a>=b AND res_2_b<=129.54e+3)
+	start
+		b:=b+1;
+		m:= n OR b>=res_2_a;
+		declare w1, w2: integer;
+		declare abc_1: integer;
+		switch (m)
+		start
+			case true: declare w1, s: real;
+ 				   s:= w1 + 54.24e-2+ q4;
+				   abc_1:=  w2 + a*pqr_2 - c*abc_1;
+				   break;	
+			case false: w1:= w1+5.76;
+				    s:= s*k;                   **ERROR: variable k is not declared** ** YUP **
+                                    declare s:integer;	       **ERROR: variable s is redeclared** ** YUP **
+				    break;	
+		end
+		abc_1:= 16;
+             	w2:= a-s*abc_1*c-pqr_2+w1;
+		m:= abc_1<=pqr_2 OR res_1;
+		w1:= w2*a-s*k*c-pqr_2;                  	**ERROR: variable k is not declared** ** YUP **
+	end
+	m:= m OR (a <= b) AND (res_2 >= 30.65); ** ERROR res_2 is not declared ** ** YUP **
+	res_1:= (true AND c==b)OR(b>p AND (a<=d));		**ERROR: variable d is not declared** ** YUP **
+	declare new: integer;					**ERROR: variable new is re-declared** ** YUP **
+	new:= a<b;
+	print(res_1);
 end
+
+<<<driver program>>>
+start
+	declare v_1_2_3:integer;
+	get_value(v_1_2_43);					**ERROR: variable v_1_2_43 is not declared** ** YUP **	
+	declare result_, v7, v9:integer;
+	declare u1:boolean;
+	[u1, result_, k]:=use module compute with parameters v_1_2_3, v7, v9;	**ERROR: variable k is not declared** ** YUP **
+	print(result_);
+	declare u1: real;					**ERROR: variable u1 is re-declared** ** YUP **
+end
+

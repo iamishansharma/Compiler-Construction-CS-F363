@@ -13,7 +13,7 @@
 
 	Type Checking and Semantics Analyser Rules ->
 
-	Errors template: printf("\n%sError:%s The switch statement identifier %s at line no %d cannot be of type real.\n", BOLDRED, RESET, switchID->n->t->value, switchID->n->t->lineno);
+	\t%sLine No: %d%s (Error) %s
 
 	IDENTIFIER SEMANTICS ->
 	
@@ -25,29 +25,41 @@
 
 	FUNCTIONS SEMANTICS -> 
 
-		1. The types and the number of parameters returned by a function must 
+	DONE	1. The types and the number of parameters returned by a function must 
 			be the same as that of the parameters used in invoking the function.
 
-		2. The parameters being returned by a function must be assigned a value. 
+	DONE	2. The parameters being returned by a function must be assigned a value. 
 			If a parameter does not get a value assigned within the function definition, 
 			it should be reported as an error.
 
-		3. The function that does not return any value, must be invoked appropriately.
+	DONE	3. The function that does not return any value, must be invoked appropriately.
 
-		4. Function input parameters passed while invoking it should be of the 
+	DONE	4. Function input parameters passed while invoking it should be of the 
 			same type as those used in the function definition.
 
-		5. Function overloading is not allowed.
+	DONE	5. Function overloading is not allowed.
 
 		6. A function declaration for a function being used (say F1) by another 
 			(say F2) must precede the definition of the function using it(i.e. F2), 
 			only if the function definition of F1 does not precede the definition of F2.
 
+				moduleReuseStmt mei jo ID hai, uski entry check karenge ->
+
+				if usage 6 hua toh theek.
+
+				else usage 6 nahi hai, 
+
+						usage == 5: toh function define hi nahi kiya 
+						usage == 2: toh is function ka line no, moduleReuseStmt se kam hona chahiye
+
+
 		7. If the function definition of F1 precedes function definition of 
 			F2(the one which uses F1), then the function declaration of F1 is 
 			redundant and is not valid.
 
-		8. The function cannot be invoked recursively.
+				agar usage == 6 hai AND calling statment ka line no: called function se zyada hai toh declaration redundant hai
+
+	DONE	8. The function cannot be invoked recursively.
 
 	SWITCH SEMANTICS ->
 
@@ -68,6 +80,10 @@
 				iterating over the range and iterating variable should be integer type.
 
 	DONE	2. WHILE expression must be of boolean type
+
+			3. WHILE expr any of the IDs in expression must be assigned a value.
+
+				recursion dalo till and find some assignment statements with LHS as variables, set isAss = 1 then. 
 
 	EXPRESSION SEMANTICS -> 
 
@@ -124,14 +140,13 @@ void CheckExpRec(ParseTree *root, int *errors)
 	{
 		if(root->child->right != NULL) // if ID has index? 
 		{
-
 			ParseTree *index = root->child->right->child;
 
 			//printf("\nID: %s\n",terms[index->value]);
 
 			if(strcmp(index->entry->type,"INTEGER") != 0) // IF Array Index is integer or not
 			{
-				printf("\n\t%sError:%s Array '%s' cannot have non-integer type of index '%s' at line no: %d\n", BOLDRED,RESET,root->child->n->t->value, index->n->t->value, root->child->n->t->lineno);
+				printf("\t%sLine No: %d%s (Error) %sArray '%s' cannot have non-integer type of index '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED,RESET,root->child->n->t->value, index->n->t->value);
 				*errors = *errors + 1;
 			}
 			else
@@ -144,7 +159,7 @@ void CheckExpRec(ParseTree *root, int *errors)
 						{}
 						else
 						{
-							printf("\n\t%sError:%s Array '%s' index '%s' is out of bounds at line no: %d\n", BOLDRED,RESET,root->child->n->t->value, index->n->t->value, root->child->n->t->lineno);
+							printf("\t%sLine No: %d%s (Error) %sArray '%s' index '%s' is out of bounds.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED,RESET,root->child->n->t->value, index->n->t->value);
 							*errors = *errors + 1;
 						}
 					}
@@ -163,7 +178,7 @@ void CheckExpRec(ParseTree *root, int *errors)
 		{
 			if(root->child->entry->isArray == 1)
 			{
-				printf("\n\t%sError:%s Complete Array '%s' cannot be used in any expression at line no: %d\n", BOLDRED,RESET, root->child->n->t->value, root->child->n->t->lineno);
+				printf("\t%sLine No: %d%s (Error) %sComplete Array '%s' cannot be used in any expression.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED,RESET, root->child->n->t->value);
 				*errors = *errors + 1;
 			}
 		}
@@ -183,7 +198,7 @@ void CheckExpRec(ParseTree *root, int *errors)
 			strcpy(root->type, "BOOLEAN");
 		else 
 		{
-			printf("\n Type mismatch error LogOp at line no: %d\n", root->child->n->t->lineno);
+			printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
 			*errors = *errors + 1;
 		}
 	}
@@ -198,7 +213,7 @@ void CheckExpRec(ParseTree *root, int *errors)
 			strcpy(root->type, "BOOLEAN");
 		else
 		{
-			printf("\n Type mismatch error RelOp at line no: %d\n", root->child->n->t->lineno);
+			printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
 			*errors = *errors + 1;
 		}
 	}
@@ -213,7 +228,7 @@ void CheckExpRec(ParseTree *root, int *errors)
 			strcpy(root->type, "REAL");
 		else
 		{
-			printf("\n Type mismatch error AROP at line no: %d\n", root->child->n->t->lineno);
+			printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
 			*errors = *errors + 1;
 		}
 	}
@@ -248,7 +263,7 @@ void CheckSwitch(ParseTree *swt, int *errors)
 			{
 				if(strcmp(temp2->child->entry->type,"INTEGER") != 0)
 				{
-					printf("\n\t%sError:%s 'switch' with integer identifier cannot have non-integer '%s' case value. Error at line no %d", BOLDRED, RESET, temp2->child->n->t->value, temp2->child->n->t->lineno);
+					printf("\t%sLine No: %d%s (Error) %s'switch' with integer identifier cannot have non-integer '%s' case value.", BOLDWHITE, temp2->child->n->t->lineno,BOLDRED, RESET, temp2->child->n->t->value);
 					*errors = *errors +1;
 				}
 			}
@@ -257,7 +272,7 @@ void CheckSwitch(ParseTree *swt, int *errors)
 
 		if(!found)
 		{
-			printf("\n\t%sError:%s 'default' case statement missing for 'switch' with integer identifier starting at line no: %d\n", BOLDRED, RESET, switchID->n->t->lineno);
+			printf("\t%sLine No: %d%s (Error) %s'default' case statement missing for 'switch' with integer identifier.\n", BOLDWHITE,switchID->n->t->lineno,BOLDRED, RESET);
 			*errors = *errors +1;
 		}
 	}
@@ -273,7 +288,7 @@ void CheckSwitch(ParseTree *swt, int *errors)
 			{
 				if(strcmp(temp2->child->entry->type,"BOOLEAN") != 0)
 				{
-					printf("\n\t%sError:%s 'switch' with boolean identifier cannot have non-boolean '%s' case value, error at line no %d", BOLDRED, RESET, temp2->child->n->t->value, temp2->child->n->t->lineno);
+					printf("\t%sLine No: %d%s (Error) %s'switch' with boolean identifier cannot have non-boolean '%s' case value.", BOLDWHITE, temp2->child->n->t->lineno, BOLDRED, RESET, temp2->child->n->t->value);
 					*errors = *errors +1;
 				}
 			}
@@ -288,7 +303,7 @@ void CheckSwitch(ParseTree *swt, int *errors)
 		{
 			if(strcmp(terms[temp->value],"default") == 0)
 			{
-				printf("\n\t%sError:%s 'switch' from line no: %d with 'boolean' identifier cannot have 'default' case.", BOLDRED, RESET, switchID->n->t->lineno);
+				printf("\t%sLine No: %d%s (Error) %s'switch' with 'boolean' identifier cannot have 'default' case.", BOLDWHITE, switchID->n->t->lineno,BOLDRED, RESET);
 				*errors = *errors +1;
 			}
 			temp = temp->right;
@@ -296,19 +311,9 @@ void CheckSwitch(ParseTree *swt, int *errors)
 	}
 	else
 	{
-		printf("\n\t%sError:%s The switch statement identifier %s at line no: %d cannot be of type 'real'.\n", BOLDRED, RESET, switchID->n->t->value, switchID->n->t->lineno);
+		printf("\t%sLine No: %d%s (Error) %sThe switch statement identifier %s cannot be of type 'real'.\n", BOLDWHITE, switchID->n->t->lineno,BOLDRED, RESET, switchID->n->t->value);
 		*errors = *errors +1;
 	}
-}
-
-void CheckIPL(SymbolEntry *mod, SymbolTable *table, ParseTree *IPL, int *errors)
-{
-
-}
-
-void CheckOPL(SymbolEntry *mod, SymbolTable *table, ParseTree *OPL, int *errors)
-{
-
 }
 
 void CheckIOStmt(ParseTree *IO, int *errors)
@@ -324,7 +329,7 @@ void CheckIterStmt(ParseTree *Iter, int *errors)
 
 		if(strcmp(iterID->entry->type,"INTEGER") != 0)
 		{
-			printf("\n\t%sError:%s In 'for' construct the iterating variable '%s' cannot be non-integer at line no: %d\n", BOLDRED, RESET, iterID->n->t->value, iterID->n->t->lineno);
+			printf("\t%sLine No: %d%s (Error) %sIn 'for' construct the iterating variable '%s' cannot be non-integer.\n", BOLDWHITE, iterID->n->t->lineno, BOLDRED, RESET, iterID->n->t->value);
 			*errors = *errors +1;
 		}
 
@@ -341,7 +346,7 @@ void CheckIterStmt(ParseTree *Iter, int *errors)
 				{
 					if(strcmp(idl->n->t->value,iterID->n->t->value) == 0)
 					{
-						printf("\n\t%sError:%s Iterating variable '%s' cannot be declared inside the 'for' loop, error at line no: %d\n", BOLDRED, RESET, iterID->n->t->value, idl->n->t->lineno);
+						printf("\t%sLine No: %d%s (Error) %sIterating variable '%s' cannot be declared inside the 'for' loop.\n", BOLDWHITE, idl->n->t->lineno,BOLDRED, RESET, iterID->n->t->value);
 						*errors = *errors +1;
 					}
 					idl = idl->right;
@@ -358,7 +363,7 @@ void CheckIterStmt(ParseTree *Iter, int *errors)
 
 		if(strcmp(whileexp->type,"BOOLEAN") != 0)
 		{
-			printf("\n\t%sError:%s 'while' control expression cannot be of non-boolean type, error at line no: %d\n", BOLDRED, RESET, Iter->child->n->t->lineno);
+			printf("\t%sLine No: %d%s (Error) %s'while' control expression cannot be of non-boolean type.\n", BOLDWHITE,Iter->child->n->t->lineno,BOLDRED, RESET);
 			*errors = *errors +1;
 		}
 
@@ -381,7 +386,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 			{
 				if(rhsID->entry->isArray == 0)
 				{
-					printf("\n\t%sError:%s Complete Array '%s' cannot be assigned to non-array identifer '%s' at line no: %d\n", BOLDRED, RESET, lhs->n->t->value, rhsID->n->t->value, lhs->n->t->lineno);
+					printf("\t%sLine No: %d%s (Error) %sComplete Array '%s' cannot be assigned to non-array identifer '%s'.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET, lhs->n->t->value, rhsID->n->t->value);
 					*errors = *errors +1;
 				}
 				else
@@ -399,7 +404,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 							}
 							else
 							{
-								printf("\n\t%sError:%s LHS Array '%s' start/end indices does not match the start/end indices of RHS Array '%s' at line no: %d\n", BOLDRED, RESET, lhs->n->t->value, rhsID->n->t->value, lhs->n->t->lineno);
+								printf("\t%sLine No: %d%s (Error) %sLHS Array '%s' start/end indices does not match the start/end indices of RHS Array '%s'.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET, lhs->n->t->value, rhsID->n->t->value);
 								*errors = *errors +1;
 							}
 						}
@@ -410,14 +415,14 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 					}
 					else
 					{
-						printf("\n\t%sError:%s Type of LHS Array '%s' does not match the type of RHS Array '%s' at line no: %d\n", BOLDRED, RESET, lhs->n->t->value, rhsID->n->t->value, lhs->n->t->lineno);
+						printf("\t%sLine No: %d%s (Error) %sType of LHS Array '%s' does not match the type of RHS Array '%s'.\n", BOLDWHITE,lhs->n->t->lineno,BOLDRED, RESET, lhs->n->t->value, rhsID->n->t->value);
 						*errors = *errors +1;
 					}
 				}
 			}
 			else
 			{
-				printf("\n\t%sError:%s Complete Array '%s' cannot be assigned to an arithematic expression at line no: %d\n", BOLDRED, RESET, lhs->n->t->value, lhs->n->t->lineno);
+				printf("\t%sLine No: %d%s (Error) %sComplete Array '%s' cannot be assigned to an arithematic expression.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET, lhs->n->t->value);
 				*errors = *errors +1;
 			}
 		}
@@ -427,7 +432,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 
 			if(strcmp(lhsindex->entry->type,"INTEGER") != 0) // IF Array Index is integer or not
 			{
-				printf("\n\t%sError:%s Array '%s' cannot have non-integer type of index '%s' at line no: %d\n", BOLDRED,RESET,lhs->n->t->value, lhsindex->n->t->value, lhs->n->t->lineno);
+				printf("\t%sLine No: %d%s (Error) %sArray '%s' cannot have non-integer type of index '%s'.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED,RESET,lhs->n->t->value, lhsindex->n->t->value);
 				*errors = *errors + 1;
 			}
 			else
@@ -440,7 +445,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 						{}
 						else
 						{
-							printf("\n\t%sError:%s Array '%s' index '%s' is out of bounds at line no: %d\n", BOLDRED,RESET,lhs->n->t->value, lhsindex->n->t->value, lhs->n->t->lineno);
+							printf("\t%sLine No: %d%s (Error) %sArray '%s' index '%s' is out of bounds.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED,RESET,lhs->n->t->value, lhsindex->n->t->value);
 							*errors = *errors + 1;
 						}
 					}
@@ -449,7 +454,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 						//Dynamic index but static array
 					}
 				}
-				elsec
+				else
 				{
 					// Dynamic Array, index may / may not be static
 				}				
@@ -467,7 +472,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 
 				if(strcmp(lhs->entry->type, ue->type) != 0)
 				{
-					printf("\n\t%sError:%s Assignment Statement LHS type does not match with RHS type at line no: %d\n", BOLDRED, RESET, lhs->n->t->lineno);
+					printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
 					*errors = *errors +1;
 				}
 			}
@@ -479,7 +484,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 
 				if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0)
 				{
-					printf("\n\t%sError:%s Assignment Statement LHS type does not match with RHS type at line no: %d\n", BOLDRED, RESET, lhs->n->t->lineno);
+					printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
 					*errors = *errors +1;
 				}
 			}
@@ -497,7 +502,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 
 			if(strcmp(lhs->entry->type, ue->type) != 0)
 			{
-				printf("\n\t%sError:%s Assignment Statement LHS type does not match with RHS type at line no: %d\n", BOLDRED, RESET, lhs->n->t->lineno);
+				printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
 				*errors = *errors +1;
 			}
 		}
@@ -509,16 +514,197 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 
 			if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0)
 			{
-				printf("\n\t%sError:%s Assignment Statement LHS type does not match with RHS type at line no: %d\n", BOLDRED, RESET, lhs->n->t->lineno);
+				printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
 				*errors = *errors +1;
 			}
 		}
 	}
 }
 
+void CheckIPL(SymbolTable *table, ParseTree *IPL, int *errors)
+{
+	ParseTree *travPT = IPL->child;
+
+	SymbolTable *inplist = table->child;
+
+	SymbolEntry *travST = inplist->nodehead;
+
+	while(travST != NULL)
+	{
+		if((strcmp(travST->type, travPT->type) != 0) || (travST->isArray != travPT->entry->isArray))
+		{
+			printf("\t%sLine No: %d%s (Error) %sType of actual parameter '%s' does not match with formal parameter '%s' during function '%s' call.\n", BOLDWHITE, IPL->n->t->lineno, BOLDRED, RESET, travPT->n->t->value, travST->name, table->name);
+			*errors = *errors + 1;
+		}
+
+		if(travST->isArray == travPT->entry->isArray && (travST->isArray == 1))
+		{
+			if(travST->startindex->isDynamic == 0 && travST->endindex->isDynamic == 0 && travPT->entry->startindex->isDynamic == 0 && travPT->entry->endindex->isDynamic == 0)
+			{
+				if((travST->startindex->ifnumvalue == travPT->entry->startindex->ifnumvalue) && (travST->endindex->ifnumvalue == travPT->entry->endindex->ifnumvalue))
+				{}
+				else
+				{
+					printf("\t%sLine No: %d%s (Error) %sType of actual parameter '%s' does not match with formal parameter '%s' during function '%s' call.\n", BOLDWHITE, IPL->n->t->lineno, BOLDRED, RESET, travPT->n->t->value, travST->name, table->name);
+					*errors = *errors + 1;
+				}
+			}
+		}
+
+		travPT = travPT->right;
+		travST = travST->next;
+
+		if((travPT == NULL && travST != NULL) || (travPT != NULL && travST == NULL))
+		{
+			printf("\t%sLine No: %d%s (Error) %sNumber of Input Parameters mismatch during function '%s' call.\n", BOLDWHITE, IPL->n->t->lineno, BOLDRED, RESET, table->name);
+			*errors = *errors + 1;
+			break;
+		}
+	}
+}
+
+void CheckOPL(SymbolTable *table, ParseTree *OPL, int *errors)
+{
+	ParseTree *travPT = OPL->child;
+
+	SymbolEntry *travST = table->nodehead;
+
+	SymbolEntry *countOPL = table->nodehead;
+
+	while(travST != NULL)
+	{
+		if(travST->usage == 4) // Output P List only
+		{
+			//printf("\nRET: %s | Op: %s\n", travST->name, travPT->n->t->value);
+			if(travPT == NULL)
+			{
+				printf("\t%sLine No: %d%s (Error) %sNumber of Output Parameters mismatch during function '%s' call.\n", BOLDWHITE, OPL->n->t->lineno, BOLDRED, RESET, table->name);
+				*errors = *errors + 1;
+				break;
+			}
+
+			if(strcmp(travST->type, travPT->type) != 0)
+			{
+				printf("\t%sLine No: %d%s (Error) %sType of receiving parameter '%s' does not match with output parameter '%s' during function '%s' call.\n", BOLDWHITE, OPL->n->t->lineno, BOLDRED, RESET, travPT->n->t->value, travST->name, table->name);
+				*errors = *errors + 1;
+			}
+
+			travPT = travPT->right;
+		}
+		travST = travST->next;
+	}
+
+	if(travPT != NULL)
+	{
+		printf("\t%sLine No: %d%s (Error) %sNumber of Output Parameters mismatch during function '%s' call.\n", BOLDWHITE, OPL->n->t->lineno, BOLDRED, RESET, table->name);
+		*errors = *errors + 1;
+	}
+}
+
+SymbolTable *FindModule(char *id, SymbolTable *tables)
+{
+	SymbolTable *temp = tables->child;
+
+	while(temp != NULL)
+	{
+		if((strcmp(temp->name,id)==0))
+		{
+			return temp;
+		}
+		temp = temp->right;
+	}
+	return NULL;
+}
+
 void CheckFunctioninST(ParseTree *Func, int *errors)
 {
+	ParseTree *op = Func->child;
 
+	if(strcmp(terms[op->value],"optional") == 0)
+	{
+		ParseTree *MRSID = Func->child->right;
+
+		if(MRSID->entry == NULL)
+		{
+			printf("%s\tLine No: %d %s(Error)%s The module '%s' should be declared or defined before its use.\n", BOLDWHITE, MRSID->n->t->lineno,BOLDRED, RESET, MRSID->n->t->value);
+			*errors = *errors + 1;
+			return;
+		}
+		
+		// Recursion Check
+		SymbolTable *tempsc = Func->scope;
+		while(strcmp(tempsc->parent->name,"global") != 0)
+			tempsc = tempsc->parent;
+		if(strcmp(tempsc->name,MRSID->n->t->value)==0)
+		{
+			printf("\t%sLine No: %d%s (Error) %sRecursive call to function '%s' is not allowed inside function '%s'.\n", BOLDWHITE, MRSID->n->t->lineno,BOLDRED, RESET, MRSID->n->t->value, tempsc->name);
+			*errors = *errors +1;
+		}
+
+		SymbolTable *func = FindModule(MRSID->n->t->value, MRSID->entry->scope);
+
+		CheckIPL(func, MRSID->right, errors);
+
+		int flagforOPL = 0;
+
+		SymbolEntry *travST = func->nodehead;
+
+		while(travST != NULL)
+		{
+			if(travST->usage == 4)
+			{
+				flagforOPL = 1;
+				break; // ek bhi trigger hua toh break karo
+			}
+			travST = travST->next;
+		}
+
+		if(flagforOPL == 0)
+		{
+			printf("\t%sLine No: %d%s (Error) %sFor function '%s' call recieving parameters are specified but function has no returning parameters.\n", BOLDWHITE, MRSID->n->t->lineno, BOLDRED, RESET, func->name);
+			*errors = *errors + 1;
+		}
+		else
+			CheckOPL(func, op->child, errors);
+	}
+	else
+	{
+		ParseTree *MRSID = Func->child;
+
+		if(MRSID->entry == NULL)
+		{
+			printf("%s\tLine No: %d %s(Error)%s The module '%s' should be declared or defined before its use.\n", BOLDWHITE, MRSID->n->t->lineno,BOLDRED, RESET, MRSID->n->t->value);
+			*errors = *errors + 1;
+			return;
+		}
+
+		// Recursion Check
+		SymbolTable *tempsc = Func->scope;
+		while(strcmp(tempsc->parent->name,"global") != 0)
+			tempsc = tempsc->parent;
+		if(strcmp(tempsc->name,MRSID->n->t->value)==0)
+		{
+			printf("\t%sLine No: %d%s (Error) %sRecursive call to function '%s' is not allowed inside function '%s'.\n", BOLDWHITE, MRSID->n->t->lineno, BOLDRED, RESET, MRSID->n->t->value, tempsc->name);
+			*errors = *errors +1;
+		}
+
+		SymbolTable *func = FindModule(MRSID->n->t->value, MRSID->entry->scope);
+
+		CheckIPL(func, MRSID->right, errors);
+
+		SymbolEntry *travST = func->nodehead;
+
+		while(travST != NULL)
+		{
+			if(travST->usage == 4)
+			{
+				printf("\t%sLine No: %d%s (Error) %sNo recieving parameters specified during function '%s' call.\n", BOLDWHITE, MRSID->n->t->lineno, BOLDRED, RESET, func->name);
+				*errors = *errors + 1;
+				break; // ek bhi trigger hua toh break karo
+			}
+			travST = travST->next;
+		}
+	}
 }
 
 void AssignType(ParseTree *head)

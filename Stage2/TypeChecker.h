@@ -22,12 +22,13 @@
 
 void CheckExpRec(ParseTree *expr, int *errors);
 void CheckSwitch(ParseTree *swt, int *errors);
-void CheckIPL(SymbolEntry *mod, SymbolTable *table, ParseTree *IPL, int *errors);
-void CheckOPL(SymbolEntry *mod, SymbolTable *table, ParseTree *OPL, int *errors);
+void CheckIPL(SymbolTable *table, ParseTree *IPL, int *errors);
+void CheckOPL(SymbolTable *table, ParseTree *OPL, int *errors);
 void CheckIOStmt(ParseTree *IO, int *errors);
 void CheckIterStmt(ParseTree *Iter, int *errors);
 void CheckAssignStmt(ParseTree *Ass, int *errors);
 void CheckFunctioninST(ParseTree *Func, int *errors);
+SymbolTable *FindModule(char *id, SymbolTable *tables);
 void AssignType(ParseTree *head);
 
 // Main Functions -> 

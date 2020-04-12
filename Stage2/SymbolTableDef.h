@@ -94,6 +94,8 @@ struct symbolnode
 	struct symbolnode *next;
 
 	struct symboltable *scope; // Gets which scope this node is in
+
+	int isAss;
 };
 
 typedef struct symbolnode SymbolEntry;

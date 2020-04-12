@@ -18,7 +18,7 @@
 
 #include "lexerDef.h"
 
-extern char buffer[4000];
+extern char buffer[10000];
 extern int buflen;
 //extern char keyword[31][35];
 //extern char *KeywordTable[1009];
