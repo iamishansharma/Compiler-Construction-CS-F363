@@ -261,7 +261,7 @@ int main(int argc, char *argv[])
 					parseInputSourceCode(f4,T,G,f9);
 					temphead=returnhead();
 					countNodes(temphead, ParseTreeCount);
-					printParseTree(f2);
+					//printParseTree(f2);
 					fprintf(f2,"\n\n*************************************************************************************** \n\n");
 					fprintf(f2, "\nAST: \n\n");
 
@@ -309,7 +309,7 @@ int main(int argc, char *argv[])
 					parseInputSourceCode(f4,T,G,f9);
 					temphead=returnhead();
 					countNodes(temphead, ParseTreeCount);
-					printParseTree(f2);
+					//printParseTree(f2);
 
 					fprintf(f2,"\n\n*************************************************************************************** \n\n");
 					fprintf(f2, "\nAST: \n\n");
@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
 
 					// Type Checking:
 
-					printf("\n%sType Checking Analysis:%s\n",BOLDCYAN,RESET);
+					printf("\n%sType Checking and Semantic Analysis Errors (if any):%s\n",BOLDCYAN,RESET);
 
 					if(scopeError == 0)
 						CallingTypeChecker(temphead, Table, &typeErrors);
@@ -375,7 +375,7 @@ int main(int argc, char *argv[])
 					parseInputSourceCode(f4,T,G,f9);
 					temphead=returnhead();
 					countNodes(temphead, ParseTreeCount);
-					printParseTree(f2);
+					//printParseTree(f2);
 					fprintf(f2,"\n\n*************************************************************************************** \n\n");
 					fprintf(f2, "\nAST: \n\n");
 

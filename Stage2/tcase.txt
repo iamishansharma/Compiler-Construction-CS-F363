@@ -10,11 +10,12 @@ start
     a := 10;
     c:=10.4;
     declare n,k: integer;
-    [a,c] := use module mod2 with parameters a, b;
+    [a,abc] := use module mod2 with parameters a, b;
     for(k in 1..10)
     start
         n := a;
     end
+    get_value(x);
 end
 
 <<<driver program>>>
@@ -44,9 +45,9 @@ start
     B := C;
     B[x] := x;
     B[3] := C[4] + 3;
-    while(b1)
+    while(b<a)
     start
-        a := a+1;
+        a := 10;
     end
     abc := 2.0;
 end

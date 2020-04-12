@@ -26,9 +26,14 @@ void CheckIPL(SymbolTable *table, ParseTree *IPL, int *errors);
 void CheckOPL(SymbolTable *table, ParseTree *OPL, int *errors);
 void CheckIOStmt(ParseTree *IO, int *errors);
 void CheckIterStmt(ParseTree *Iter, int *errors);
+void CheckWhileAssExpRec(ParseTree *root, int *errors);
+void CheckFORID(ParseTree *iterID, ParseTree *func, int *errors);
+void CheckWhileID(char *id, ParseTree *func, int *errors);
 void CheckAssignStmt(ParseTree *Ass, int *errors);
 void CheckFunctioninST(ParseTree *Func, int *errors);
 SymbolTable *FindModule(char *id, SymbolTable *tables);
+void CheckOPLifAssigned(ParseTree *func, int *errors);
+void CheckOPLifAssignedRec(char *id, ParseTree *func, int *errors);
 void AssignType(ParseTree *head);
 
 // Main Functions -> 
