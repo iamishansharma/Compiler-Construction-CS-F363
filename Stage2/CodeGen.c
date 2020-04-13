@@ -22,7 +22,7 @@ int TEMP_LOCAL = 1;
 char TEMP_BUF[5];
 char LABEL_BUF[10];
 
-char cgbuffer[100];c
+char cgbuffer[100];
 
 void getTemporary()
 {

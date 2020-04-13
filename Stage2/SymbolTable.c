@@ -459,7 +459,7 @@ void printSymbolTable(SymbolTable *table)
 		int width = EntryList->width;
 		int offset = EntryList->offset;
 
-		printf("%-20s %-20s %d \t %d \t %-5s    %-10s    %-10s    %-10s \t %d \t %d \t %-10s %d\n", idname, scopename, lineno, width,isA,isS,arraytype,type,offset,nesting,usagename,EntryList->mrsreq);
+		printf("%-20s %-20s %d \t %d \t %-5s    %-10s    %-10s    %-10s \t %d \t %d \t %-10s\n", idname, scopename, lineno, width,isA,isS,arraytype,type,offset,nesting,usagename);
 
 		//printf("%-6s \t\t %-10s \t %d \t %d \t %-6s %-6s \t\t %-6s \t %-6s \t %d \t %d\n", idname, scopename, lineno, width,isA,isS,arraytype,type,offset,nesting);
 
