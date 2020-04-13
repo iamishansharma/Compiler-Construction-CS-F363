@@ -418,12 +418,34 @@ int main(int argc, char *argv[])
 
 					printf("\n%sType Checking Analysis:%s \n",BOLDCYAN,RESET);
 
+					if(scopeError == 0)
 						CallingTypeChecker(temphead, Table, &typeErrors);
+					else
+					{
+						printf("\n\t%sPlease rectify the declaration errors during SymbolTable creation before \n\tproceeding forward with semantic analysis as it may contain undeclared variables.%s\n",BOLDRED,RESET);
+
+						removedollar(argv[1]);
+						fclose(f4);
+						exit(0);
+						break;
+					}
 
 					if(typeErrors == 0)
 						printf("\n%s\t3. No errors found during Type Checking and Semantic Analysis.%s\n", BOLDWHITE, RESET);
 
 					// Call CodeGen here
+
+					if(typeErrors!=0)
+					{
+						printf("\n\t%sPlease rectify the semantic errors before proceeding forward \n\twith code gen as it may show errorneous behaviour.%s\n",BOLDRED,RESET);
+
+						removedollar(argv[1]);
+						fclose(f4);
+						exit(0);
+						break;
+					}
+					else
+						CallingCodeGen(temphead, Table, codegen);
 
 					removedollar(argv[1]);
 					fclose(f4);
