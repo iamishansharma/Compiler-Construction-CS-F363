@@ -96,6 +96,12 @@ struct symbolnode
 	struct symboltable *scope; // Gets which scope this node is in
 
 	int isAss;
+
+	int mrsreq; // used to have the value of latest line no if func decl is required. 
+
+	int declno; // used to store declaration line no of function 
+
+	int deflno; // used to store the defination line no of function
 };
 
 typedef struct symbolnode SymbolEntry;

@@ -42,7 +42,7 @@ void printLexer(char *filename)
 	
 	printf("\n");
 
-	printf("\nLine Number      Lexeme            Token\n\n");
+	printf("\nLine Number      Lexeme               Token\n\n");
 	Node *n=(Node*)malloc(sizeof(Node));
 	do
 	{
@@ -53,11 +53,11 @@ void printLexer(char *filename)
 		}
 		if(strcmp(n->t->token,"Error"))
 		{
-			printf("     %d           %s           %s\n",n->t->lineno,n->t->value,n->t->token);
+			printf("     %-12d %-20s %-20s\n",n->t->lineno,n->t->value,n->t->token);
 		}
 		else
 		{
-			printf("     %d           %s           %s\n",n->t->lineno,n->t->value,n->t->token);
+			printf("     %-12d %-20s %-20s\n",n->t->lineno,n->t->value,n->t->token);
 		}
 	}while(buffer[fwd]!='\0');
 }
@@ -96,13 +96,13 @@ int main(int argc, char *argv[])
 	FirstAndFollow F;
 	ParseTable T;
 
-	FILE *f2=fopen(argv[2],"w"); // for printing parse tree
-
 	FILE *f3=fopen("grammar.txt","r"); // for reading grammar file
 
 	FILE *f1=fopen(argv[1],"a"); // appending $
 
-	FILE *f9=fopen(argv[3],"w");
+	FILE *f9;
+
+	FILE *codegen = fopen(argv[2],"w");
 
 	FILE *f4=fopen(argv[1],"r"); // now reading that file
 
@@ -123,9 +123,10 @@ int main(int argc, char *argv[])
 	int typeErrors = 0;
 
 	int sizePT = 0;
+
 	int sizeAST = 0;
 
-	if(argc!=4)
+	if(argc!=3)
 	{
 		printf("Too few/many arguments, exiting! Please enter in format as ./compiler *.txt {<- test case file} *.txt {<- file to print AST/ParseTree} *.asm {<- machine code file}");
 		exit(1);
@@ -145,8 +146,8 @@ int main(int argc, char *argv[])
 		printf("Please select one of the following options (Please use only 1 option in one run of code) ->\n\n");
 		printf("\t0. Exit the program.\n");
 		printf("\t1. Display token list on console.\n");
-		printf("\t2. Parse the input file and write the Parse Tree into a file.\n");
-		printf("\t3. Create Abstract Syntax Tree and print it in a file.\n");
+		printf("\t2. Parse the input file.\n");
+		printf("\t3. Create Abstract Syntax Tree and print it in on console.\n");
 		printf("\t4. Display the sizes and compression percentage for Parse Tree and AST.\n");
 		printf("\t5. Create and display the Symbol Table. (Also displays identifier declaration errors {if any}).\n");
 		printf("\t6. Parse the file for type checking and semantic analysis. (Displays errors {if any}).\n");
@@ -179,7 +180,7 @@ int main(int argc, char *argv[])
 					parseInputSourceCode(f4,T,G,f9);
 					temphead=returnhead();
 					countNodes(temphead, ParseTreeCount);
-					printParseTree(f2);
+					//printParseTree(f2);
 
 					removedollar(argv[1]);
 					fclose(f4);
@@ -199,14 +200,22 @@ int main(int argc, char *argv[])
 					countNodes(temphead, ParseTreeCount);
 					//printParseTree(f2);
 
-					fprintf(f2,"\n\n*************************************************************************************** \n\n");
-					fprintf(f2, "\nAST: \n\n");
+					printf("\n\nTraversal used: PreOrder - Parent -> LeftMost Child -> All other right children");
 
 					// Making and printing AST here:
 
 					callingAST(temphead);
+
 					countNodes(temphead, ASTCount);
-					printParseTree(f2); // Printing AST here. */
+
+					printf("\n**************************************************   %sAbstract Syntax Tree%s   **************************************************\n", BOLDRED, RESET);
+					printf("------------------------------------------------------------------------------------------------------------------------------\n");
+					printf("Lexeme \t           LineNo   NodeToken \t      ValueIfNum    Parent \t\tisLeaf \t    NodeSymbol\n");
+					printf("------------------------------------------------------------------------------------------------------------------------------\n");
+
+					printParseTree(); // Printing AST here. */
+
+					printf("*********************************************************************************************************************************\n");
 
 					removedollar(argv[1]);
 					fclose(f4);
@@ -262,14 +271,15 @@ int main(int argc, char *argv[])
 					temphead=returnhead();
 					countNodes(temphead, ParseTreeCount);
 					//printParseTree(f2);
-					fprintf(f2,"\n\n*************************************************************************************** \n\n");
-					fprintf(f2, "\nAST: \n\n");
+					//fprintf(f2,"\n\n*************************************************************************************** \n\n");
+					//fprintf(f2, "\nAST: \n\n");
 
 					// Making and printing AST here:
 
 					callingAST(temphead);
 					countNodes(temphead, ASTCount);
-					printParseTree(f2);
+
+					//printParseTree(f2);
 
 					// Symbol Table: 
 
@@ -280,14 +290,14 @@ int main(int argc, char *argv[])
 					if(scopeError == 0)
 						printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
 
-					printf("\n******************************************************   %sSYMBOL TABLE%s   ******************************************************\n", BOLDRED, RESET);
-					printf("------------------------------------------------------------------------------------------------------------------------------\n");
-					printf("IDENTIFIER \t USAGE \t\t TYPE \t\tisARRAY      LINE NO. \t SCOPE \t      ParentSCOPE     NESTING   WIDTH   OFFSET\n");
-					printf("------------------------------------------------------------------------------------------------------------------------------\n");
+					printf("\n******************************************************   %sSYMBOL TABLE%s   *********************************************************************\n", BOLDRED, RESET);
+					printf("---------------------------------------------------------------------------------------------------------------------------------------------\n");
+					printf("IDENTIFIER \t     SCOPE \t     LINEPAIR   WIDTH  isARRAY \tSTATIC/DYN     ARRAYRANGE     TYPE            OFFSET   NESTING    USAGE\n");
+					printf("---------------------------------------------------------------------------------------------------------------------------------------------\n");
 
 					printSymbolTable(Table);
 
-					printf("------------------------------------------------------------------------------------------------------------------------------\n");
+					printf("---------------------------------------------------------------------------------------------------------------------------------------------\n");
 					printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n");
 					printf("%s** NOTE **%s Symbol Table will be constructed wrong if you have declaration errors.\n",BOLDRED,RESET);
 					printf("\t   Please sort all the above errors before moving forward to TypeChecking and Semantic Analysis.\n\n");
@@ -311,14 +321,14 @@ int main(int argc, char *argv[])
 					countNodes(temphead, ParseTreeCount);
 					//printParseTree(f2);
 
-					fprintf(f2,"\n\n*************************************************************************************** \n\n");
-					fprintf(f2, "\nAST: \n\n");
+					//fprintf(f2,"\n\n*************************************************************************************** \n\n");
+					//fprintf(f2, "\nAST: \n\n");
 
 					// Making and printing AST here:
 
 					callingAST(temphead);
 					countNodes(temphead, ASTCount);
-					printParseTree(f2);
+					//printParseTree(f2);
 
 					// Symbol Table: 
 
@@ -376,14 +386,14 @@ int main(int argc, char *argv[])
 					temphead=returnhead();
 					countNodes(temphead, ParseTreeCount);
 					//printParseTree(f2);
-					fprintf(f2,"\n\n*************************************************************************************** \n\n");
-					fprintf(f2, "\nAST: \n\n");
+					//fprintf(f2,"\n\n*************************************************************************************** \n\n");
+					//fprintf(f2, "\nAST: \n\n");
 
 					// Making and printing AST here:
 
 					callingAST(temphead);
 					countNodes(temphead, ASTCount);
-					printParseTree(f2);
+					//printParseTree(f2);
 
 					// Symbol Table: 
 

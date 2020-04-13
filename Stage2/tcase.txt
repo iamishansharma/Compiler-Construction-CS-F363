@@ -1,6 +1,3 @@
-declare module mod1;
-declare module mod2;
-
 <<module mod1>>
 takes input [a: integer, b: integer];
 returns [x:integer, abc:real];

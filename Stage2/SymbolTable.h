@@ -29,7 +29,7 @@ SymbolTable *ScopeEntry(SymbolTable *parent, char *st);
 SymbolEntry *FindEntryEverywhere(char *id, SymbolTable *scope, int line, int isFunc, int *errors);
 int FindEntryInScope(char *id, SymbolTable *scope);
 void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, Index *endindex, int line, SymbolTable *scope, int *errors);
-
+void ReassignMRS(ParseTree *head, SymbolTable *globaltable, int *errors);
 
 /* Auxilary Functions END */
 

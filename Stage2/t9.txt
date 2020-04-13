@@ -235,8 +235,8 @@ start
 	p:= 23.56;
 	get_value(v_1_2_3);							 		
 	declare B, C: array [2..20] of integer;
-	[ v_1_2_3, u1]:=use module var_demo_array with parameters A,B,p;		
-	[ v_1_2_3, k]:=use module var_demo_array with parameters A,B,p;	
+	[v_1_2_3, u1]:=use module var_demo_array with parameters A,B,p;		
+	[v_1_2_3, k]:=use module var_demo_array with parameters A,B,p;	
 	declare a,b:integer;
 	a:= 5.89e-2;			        **ERROR: type mismatch error**
 	get_value(b);

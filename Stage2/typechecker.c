@@ -35,11 +35,11 @@
 	DONE	3. The function that does not return any value, must be invoked appropriately.
 
 	DONE	4. Function input parameters passed while invoking it should be of the 
-			same type as those used in the function definition.
+				same type as those used in the function definition.
 
 	DONE	5. Function overloading is not allowed.
 
-			6. A function declaration for a function being used (say F1) by another 
+	DONE	6. A function declaration for a function being used (say F1) by another 
 				(say F2) must precede the definition of the function using it(i.e. F2), 
 				only if the function definition of F1 does not precede the definition of F2.
 
@@ -53,11 +53,9 @@
 						usage == 2: toh is function ka line no, moduleReuseStmt se kam hona chahiye
 
 
-			7. If the function definition of F1 precedes function definition of 
+	DONE		7. If the function definition of F1 precedes function definition of 
 				F2(the one which uses F1), then the function declaration of F1 is 
 				redundant and is not valid.
-
-				agar usage == 6 hai AND calling statment ka line no: called function se zyada hai toh declaration redundant hai
 
 	DONE	8. The function cannot be invoked recursively.
 
@@ -75,6 +73,8 @@
 	DONE	3. A switch statement with a boolean type identifier can have the case statements 
 			with labels true and false only. The switch statement then should not have a 
 			default statement.
+
+			default ke line no galat hai.
 
 	ITERATIVE SEMANTICS ->
 	
@@ -759,6 +759,18 @@ void CheckFunctioninST(ParseTree *Func, int *errors)
 		}
 		else
 			CheckOPL(func, op->child, errors);
+
+		if(MRSID->entry->mrsreq == -1 && MRSID->entry->usage == 6 && (MRSID->entry->deflno < MRSID->n->t->lineno))
+		{
+			printf("\t%sLine No: %d%s (Error) %sDeclaration of function '%s' is redundant hence not required.\n", BOLDWHITE, MRSID->entry->lineno, BOLDRED, RESET, MRSID->entry->name);
+			*errors = *errors + 1;
+		}
+
+		if(MRSID->entry->usage == 2 && (MRSID->entry->deflno > MRSID->n->t->lineno))
+		{
+			printf("\t%sLine No: %d%s (Error) %sFunction '%s' should be declared at start, as it is being called before its defination.\n", BOLDWHITE, MRSID->n->t->lineno, BOLDRED, RESET, MRSID->entry->name);
+			*errors = *errors + 1;
+		}
 	}
 	else
 	{
@@ -796,6 +808,18 @@ void CheckFunctioninST(ParseTree *Func, int *errors)
 				break; // ek bhi trigger hua toh break karo
 			}
 			travST = travST->next;
+		}
+
+		if(MRSID->entry->mrsreq == -1 && MRSID->entry->usage == 6 && (MRSID->entry->deflno < MRSID->n->t->lineno))
+		{
+			printf("\t%sLine No: %d%s (Error) %sDeclaration of function '%s' is redundant hence not required.\n", BOLDWHITE, MRSID->entry->lineno, BOLDRED, RESET, MRSID->entry->name);
+			*errors = *errors + 1;
+		}
+
+		if(MRSID->entry->usage == 2 && (MRSID->entry->deflno > MRSID->n->t->lineno))
+		{
+			printf("\t%sLine No: %d%s (Error) %sFunction '%s' is should be declared, as it is being called before its defination.\n", BOLDWHITE, MRSID->n->t->lineno, BOLDRED, RESET, MRSID->entry->name);
+			*errors = *errors + 1;
 		}
 	}
 }

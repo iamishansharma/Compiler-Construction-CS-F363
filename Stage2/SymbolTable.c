@@ -75,7 +75,6 @@ SymbolEntry *FindEntryEverywhere(char *id, SymbolTable *scope, int line, int isF
 
 	while(temptable != NULL)
 	{
-		//printf("\nCame for ID: %s | Line No: %d | Temptable: %s | Tempparent: %s\n", id, line, temptable->name, temptable->parent->name);
 
 		if(strcmp(temptable->name,"global") == 0 && isFunc == 0)
 		{
@@ -86,7 +85,6 @@ SymbolEntry *FindEntryEverywhere(char *id, SymbolTable *scope, int line, int isF
 
 		while(templist != NULL)
 		{
-			
 			if(strcmp(templist->name, id) == 0)
 			{
 				return templist;
@@ -179,6 +177,8 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 				{
 					entrylist1->usage = 6;
 					foundornot = 1;
+
+					entrylist1->deflno = line;
 				}
 				entrylist1 = entrylist1->next;
 			}
@@ -210,6 +210,19 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 		newEntry->width = 0;
 		newEntry->lineno = line;
 		newEntry->scope = scope;
+		newEntry->mrsreq = -1;
+		newEntry->declno = -1;
+		newEntry->deflno = -1;
+
+		if(usage == 2)
+		{
+			newEntry->deflno = line;
+		}
+
+		if(usage == 5)
+		{
+			newEntry->declno = line;
+		}
 
 		// Calculate offset and width now: 
 
@@ -289,6 +302,37 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 	}
 }
 
+void ReassignMRS(ParseTree *head, SymbolTable *globaltable, int *errors)
+{
+	if(head == NULL)
+		return;
+
+	SymbolEntry *found;
+
+	if(strcmp(terms[(head->value)],"ID") == 0)
+	{
+		if(strcmp(terms[(head->parent->value)],"moduleReuseStmt") == 0)
+		{
+			//printf("\nGoing in: MRSID: %s | Global Table: %s\n", head->n->t->value, globaltable->name);
+			found = FindEntryEverywhere(head->n->t->value, globaltable, head->n->t->lineno, 1, errors);
+
+			head->entry = found;
+
+			if(found != NULL)
+			{
+				//printf("\nCame here for MRSID: %s\n", head->n->t->value);
+				if(found->usage == 6 && (found->deflno > head->n->t->lineno))
+				{
+					found->mrsreq = head->n->t->lineno;
+				}
+			}
+		}
+	}
+
+	ReassignMRS(head->child, globaltable, errors);
+	ReassignMRS(head->right, globaltable, errors);
+}
+
 /* Auxilary Functions END */
 
 /********************************************************************************************************************************/
@@ -351,38 +395,41 @@ void printSymbolTable(SymbolTable *table)
 		strcpy(type, EntryList->type);
 
 		char arraytype[30];
+		char isA[20];
+		char isS[20];
 
 		if(EntryList->isArray == 1)
 		{
-			strcpy(arraytype,"ARR");
+			strcpy(isA,"Yes");
+
+			strcpy(arraytype,"[");
 
 			char index1[10];
 			char index2[10];
 
+			if(EntryList->startindex->isDynamic == 0 && EntryList->endindex->isDynamic == 0)
+				strcpy(isS,"Static");
+			else
+				strcpy(isS,"Dynamic");
+
 			if(EntryList->startindex->isDynamic == 0)
 			{
-				//printf(" \n\n1. Comes here\n\n");
-				sprintf(index1,"(%d,",EntryList->startindex->ifnumvalue);
-				//printf("\n\n Index1: %s \n\n",index1);
+				sprintf(index1,"%d,",EntryList->startindex->ifnumvalue);
 			}
 			else
 			{
-				strcpy(index1,"(");
-				strcat(index1,EntryList->startindex->id);
+				strcpy(index1,EntryList->startindex->id);
 				strcat(index1,",");
 			}
 			if(EntryList->endindex->isDynamic == 0)
 			{
-				//printf(" \n\n2. Comes here\n\n");
-				sprintf(index2,"%d)",EntryList->endindex->ifnumvalue);
-				//printf("\n\n Index2: %s \n\n",index2);
+				sprintf(index2,"%d]",EntryList->endindex->ifnumvalue);
 			}
 			else
 			{
 				strcpy(index2,EntryList->endindex->id);
-				strcat(index2,")");
+				strcat(index2,"]");
 			}
-			//printf("\n\n%s\n\n",type);
 
 			char cominx[30];
 
@@ -392,7 +439,9 @@ void printSymbolTable(SymbolTable *table)
 		}
 		else
 		{
-			strcpy(arraytype,"--------");
+			strcpy(isA,"No");
+			strcpy(arraytype,"----");
+			strcpy(isS,"----");
 		}
 
 		int lineno = EntryList->lineno;
@@ -410,7 +459,9 @@ void printSymbolTable(SymbolTable *table)
 		int width = EntryList->width;
 		int offset = EntryList->offset;
 
-		printf("%s\t\t%s\t%s\t\t%s\t%d\t%s\t\t%s\t\t%d\t %d\t% d\n",idname,usagename,type,arraytype,lineno,scopename,scopeparent,nesting,width,offset);
+		printf("%-20s %-20s %d \t %d \t %-5s    %-10s    %-10s    %-10s \t %d \t %d \t %-10s %d\n", idname, scopename, lineno, width,isA,isS,arraytype,type,offset,nesting,usagename,EntryList->mrsreq);
+
+		//printf("%-6s \t\t %-10s \t %d \t %d \t %-6s %-6s \t\t %-6s \t %-6s \t %d \t %d\n", idname, scopename, lineno, width,isA,isS,arraytype,type,offset,nesting);
 
 		EntryList = EntryList->next;
 	}
@@ -447,7 +498,7 @@ SymbolTable *CallingSymbolTable(ParseTree *head, int *errors)
 
 	ConstructSymbolTable(head, table, errors);
 
-	//printf("\n2. Error here\n");
+	ReassignMRS(head, globaltable, errors);
 
 	return table;
 }
@@ -660,7 +711,6 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					i1->ifnumvalue = -1;
 					i2->ifnumvalue = -1;
 
-					//printf("\n\nModuleDef: %s | Scope: %s | ScopeParent: %s", head->n->t->value, scope->name, scope->parent->name);
 					AddEntry(head->n->t->value, 2, "N.A", 0, i1, i2, head->n->t->lineno, globaltable, errors);
 					head->entry = AddEntryWala;
 					strcpy(head->type, AddEntryWala->type);
@@ -679,7 +729,6 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					AddEntry(head->n->t->value, 5, "N.A", 0, i1, i2, head->n->t->lineno, scope, errors);
 					head->entry = AddEntryWala;
 					strcpy(head->type, AddEntryWala->type);
-					//printf("\n\nModuleDec: %s | Scope: %s | ScopeParent: %s", head->n->t->value, scope->name, scope->parent->name);
 				}
 				else
 				{
@@ -687,12 +736,21 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 
 					if(strcmp(terms[(head->parent->value)],"moduleReuseStmt") == 0)
 					{
-						found = FindEntryEverywhere(head->n->t->value, scope, head->n->t->lineno, 1, errors);
+						/*found = FindEntryEverywhere(head->n->t->value, scope, head->n->t->lineno, 1, errors);
 						head->entry = found;
+
+						if(found != NULL)
+						{
+							//printf("\nMRS at lineno: %d | Func: %s | FuncLno: %d | FuncUsage: %d\n",head->n->t->lineno, head->entry->name, head->entry->lineno, head->entry->usage);
+							if(found->usage == 5)
+							{
+								//printf("\nMRS at lineno: %d | Func: %s | FuncLno: %d | FuncUsage: %d\n",head->n->t->lineno, head->entry->name, head->entry->lineno, head->entry->usage);
+								found->mrsreq = head->n->t->lineno;
+							}
+						}*/
 					}
 					else
 					{
-
 						//printf("\nYahan bakchodi hai\n");
 
 						//printf("\n This is going inside: ID: %s | Scope: %s | Parent: %s \n",head->n->t->value, scope->name, terms[head->parent->value]);
