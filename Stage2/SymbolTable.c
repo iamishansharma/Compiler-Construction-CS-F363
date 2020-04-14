@@ -38,8 +38,11 @@ SymbolTable *ScopeEntry(SymbolTable *table, char *scopename)
 	newTable->left = NULL;
 	newTable->nodehead = NULL;
 
-	if(table != NULL && table->parent == NULL)
-		offset=0;
+	if(table != NULL && (table->parent != NULL) && (strcmp(table->parent->name,"global") == 0))
+	{
+		//printf("\nCame for function: %s\n",table->name);
+		offset = 0;
+	}
 
 	// Insert scope in tree
 
@@ -213,6 +216,7 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 		newEntry->mrsreq = -1;
 		newEntry->declno = -1;
 		newEntry->deflno = -1;
+		newEntry->udv = 0;
 
 		if(usage == 2)
 		{
@@ -482,7 +486,7 @@ void TypeNULLinit(ParseTree *head)
 	TypeNULLinit(head->right);
 }
 
-SymbolTable *CallingSymbolTable(ParseTree *head, int *errors)
+SymbolTable *CallingSymbolTable(ParseTree *head, int *errors, int *udvflag)
 {
 	TypeNULLinit(head);
 
@@ -496,14 +500,14 @@ SymbolTable *CallingSymbolTable(ParseTree *head, int *errors)
 
 	//printf("\n1. Error here\n");
 
-	ConstructSymbolTable(head, table, errors);
+	ConstructSymbolTable(head, table, errors, udvflag);
 
 	ReassignMRS(head, globaltable, errors);
 
 	return table;
 }
 
-void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
+void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors, int *udvflag)
 {
 	SymbolTable *newScope;
 	SymbolEntry *newEntry;
@@ -646,7 +650,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 						}
 
 						//             ID name   Usage: input_plist  Datatype  isArray
-						AddEntry(head->n->t->value, 1, terms[datatypearray->value], 1, i1, i2, head->n->t->lineno, scope, errors);
+						AddEntry(head->n->t->value, 3, terms[datatypearray->value], 1, i1, i2, head->n->t->lineno, scope, errors);
 						head->entry = AddEntryWala;
 						strcpy(head->type, AddEntryWala->type);
 
@@ -751,18 +755,37 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 					}
 					else
 					{
-						//printf("\nYahan bakchodi hai\n");
-
-						//printf("\n This is going inside: ID: %s | Scope: %s | Parent: %s \n",head->n->t->value, scope->name, terms[head->parent->value]);
 						
 						found = FindEntryEverywhere(head->n->t->value, scope, head->n->t->lineno, 0, errors);
-
-						//printf("\nYahan tak aaya, bakchodi hai?\n");
 						
 						if(found == NULL)
 						{
-							printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, head->n->t->lineno,BOLDRED, RESET, head->n->t->value);
-							*errors = 1;
+							/*printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, head->n->t->lineno,BOLDRED, RESET, head->n->t->value);
+							*errors = 1;*/
+
+							// printf("\nThis ID is not declared: %s | LNO: %d\n", head->n->t->value, head->n->t->lineno);
+
+							/*UDV *newNode = (UDV*)malloc(sizeof(UDV));
+							strcpy(newNode->id,head->n->t->value);
+							newNode->lineno = head->n->t->lineno;
+							newNode->next = NULL;
+
+							if(udvhead == NULL)
+								udvhead = newNode;
+							else
+							{
+								UDV *temp = udvhead;
+
+								while(temp->next != NULL)
+									temp = temp->next;
+
+								temp->next = newNode;
+							}
+
+							*udvflag = 1;*/
+
+							head->entry = (SymbolEntry *)malloc(sizeof(SymbolEntry));
+							head->entry->udv = 1;
 						}
 						else
 						{
@@ -777,37 +800,33 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors)
 				if(strcmp(terms[(head->value)],"conditionalStmt") == 0)
 				{
 					newScope = ScopeEntry(scope, head->child->n->t->value);
-					//printf("\n\nConditional change -> newScope: %s", newScope->name);
-					ConstructSymbolTable(head, newScope, errors);
+					ConstructSymbolTable(head, newScope, errors, udvflag);
 				}
 				else if(strcmp(terms[(head->value)],"module") == 0)
 				{
 					newScope = ScopeEntry(scope, head->child->n->t->value);
-					//printf("\n\nFunctional change -> newScope: %s", newScope->name);
-					ConstructSymbolTable(head, newScope, errors);
+					ConstructSymbolTable(head, newScope, errors, udvflag);
 				}
 				else if(strcmp(terms[(head->value)],"driverModule") == 0)
 				{
 					newScope = ScopeEntry(scope, "driver");
-					//printf("\n\nDriver change -> newScope: %s", newScope->name);
 					driver = newScope;
-					ConstructSymbolTable(head, newScope, errors);
+					ConstructSymbolTable(head, newScope, errors, udvflag);
 				}
 				else if(strcmp(terms[(head->value)],"iterativeStmt") == 0)
 				{
 					newScope = ScopeEntry(scope, head->child->n->t->value);
-					//printf("\n\nIterative -> newScope: %s", newScope->name);
-					ConstructSymbolTable(head, newScope, errors);
-					//printf("\n\nFOR change -> Scope: %s | ScopeParent: %s", scope->name, scope->parent->name);
+					ConstructSymbolTable(head, newScope, errors, udvflag);
 				}
 				else if(strcmp(terms[(head->value)],"input_plist") == 0)
 				{
-					newScope = ScopeEntry(scope, "inplist");
-					ConstructSymbolTable(head, newScope, errors);
+					//printf("\nINPL Scope: %s | Scope Parent: %s\n", scope->name, scope->parent->name);
+					newScope = ScopeEntry(scope, "input_plist");
+					ConstructSymbolTable(head, newScope, errors, udvflag);
 				}
 				else
 				{
-					ConstructSymbolTable(head, scope, errors);
+					ConstructSymbolTable(head, scope, errors, udvflag);
 				}
 			}
 			head = head->right;

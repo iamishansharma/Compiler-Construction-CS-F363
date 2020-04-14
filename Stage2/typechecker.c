@@ -13,7 +13,7 @@
 
 	Type Checking and Semantics Analyser Rules ->
 
-	\t%sLine No: %d%s (Error) %s
+	(->entry wala check kar for undeclared variables.)
 
 	IDENTIFIER SEMANTICS ->
 	
@@ -125,27 +125,71 @@
 
 #include "TypeChecker.h"
 #include "ast.h"
-#include "SymbolTableDef.h"
 #include "SymbolTable.h"
 
 int asscidwhile = 0; // used to count assigned no of id's in while expression
+
+int flagudvexp = 0;
 
 /********************************************************************************************************************************/
 /********************************************************************************************************************************/
 
 /* Auxilary Functions */
 
-void CheckExpRec(ParseTree *root, int *errors)
+void isIDEntryNULLExp(ParseTree *root, int *errors)
+{
+	if(strcmp(terms[root->value],"var_id_num") == 0)
+	{
+		if(root->child->entry->udv == 1)
+		{
+			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, root->child->n->t->lineno,BOLDRED, RESET, root->child->n->t->value);
+			*errors = *errors + 1;
+			flagudvexp = 1;
+		}
+	}
+
+	else if(strcmp(terms[root->value], "AND") == 0 || strcmp(terms[root->value], "OR") == 0)
+	{
+		isIDEntryNULLExp(root->child, errors);
+		isIDEntryNULLExp(root->child->right, errors);
+	}
+	else if(strcmp(terms[root->value], "LE") == 0 || strcmp(terms[root->value], "LT") == 0 || strcmp(terms[root->value], "GE") == 0 || strcmp(terms[root->value], "GT") == 0 || strcmp(terms[root->value], "NE") == 0 || strcmp(terms[root->value], "EQ") == 0)
+	{
+		isIDEntryNULLExp(root->child, errors);
+		isIDEntryNULLExp(root->child->right, errors);
+	}
+	else if(strcmp(terms[root->value], "PLUS") == 0 || strcmp(terms[root->value], "MINUS") == 0 || strcmp(terms[root->value], "MUL") == 0 || strcmp(terms[root->value], "DIV") == 0)
+	{
+		isIDEntryNULLExp(root->child, errors);
+		isIDEntryNULLExp(root->child->right, errors);
+	}
+}
+
+void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 {
 	//printf("\nExpr: %s | Value: %s\n", terms[root->value], root->n->t->value);
 
 	if(root->child != NULL && strcmp(terms[root->child->value],"ID") == 0) // IF ID or not
 	{
+		if(root->child->entry->udv == 1)
+		{
+			/* printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, root->child->n->t->lineno,BOLDRED, RESET, root->child->n->t->value);
+			*errors = *errors + 1; */
+			goto arraycheckskip;
+		}
+
 		if(root->child->right != NULL) // if ID has index? 
 		{
 			ParseTree *index = root->child->right->child;
 
 			//printf("\nID: %s\n",terms[index->value]);
+
+			if(index->entry->udv == 1)
+			{
+				printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, index->n->t->lineno,BOLDRED, RESET, index->n->t->value);
+				*errors = *errors + 1;
+				goto indexskip;
+			}
 
 			if(strcmp(index->entry->type,"INTEGER") != 0) // IF Array Index is integer or not
 			{
@@ -176,6 +220,8 @@ void CheckExpRec(ParseTree *root, int *errors)
 					// Dynamic Array, index may / may not be static
 				}				
 			}
+
+			indexskip: ;
 		}
 		else
 		{
@@ -185,17 +231,32 @@ void CheckExpRec(ParseTree *root, int *errors)
 				*errors = *errors + 1;
 			}
 		}
+
+		arraycheckskip: ;
 	}
 
 	if(strcmp(terms[root->value],"var_id_num") == 0)
 	{
-		strcpy(root->type, root->child->entry->type);
+		if(root->child->entry->udv == 1)
+		{
+			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, root->child->n->t->lineno,BOLDRED, RESET, root->child->n->t->value);
+			*errors = *errors + 1;
+			strcpy(root->type, "ERROR");
+		}
+		else
+			strcpy(root->type, root->child->entry->type);
 	}
 
 	else if(strcmp(terms[root->value], "AND") == 0 || strcmp(terms[root->value], "OR") == 0)
 	{
-		CheckExpRec(root->child, errors);
-		CheckExpRec(root->child->right, errors);
+		CheckExpRec(root->child, errors, udvflag);
+		CheckExpRec(root->child->right, errors, udvflag);
+
+		if((strcmp(root->child->type,"ERROR") == 0) || (strcmp(root->child->right->type,"ERROR") == 0))
+		{
+			strcpy(root->type, "ERROR");
+			goto skiplop;
+		}
 
 		if((strcmp(root->child->type,"BOOLEAN") == 0) && (strcmp(root->child->right->type,"BOOLEAN") == 0))
 			strcpy(root->type, "BOOLEAN");
@@ -204,11 +265,19 @@ void CheckExpRec(ParseTree *root, int *errors)
 			printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
 			*errors = *errors + 1;
 		}
+
+		skiplop: ;
 	}
 	else if(strcmp(terms[root->value], "LE") == 0 || strcmp(terms[root->value], "LT") == 0 || strcmp(terms[root->value], "GE") == 0 || strcmp(terms[root->value], "GT") == 0 || strcmp(terms[root->value], "NE") == 0 || strcmp(terms[root->value], "EQ") == 0)
 	{
-		CheckExpRec(root->child, errors);
-		CheckExpRec(root->child->right, errors);
+		CheckExpRec(root->child, errors, udvflag);
+		CheckExpRec(root->child->right, errors, udvflag);
+
+		if((strcmp(root->child->type,"ERROR") == 0) || (strcmp(root->child->right->type,"ERROR") == 0))
+		{
+			strcpy(root->type, "ERROR");
+			goto rop;
+		}
 
 		if((strcmp(root->child->type,"INTEGER") == 0) && (strcmp(root->child->right->type,"INTEGER") == 0))
 			strcpy(root->type, "BOOLEAN");
@@ -219,11 +288,19 @@ void CheckExpRec(ParseTree *root, int *errors)
 			printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
 			*errors = *errors + 1;
 		}
+
+		rop: ;
 	}
 	else if(strcmp(terms[root->value], "PLUS") == 0 || strcmp(terms[root->value], "MINUS") == 0 || strcmp(terms[root->value], "MUL") == 0 || strcmp(terms[root->value], "DIV") == 0)
 	{
-		CheckExpRec(root->child, errors);
-		CheckExpRec(root->child->right, errors);
+		CheckExpRec(root->child, errors, udvflag);
+		CheckExpRec(root->child->right, errors, udvflag);
+
+		if((strcmp(root->child->type,"ERROR") == 0) || (strcmp(root->child->right->type,"ERROR") == 0))
+		{
+			strcpy(root->type, "ERROR");
+			goto skiparop;
+		}
 
 		if((strcmp(root->child->type,"INTEGER") == 0) && (strcmp(root->child->right->type,"INTEGER") == 0))
 			strcpy(root->type, "INTEGER");
@@ -234,12 +311,21 @@ void CheckExpRec(ParseTree *root, int *errors)
 			printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
 			*errors = *errors + 1;
 		}
+
+		skiparop: ;
 	}
 }
 
-void CheckSwitch(ParseTree *swt, int *errors)
+void CheckSwitch(ParseTree *swt, int *errors, int *udvflag)
 {
 	ParseTree *switchID = swt->child->right;
+
+	if(switchID->entry->udv == 1)
+	{
+		printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, switchID->n->t->lineno,BOLDRED, RESET, switchID->n->t->value);
+		*errors = *errors + 1;
+		goto swtskip;
+	}
 
 	if(strcmp(switchID->entry->type,"INTEGER") == 0)
 	{
@@ -317,18 +403,23 @@ void CheckSwitch(ParseTree *swt, int *errors)
 		printf("\t%sLine No: %d%s (Error) %sThe switch statement identifier %s cannot be of type 'real'.\n", BOLDWHITE, switchID->n->t->lineno,BOLDRED, RESET, switchID->n->t->value);
 		*errors = *errors +1;
 	}
+
+	swtskip:
+			return;
 }
 
-void CheckIOStmt(ParseTree *IO, int *errors)
-{
-
-}
-
-void CheckIterStmt(ParseTree *Iter, int *errors)
+void CheckIterStmt(ParseTree *Iter, int *errors, int *udvflag)
 {
 	if(strcmp(terms[Iter->child->value],"FOR") == 0)
 	{
 		ParseTree *iterID = Iter->child->right;
+
+		if(iterID->entry->udv == 1)
+		{
+			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, iterID->n->t->lineno,BOLDRED, RESET, iterID->n->t->value);
+			*errors = *errors + 1;
+			goto forskip;
+		}
 
 		if(strcmp(iterID->entry->type,"INTEGER") != 0)
 		{
@@ -338,13 +429,21 @@ void CheckIterStmt(ParseTree *Iter, int *errors)
 
 		ParseTree *forexp = Iter->child->right->right->right;
 
-		CheckFORID(iterID, forexp, errors);
+		CheckFORID(iterID, forexp, errors, udvflag);
+
+		forskip:
+				return;
 	}
 	else if(strcmp(terms[Iter->child->value],"WHILE") == 0)
 	{
 		ParseTree *whileexp = Iter->child->right;
 
-		CheckExpRec(whileexp, errors);
+		isIDEntryNULLExp(whileexp, errors);
+
+		if(flagudvexp)
+			goto whileskip;
+
+		CheckExpRec(whileexp, errors, udvflag);
 
 		if(strcmp(whileexp->type,"BOOLEAN") != 0)
 		{
@@ -352,21 +451,24 @@ void CheckIterStmt(ParseTree *Iter, int *errors)
 			*errors = *errors +1;
 		}
 
-		CheckWhileID(Iter->child->scope->name, Iter->child, errors);
+		CheckWhileID(Iter->child->scope->name, Iter->child, errors, udvflag);
 
 		asscidwhile = 0;
 
-		CheckWhileAssExpRec(whileexp, errors);
+		CheckWhileAssExpRec(whileexp, errors, udvflag);
 
 		if(asscidwhile == 0)
 		{
 			printf("\t%sLine No: %d%s (Error) %s In 'while' control expression atleast one ID should be assigned a value inside while scope.\n", BOLDWHITE, whileexp->child->n->t->lineno,BOLDRED, RESET);
 			*errors = *errors +1;
 		}
+
+		whileskip:
+				return;
 	}
 }
 
-void CheckFORID(ParseTree *iterID, ParseTree *func, int *errors)
+void CheckFORID(ParseTree *iterID, ParseTree *func, int *errors, int *udvflag)
 {
 	if(func == NULL)
 		return;
@@ -395,11 +497,11 @@ void CheckFORID(ParseTree *iterID, ParseTree *func, int *errors)
 		*errors = *errors +1;
 	}
 
-	CheckFORID(iterID, func->child, errors);
-	CheckFORID(iterID, func->right, errors);
+	CheckFORID(iterID, func->child, errors, udvflag);
+	CheckFORID(iterID, func->right, errors, udvflag);
 }
 
-void CheckWhileAssExpRec(ParseTree *root, int *errors)
+void CheckWhileAssExpRec(ParseTree *root, int *errors, int *udvflag)
 {
 	if(root->child != NULL && strcmp(terms[root->child->value],"ID") == 0) // IF ID or not
 	{
@@ -416,22 +518,22 @@ void CheckWhileAssExpRec(ParseTree *root, int *errors)
 
 	else if(strcmp(terms[root->value], "AND") == 0 || strcmp(terms[root->value], "OR") == 0)
 	{
-		CheckWhileAssExpRec(root->child, errors);
-		CheckWhileAssExpRec(root->child->right, errors);
+		CheckWhileAssExpRec(root->child, errors, udvflag);
+		CheckWhileAssExpRec(root->child->right, errors, udvflag);
 	}
 	else if(strcmp(terms[root->value], "LE") == 0 || strcmp(terms[root->value], "LT") == 0 || strcmp(terms[root->value], "GE") == 0 || strcmp(terms[root->value], "GT") == 0 || strcmp(terms[root->value], "NE") == 0 || strcmp(terms[root->value], "EQ") == 0)
 	{
-		CheckWhileAssExpRec(root->child, errors);
-		CheckWhileAssExpRec(root->child->right, errors);
+		CheckWhileAssExpRec(root->child, errors, udvflag);
+		CheckWhileAssExpRec(root->child->right, errors, udvflag);
 	}
 	else if(strcmp(terms[root->value], "PLUS") == 0 || strcmp(terms[root->value], "MINUS") == 0 || strcmp(terms[root->value], "MUL") == 0 || strcmp(terms[root->value], "DIV") == 0)
 	{
-		CheckWhileAssExpRec(root->child, errors);
-		CheckWhileAssExpRec(root->child->right, errors);
+		CheckWhileAssExpRec(root->child, errors, udvflag);
+		CheckWhileAssExpRec(root->child->right, errors, udvflag);
 	}
 }
 
-void CheckWhileID(char *id, ParseTree *func, int *errors)
+void CheckWhileID(char *id, ParseTree *func, int *errors, int *udvflag)
 {
 	if(func == NULL)
 		return;
@@ -456,13 +558,20 @@ void CheckWhileID(char *id, ParseTree *func, int *errors)
 		func->entry->isAss = 1;
 	}
 
-	CheckWhileID(id, func->child, errors);
-	CheckWhileID(id, func->right, errors);
+	CheckWhileID(id, func->child, errors, udvflag);
+	CheckWhileID(id, func->right, errors, udvflag);
 }
 
-void CheckAssignStmt(ParseTree *Ass, int *errors)
+void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 {
 	ParseTree *lhs = Ass->child;
+
+	if(lhs->entry->udv == 1)
+	{
+		printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED, RESET, lhs->n->t->value);
+		*errors = *errors + 1;
+		goto assskip;
+	}
 
 	if(lhs->entry->isArray == 1)
 	{
@@ -558,7 +667,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 			{
 				ParseTree *ue = rhsexpr->child->child->right->child; // new_NT
 
-				CheckExpRec(ue, errors);
+				CheckExpRec(ue, errors, udvflag);
 
 				if(strcmp(lhs->entry->type, ue->type) != 0)
 				{
@@ -570,7 +679,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 			{
 				//printf("\nComes here for LHS: %s | RHS: %s | Lineno: %d\n" , lhs->n->t->value, terms[rhsexpr->child->value], lhs->n->t->lineno);
 
-				CheckExpRec(rhsexpr->child, errors);
+				CheckExpRec(rhsexpr->child, errors, udvflag);
 
 				if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0)
 				{
@@ -588,7 +697,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 		{
 			ParseTree *ue = rhsexpr->child->child->right->child; // new_NT
 
-			CheckExpRec(ue, errors);
+			CheckExpRec(ue, errors, udvflag);
 
 			if(strcmp(lhs->entry->type, ue->type) != 0)
 			{
@@ -600,7 +709,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 		{
 			//printf("\nComes here for LHS: %s | RHS: %s | Lineno: %d\n" , lhs->n->t->value, terms[rhsexpr->child->value], lhs->n->t->lineno);
 
-			CheckExpRec(rhsexpr->child, errors);
+			CheckExpRec(rhsexpr->child, errors, udvflag);
 
 			if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0)
 			{
@@ -609,9 +718,12 @@ void CheckAssignStmt(ParseTree *Ass, int *errors)
 			}
 		}
 	}
+
+	assskip:
+			return;
 }
 
-void CheckIPL(SymbolTable *table, ParseTree *IPL, int *errors)
+void CheckIPL(SymbolTable *table, ParseTree *IPL, int *errors, int *udvflag)
 {
 	ParseTree *travPT = IPL->child;
 
@@ -621,42 +733,54 @@ void CheckIPL(SymbolTable *table, ParseTree *IPL, int *errors)
 
 	while(travST != NULL)
 	{
-		if((strcmp(travST->type, travPT->type) != 0) || (travST->isArray != travPT->entry->isArray))
+		if(travPT->entry->udv == 1)
 		{
-			printf("\t%sLine No: %d%s (Error) %sType of actual parameter '%s' does not match with formal parameter '%s' during function '%s' call.\n", BOLDWHITE, IPL->n->t->lineno, BOLDRED, RESET, travPT->n->t->value, travST->name, table->name);
+			//Error reporting here
+			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, travPT->n->t->lineno,BOLDRED, RESET, travPT->n->t->value);
 			*errors = *errors + 1;
 			goto skip;
 		}
-
-		if(travST->isArray == travPT->entry->isArray && (travST->isArray == 1))
+		else
 		{
-			if(travST->startindex->isDynamic == 0 && travST->endindex->isDynamic == 0 && travPT->entry->startindex->isDynamic == 0 && travPT->entry->endindex->isDynamic == 0)
+			if((strcmp(travST->type, travPT->type) != 0) || (travST->isArray != travPT->entry->isArray))
 			{
-				if((travST->startindex->ifnumvalue == travPT->entry->startindex->ifnumvalue) && (travST->endindex->ifnumvalue == travPT->entry->endindex->ifnumvalue))
-				{}
-				else
+				printf("\t%sLine No: %d%s (Error) %sType of actual parameter '%s' does not match with formal parameter '%s' during function '%s' call.\n", BOLDWHITE, IPL->n->t->lineno, BOLDRED, RESET, travPT->n->t->value, travST->name, table->name);
+				*errors = *errors + 1;
+				goto skip1;
+			}
+
+			if(travST->isArray == travPT->entry->isArray && (travST->isArray == 1))
+			{
+				if(travST->startindex->isDynamic == 0 && travST->endindex->isDynamic == 0 && travPT->entry->startindex->isDynamic == 0 && travPT->entry->endindex->isDynamic == 0)
 				{
-					printf("\t%sLine No: %d%s (Error) %sType of actual parameter '%s' does not match with formal parameter '%s' during function '%s' call.\n", BOLDWHITE, IPL->n->t->lineno, BOLDRED, RESET, travPT->n->t->value, travST->name, table->name);
-					*errors = *errors + 1;
+					if((travST->startindex->ifnumvalue == travPT->entry->startindex->ifnumvalue) && (travST->endindex->ifnumvalue == travPT->entry->endindex->ifnumvalue))
+					{}
+					else
+					{
+						printf("\t%sLine No: %d%s (Error) %sType of actual parameter '%s' does not match with formal parameter '%s' during function '%s' call.\n", BOLDWHITE, IPL->n->t->lineno, BOLDRED, RESET, travPT->n->t->value, travST->name, table->name);
+						*errors = *errors + 1;
+					}
 				}
 			}
+
+			skip1:;
 		}
 
 		skip:
 
-		travPT = travPT->right;
-		travST = travST->next;
+			travPT = travPT->right;
+			travST = travST->next;
 
-		if((travPT == NULL && travST != NULL) || (travPT != NULL && travST == NULL))
-		{
-			printf("\t%sLine No: %d%s (Error) %sNumber of Input Parameters mismatch during function '%s' call.\n", BOLDWHITE, IPL->n->t->lineno, BOLDRED, RESET, table->name);
-			*errors = *errors + 1;
-			break;
-		}
+			if((travPT == NULL && travST != NULL) || (travPT != NULL && travST == NULL))
+			{
+				printf("\t%sLine No: %d%s (Error) %sNumber of Input Parameters mismatch during function '%s' call.\n", BOLDWHITE, IPL->n->t->lineno, BOLDRED, RESET, table->name);
+				*errors = *errors + 1;
+				break;
+			}
 	}
 }
 
-void CheckOPL(SymbolTable *table, ParseTree *OPL, int *errors)
+void CheckOPL(SymbolTable *table, ParseTree *OPL, int *errors, int *udvflag)
 {
 	ParseTree *travPT = OPL->child;
 
@@ -681,10 +805,18 @@ void CheckOPL(SymbolTable *table, ParseTree *OPL, int *errors)
 				printf("\t%sLine No: %d%s (Error) %sType of receiving parameter '%s' does not match with output parameter '%s' during function '%s' call.\n", BOLDWHITE, OPL->n->t->lineno, BOLDRED, RESET, travPT->n->t->value, travST->name, table->name);
 				*errors = *errors + 1;
 			}
-
 			travPT = travPT->right;
 		}
 		travST = travST->next;
+
+		if(travPT != NULL && travPT->entry->udv == 1)
+		{
+			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, travPT->n->t->lineno,BOLDRED, RESET, travPT->n->t->value);
+			*errors = *errors + 1;
+
+			travPT = travPT->right;
+			travST = travST->next;
+		}
 	}
 
 	if(travPT != NULL)
@@ -694,7 +826,7 @@ void CheckOPL(SymbolTable *table, ParseTree *OPL, int *errors)
 	}
 }
 
-SymbolTable *FindModule(char *id, SymbolTable *tables)
+SymbolTable *FindModule(char *id, SymbolTable *tables, int *udvflag)
 {
 	SymbolTable *temp = tables->child;
 
@@ -709,7 +841,7 @@ SymbolTable *FindModule(char *id, SymbolTable *tables)
 	return NULL;
 }
 
-void CheckFunctioninST(ParseTree *Func, int *errors)
+void CheckFunctioninST(ParseTree *Func, int *errors, int *udvflag)
 {
 	ParseTree *op = Func->child;
 
@@ -726,17 +858,19 @@ void CheckFunctioninST(ParseTree *Func, int *errors)
 		
 		// Recursion Check
 		SymbolTable *tempsc = Func->scope;
+
 		while(strcmp(tempsc->parent->name,"global") != 0)
 			tempsc = tempsc->parent;
+		
 		if(strcmp(tempsc->name,MRSID->n->t->value)==0)
 		{
 			printf("\t%sLine No: %d%s (Error) %sRecursive call to function '%s' is not allowed inside function '%s'.\n", BOLDWHITE, MRSID->n->t->lineno,BOLDRED, RESET, MRSID->n->t->value, tempsc->name);
 			*errors = *errors +1;
 		}
 
-		SymbolTable *func = FindModule(MRSID->n->t->value, MRSID->entry->scope);
+		SymbolTable *func = FindModule(MRSID->n->t->value, MRSID->entry->scope, udvflag);
 
-		CheckIPL(func, MRSID->right, errors);
+		CheckIPL(func, MRSID->right, errors, udvflag);
 
 		int flagforOPL = 0;
 
@@ -758,7 +892,7 @@ void CheckFunctioninST(ParseTree *Func, int *errors)
 			*errors = *errors + 1;
 		}
 		else
-			CheckOPL(func, op->child, errors);
+			CheckOPL(func, op->child, errors, udvflag);
 
 		if(MRSID->entry->mrsreq == -1 && MRSID->entry->usage == 6 && (MRSID->entry->deflno < MRSID->n->t->lineno))
 		{
@@ -793,9 +927,9 @@ void CheckFunctioninST(ParseTree *Func, int *errors)
 			*errors = *errors +1;
 		}
 
-		SymbolTable *func = FindModule(MRSID->n->t->value, MRSID->entry->scope);
+		SymbolTable *func = FindModule(MRSID->n->t->value, MRSID->entry->scope, udvflag);
 
-		CheckIPL(func, MRSID->right, errors);
+		CheckIPL(func, MRSID->right, errors, udvflag);
 
 		SymbolEntry *travST = func->nodehead;
 
@@ -824,9 +958,9 @@ void CheckFunctioninST(ParseTree *Func, int *errors)
 	}
 }
 
-void CheckOPLifAssigned(ParseTree *func, int *errors)
+void CheckOPLifAssigned(ParseTree *func, int *errors, int *udvflag)
 {
-	CheckOPLifAssignedRec(func->child->n->t->value, func, errors);
+	CheckOPLifAssignedRec(func->child->n->t->value, func, errors, udvflag);
 
 	ParseTree *ret = func->child->right->right;
 
@@ -849,36 +983,40 @@ void CheckOPLifAssigned(ParseTree *func, int *errors)
 	}
 }
 
-void CheckOPLifAssignedRec(char *id, ParseTree *func, int *errors)
+void CheckOPLifAssignedRec(char *id, ParseTree *func, int *errors, int *udvflag)
 {
 	if(func == NULL)
 		return;
 
-	//printf("\nFunc: %s | Parent: %s | Lineno: %d\n", terms[func->value], terms[func->parent->value], func->n->t->lineno);
+	if((strcmp(terms[func->value],"ID")==0) && func->entry->udv == 1)
+	{
+		/*printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, func->n->t->lineno,BOLDRED, RESET, func->n->t->value);
+		*errors = *errors + 1;*/
+		goto OPLskip;
+	}
 
 	if((strcmp(terms[func->value],"ID")==0) && (strcmp(terms[func->parent->value],"assignmentStmt")==0))
 	{
-		//printf("\nCame here for Ass: %s | Line No: %d\n", func->n->t->value, func->n->t->lineno);
 		func->entry->isAss = 1;
 	}
 	
 	else if((strcmp(terms[func->value],"ID")==0) && (strcmp(terms[func->parent->value],"ioStmt")==0))
 	{
-		//printf("\nCame here for GV: %s | Line No: %d\n", func->n->t->value, func->n->t->lineno);
 		if(strcmp(terms[func->left->value],"GET_VALUE")==0)
 			func->entry->isAss = 1;
 	}
 	else if((strcmp(terms[func->value],"ID")==0) && (strcmp(terms[func->parent->value],"idList")==0) && (strcmp(terms[func->parent->parent->value],"optional")==0))
 	{
-		//printf("\nCame here for RP: %s | Line No: %d\n", func->n->t->value, func->n->t->lineno);
 		func->entry->isAss = 1;
 	}
 
-	CheckOPLifAssignedRec(id, func->child, errors);
-	CheckOPLifAssignedRec(id, func->right, errors);
+	OPLskip: ;
+
+	CheckOPLifAssignedRec(id, func->child, errors, udvflag);
+	CheckOPLifAssignedRec(id, func->right, errors, udvflag);
 }
 
-void AssignType(ParseTree *head)
+void AssignType(ParseTree *head, int *udvflag)
 {
 	if(head == NULL)
 		return;
@@ -924,8 +1062,8 @@ void AssignType(ParseTree *head)
 		strcpy(head->type, "BOOLEAN");
 	}
 
-	AssignType(head->child);
-	AssignType(head->right);
+	AssignType(head->child, udvflag);
+	AssignType(head->right, udvflag);
 }
 
 /* Auxilary Functions END */
@@ -935,15 +1073,13 @@ void AssignType(ParseTree *head)
 
 /* MAIN Functions */
 
-void CallingTypeChecker(ParseTree *head, SymbolTable *table, int *errors)
+void CallingTypeChecker(ParseTree *head, SymbolTable *table, int *errors, int *udvflag)
 {
-	// At this point we don't need to check if any variable is undeclared because that is already handled during SymbolTable
-
-	AssignType(head);
-	TypeChecker(head, table, errors);
+	AssignType(head, udvflag);
+	TypeChecker(head, table, errors, udvflag);
 }
 
-void TypeChecker(ParseTree *head, SymbolTable *table, int *errors)
+void TypeChecker(ParseTree *head, SymbolTable *table, int *errors, int *udvflag)
 {
 	if(head == NULL)
 		return;
@@ -954,31 +1090,31 @@ void TypeChecker(ParseTree *head, SymbolTable *table, int *errors)
 	}
 	else if(strcmp(terms[head->value],"conditionalStmt") == 0) // SWITCH 
 	{
-		CheckSwitch(head, errors); // DONE
+		CheckSwitch(head, errors, udvflag); // DONE
 	}
 	else if(strcmp(terms[head->value],"moduleReuseStmt") == 0) // Function Call
 	{
-		CheckFunctioninST(head, errors);
+		CheckFunctioninST(head, errors, udvflag);
 	}
 	else if(strcmp(terms[head->value],"ioStmt") == 0) // IOStmt
 	{
-		CheckIOStmt(head, errors);
+		//CheckIOStmt(head, errors, udvflag);
 	}
 	else if(strcmp(terms[head->value],"iterativeStmt") == 0) // FOR and WHILE
 	{
-		CheckIterStmt(head, errors);
+		CheckIterStmt(head, errors, udvflag);
 	}
 	else if(strcmp(terms[head->value],"assignmentStmt") == 0) // ASSIGN
 	{
-		CheckAssignStmt(head, errors);
+		CheckAssignStmt(head, errors, udvflag);
 	}
 	else if(strcmp(terms[head->value],"module") == 0)
 	{
-		CheckOPLifAssigned(head, errors);
+		CheckOPLifAssigned(head, errors, udvflag);
 	}
 
-	TypeChecker(head->child, table, errors);
-	TypeChecker(head->right, table, errors);
+	TypeChecker(head->child, table, errors, udvflag);
+	TypeChecker(head->right, table, errors, udvflag);
 }
 
 /* MAIN Functions END */

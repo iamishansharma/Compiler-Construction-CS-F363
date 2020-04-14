@@ -56,4 +56,4 @@ start
 	[u1, result_, k]:=use module compute with parameters v_1_2_3, v7, v9;	**ERROR: variable k is not declared** ** YUP **
 	print(result_);
 	declare u1: real;				**ERROR: variable u1 is re-declared** ** YUP **
-end$$$$$
+end

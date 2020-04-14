@@ -126,6 +126,8 @@ int main(int argc, char *argv[])
 
 	int sizeAST = 0;
 
+	int udvflag = 0;
+
 	if(argc!=3)
 	{
 		printf("Too few/many arguments, exiting! Please enter in format as ./compiler *.txt {<- test case file} *.txt {<- file to print AST/ParseTree} *.asm {<- machine code file}");
@@ -283,16 +285,16 @@ int main(int argc, char *argv[])
 
 					// Symbol Table: 
 
-					printf("\n\n%sErrors During SymbolTable Creation (if any):%s ",BOLDCYAN,RESET);
+					//printf("\n\n%sErrors During SymbolTable Creation (if any):%s ",BOLDCYAN,RESET);
 
-					Table = CallingSymbolTable(temphead, &scopeError);
+					Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
 
-					if(scopeError == 0)
-						printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
+					//if(scopeError == 0)
+						//printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
 
 					printf("\n******************************************************   %sSYMBOL TABLE%s   *********************************************************************\n", BOLDRED, RESET);
 					printf("---------------------------------------------------------------------------------------------------------------------------------------------\n");
-					printf("IDENTIFIER \t     SCOPE \t     LINEPAIR   WIDTH  isARRAY \tSTATIC/DYN     ARRAYRANGE     TYPE            OFFSET   NESTING    USAGE\n");
+					printf("IDENTIFIER \t     SCOPE \t     LINENUMB   WIDTH  isARRAY \tSTATIC/DYN     ARRAYRANGE     TYPE            OFFSET   NESTING    USAGE\n");
 					printf("---------------------------------------------------------------------------------------------------------------------------------------------\n");
 
 					printSymbolTable(Table);
@@ -300,7 +302,7 @@ int main(int argc, char *argv[])
 					printf("---------------------------------------------------------------------------------------------------------------------------------------------\n");
 					printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n");
 					printf("%s** NOTE **%s Symbol Table will be constructed wrong if you have declaration errors.\n",BOLDRED,RESET);
-					printf("\t   Please sort all the above errors before moving forward to TypeChecking and Semantic Analysis.\n\n");
+					printf("\t   Please rectify all the above errors before moving forward to TypeChecking and Semantic Analysis.\n\n");
 
 					removedollar(argv[1]);
 					fclose(f4);
@@ -319,54 +321,34 @@ int main(int argc, char *argv[])
 					parseInputSourceCode(f4,T,G,f9);
 					temphead=returnhead();
 					countNodes(temphead, ParseTreeCount);
-					//printParseTree(f2);
-
-					//fprintf(f2,"\n\n*************************************************************************************** \n\n");
-					//fprintf(f2, "\nAST: \n\n");
 
 					// Making and printing AST here:
 
 					callingAST(temphead);
 					countNodes(temphead, ASTCount);
-					//printParseTree(f2);
 
 					// Symbol Table: 
 
-					printf("\n\n%sErrors During SymbolTable Creation (if any):%s ",BOLDCYAN,RESET);
+					printf("\n\n%sErrors During TypeChecking and Semantic Analysis (if any):%s ",BOLDCYAN,RESET);
 
-					Table = CallingSymbolTable(temphead, &scopeError);
-
-					if(scopeError == 0)
-						printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
-
-					/*printf("\n**********************************   %sSYMBOL TABLE%s   ******************************************\n", BOLDRED, RESET);
-					printf("----------------------------------------------------------------------------------------------\n");
-					printf("IDENTIFIER \t USAGE \t\t TYPE \t     LINE NO. \t SCOPE \t     NESTING   WIDTH   OFFSET\n");
-					printf("----------------------------------------------------------------------------------------------\n");
-
-					printSymbolTable(Table);
-
-					printf("**********************************************************************************************\n");
-					*/
+					Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
 
 					// Type Checking:
 
-					printf("\n%sType Checking and Semantic Analysis Errors (if any):%s\n",BOLDCYAN,RESET);
+					CallingTypeChecker(temphead, Table, &typeErrors, &udvflag);
 
-					if(scopeError == 0)
-						CallingTypeChecker(temphead, Table, &typeErrors);
-					else
+					/*else
 					{
-						printf("\n\t%sPlease rectify the declaration errors during SymbolTable creation before \n\tproceeding forward with semantic analysis as it may contain undeclared variables.%s\n",BOLDRED,RESET);
+						printf("\n\t%sPlease rectify the above declaration errors during SymbolTable creation before \n\tproceeding forward with semantic analysis as it may contain undeclared variables.%s\n",BOLDRED,RESET);
 
 						removedollar(argv[1]);
 						fclose(f4);
 						exit(0);
 						break;
-					}
+					}*/
 
 					if(typeErrors == 0)
-						printf("\n%s\t3. No errors found during Type Checking and Semantic Analysis.%s\n\n", BOLDWHITE, RESET);
+						printf("%s\t2. No errors found during Type Checking and Semantic Analysis.%s\n\n", BOLDWHITE, RESET);
 
 					removedollar(argv[1]);
 					fclose(f4);
@@ -399,7 +381,7 @@ int main(int argc, char *argv[])
 
 					printf("\n\n%sErrors During SymbolTable Creation (if any):%s ",BOLDCYAN,RESET);
 
-					Table = CallingSymbolTable(temphead, &scopeError);
+					Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
 
 					if(scopeError == 0)
 						printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
@@ -419,7 +401,7 @@ int main(int argc, char *argv[])
 					printf("\n%sType Checking Analysis:%s \n",BOLDCYAN,RESET);
 
 					if(scopeError == 0)
-						CallingTypeChecker(temphead, Table, &typeErrors);
+						CallingTypeChecker(temphead, Table, &typeErrors, &udvflag);
 					else
 					{
 						printf("\n\t%sPlease rectify the declaration errors during SymbolTable creation before \n\tproceeding forward with semantic analysis as it may contain undeclared variables.%s\n",BOLDRED,RESET);
@@ -452,10 +434,11 @@ int main(int argc, char *argv[])
 					exit(0);
 					break;
 
-			case 8: 
-					system("clear");
-					exit(0);
-					break;
+			case 8: break;
+
+			case 9: break;
+
+			case 10: break;
 
 			default:
 					printf("\nWrong option, try again!\n");

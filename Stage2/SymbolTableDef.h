@@ -102,6 +102,10 @@ struct symbolnode
 	int declno; // used to store declaration line no of function 
 
 	int deflno; // used to store the defination line no of function
+
+	char temporary[5]; // Temporary Variable used for SymbolEntry in CodeGen
+
+	int udv; // flag for UDV
 };
 
 typedef struct symbolnode SymbolEntry;

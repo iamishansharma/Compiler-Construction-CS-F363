@@ -144,4 +144,4 @@ start
 	w:= w + 5;		 
 	B:= C;
 	C:= D; **ERROR: type mismatch error**       
-end
+end$

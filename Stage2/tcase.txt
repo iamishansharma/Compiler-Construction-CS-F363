@@ -1,3 +1,5 @@
+declare module mod2;
+
 <<module mod1>>
 takes input [a: integer, b: integer];
 returns [x:integer, abc:real];
@@ -42,9 +44,9 @@ start
     B := C;
     B[x] := x;
     B[3] := C[4] + 3;
-    while(b<a)
+    while(b<a AND x<C[5] OR false)
     start
         a := 10;
     end
     abc := 2.0;
-end
+end$

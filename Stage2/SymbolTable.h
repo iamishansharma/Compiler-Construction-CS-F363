@@ -18,6 +18,18 @@
 
 #include "SymbolTableDef.h"
 
+struct udv // undeclared variable structure
+{
+	char id[30];
+	int lineno;
+	char scopename[30];
+	char scopeparentname[30];
+	struct udv *next;
+};
+
+typedef struct udv UDV;
+UDV *udvhead;
+
 // Functions Declatations -> 
 
 /********************************************************************************************************************************/
@@ -39,8 +51,8 @@ void ReassignMRS(ParseTree *head, SymbolTable *globaltable, int *errors);
 /* MAIN Functions */ 
 
 void printSymbolTable(SymbolTable *head);
-SymbolTable *CallingSymbolTable(ParseTree *head, int *errors);
-void ConstructSymbolTable(ParseTree *head, SymbolTable *scope, int *errors);
+SymbolTable *CallingSymbolTable(ParseTree *head, int *errors, int *udvflag);
+void ConstructSymbolTable(ParseTree *head, SymbolTable *scope, int *errors, int *udvflag);
 
 /* MAIN Functions END */ 
 
