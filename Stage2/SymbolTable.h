@@ -50,7 +50,9 @@ void ReassignMRS(ParseTree *head, SymbolTable *globaltable, int *errors);
 
 /* MAIN Functions */ 
 
+void printActiveRecords(SymbolTable *Table);
 void printSymbolTable(SymbolTable *head);
+void printSymbolTableArray(SymbolTable *table);
 SymbolTable *CallingSymbolTable(ParseTree *head, int *errors, int *udvflag);
 void ConstructSymbolTable(ParseTree *head, SymbolTable *scope, int *errors, int *udvflag);
 

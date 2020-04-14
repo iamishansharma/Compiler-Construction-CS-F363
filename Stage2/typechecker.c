@@ -142,7 +142,7 @@ void isIDEntryNULLExp(ParseTree *root, int *errors)
 	{
 		if(root->child->entry->udv == 1)
 		{
-			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, root->child->n->t->lineno,BOLDRED, RESET, root->child->n->t->value);
+			//printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, root->child->n->t->lineno,BOLDRED, RESET, root->child->n->t->value);
 			*errors = *errors + 1;
 			flagudvexp = 1;
 		}
@@ -186,7 +186,7 @@ void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 
 			if(index->entry->udv == 1)
 			{
-				printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, index->n->t->lineno,BOLDRED, RESET, index->n->t->value);
+				//printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, index->n->t->lineno,BOLDRED, RESET, index->n->t->value);
 				*errors = *errors + 1;
 				goto indexskip;
 			}
@@ -239,7 +239,7 @@ void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 	{
 		if(root->child->entry->udv == 1)
 		{
-			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, root->child->n->t->lineno,BOLDRED, RESET, root->child->n->t->value);
+			//printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, root->child->n->t->lineno,BOLDRED, RESET, root->child->n->t->value);
 			*errors = *errors + 1;
 			strcpy(root->type, "ERROR");
 		}
@@ -322,7 +322,7 @@ void CheckSwitch(ParseTree *swt, int *errors, int *udvflag)
 
 	if(switchID->entry->udv == 1)
 	{
-		printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, switchID->n->t->lineno,BOLDRED, RESET, switchID->n->t->value);
+		//printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, switchID->n->t->lineno,BOLDRED, RESET, switchID->n->t->value);
 		*errors = *errors + 1;
 		goto swtskip;
 	}
@@ -416,7 +416,7 @@ void CheckIterStmt(ParseTree *Iter, int *errors, int *udvflag)
 
 		if(iterID->entry->udv == 1)
 		{
-			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, iterID->n->t->lineno,BOLDRED, RESET, iterID->n->t->value);
+			//printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, iterID->n->t->lineno,BOLDRED, RESET, iterID->n->t->value);
 			*errors = *errors + 1;
 			goto forskip;
 		}
@@ -566,15 +566,16 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 {
 	ParseTree *lhs = Ass->child;
 
+	//printf("\nLHS: %s | LineNo: %d\n",lhs->n->t->value, lhs->n->t->lineno);
+
 	ParseTree *IDARR = lhs->right;
 
 	if(strcmp(terms[IDARR->value],"lvalueIDStmt") == 0)
 	{
 		if(lhs->entry->udv == 1)
 		{
-			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED, RESET, lhs->n->t->value);
+			//printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED, RESET, lhs->n->t->value);
 			*errors = *errors + 1;
-			goto RHSCHECK1;
 		}
 
 		if(lhs->entry->isArray)
@@ -628,38 +629,36 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 
 		ParseTree *rhsexpr = Ass->child->right->child;
 
-		RHSCHECK1:
+		if(strcmp(terms[rhsexpr->child->value],"unary") == 0)
+		{
+			ParseTree *ue = rhsexpr->child->child->right->child; // new_NT
 
-			if(strcmp(terms[rhsexpr->child->value],"unary") == 0)
+			CheckExpRec(ue, errors, udvflag);
+
+			if(strcmp(lhs->entry->type, ue->type) != 0 && (lhs->entry->udv != 1))
 			{
-				ParseTree *ue = rhsexpr->child->child->right->child; // new_NT
-
-				CheckExpRec(ue, errors, udvflag);
-
-				if(strcmp(lhs->entry->type, ue->type) != 0)
-				{
-					printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
-					*errors = *errors +1;
-				}
+				printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
+				*errors = *errors +1;
 			}
-			else
+		}
+		else
+		{
+			//printf("\nComes here for LHS: %s | RHS: %s | Lineno: %d\n" , lhs->n->t->value, terms[rhsexpr->child->value], lhs->n->t->lineno);
+
+			CheckExpRec(rhsexpr->child, errors, udvflag);
+
+			if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0 && (lhs->entry->udv != 1))
 			{
-				//printf("\nComes here for LHS: %s | RHS: %s | Lineno: %d\n" , lhs->n->t->value, terms[rhsexpr->child->value], lhs->n->t->lineno);
-
-				CheckExpRec(rhsexpr->child, errors, udvflag);
-
-				if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0)
-				{
-					printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
-					*errors = *errors +1;
-				}
+				printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
+				*errors = *errors +1;
 			}
+		}
 	}
 	else
 	{
 		if(lhs->entry->udv == 1)
 		{
-			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED, RESET, lhs->n->t->value);
+			//printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED, RESET, lhs->n->t->value);
 			*errors = *errors + 1;
 			goto RHSCHECK2;
 		}
@@ -748,7 +747,7 @@ void CheckIPL(SymbolTable *table, ParseTree *IPL, int *errors, int *udvflag)
 		if(travPT->entry->udv == 1)
 		{
 			//Error reporting here
-			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, travPT->n->t->lineno,BOLDRED, RESET, travPT->n->t->value);
+			//printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, travPT->n->t->lineno,BOLDRED, RESET, travPT->n->t->value);
 			*errors = *errors + 1;
 			goto skip;
 		}
@@ -823,7 +822,7 @@ void CheckOPL(SymbolTable *table, ParseTree *OPL, int *errors, int *udvflag)
 
 		if(travPT != NULL && travPT->entry->udv == 1)
 		{
-			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, travPT->n->t->lineno,BOLDRED, RESET, travPT->n->t->value);
+			//printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, travPT->n->t->lineno,BOLDRED, RESET, travPT->n->t->value);
 			*errors = *errors + 1;
 
 			travPT = travPT->right;
@@ -1119,6 +1118,7 @@ void TypeChecker(ParseTree *head, SymbolTable *table, int *errors, int *udvflag)
 	else if(strcmp(terms[head->value],"assignmentStmt") == 0) // ASSIGN
 	{
 		CheckAssignStmt(head, errors, udvflag);
+		//printf("\nEnding Assignment\n");
 	}
 	else if(strcmp(terms[head->value],"module") == 0)
 	{

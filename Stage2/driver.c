@@ -151,299 +151,411 @@ int main(int argc, char *argv[])
 		printf("\t2. Parse the input file.\n");
 		printf("\t3. Create Abstract Syntax Tree and print it in on console.\n");
 		printf("\t4. Display the sizes and compression percentage for Parse Tree and AST.\n");
-		printf("\t5. Create and display the Symbol Table. (Also displays identifier declaration errors {if any}).\n");
+		printf("\t5. Create and display the Symbol Table.\n");
 		printf("\t6. Parse the file for type checking and semantic analysis. (Displays errors {if any}).\n");
-		printf("\t7. Generate Assembly Code.\n\n");
+		printf("\t6. Print activation record details on console.\n");
+		printf("\t7. Print Static and Dynamic Arrays.\n");
+		printf("\t8. Parse the file for type checking and semantic analysis. (Displays errors {if any}).\n");
+		printf("\t9. Generate Assembly Code.\n\n");
 		printf("Enter your option here: ");
 		scanf("%d",&option);
 
-		switch(option)
+
+		if(option == 0)
 		{
-			case 0: printf("\n***********************************************\n");
-					printf("%s* Exiting, Thank you for using the compiler! *\n%s",BOLDWHITE,RESET);
-					printf("***********************************************\n");
-					exit(0);
-					break;
+			printf("\n***********************************************\n");
+			printf("%s* Exiting, Thank you for using the compiler! *\n%s",BOLDWHITE,RESET);
+			printf("***********************************************\n");
+			exit(0);
+			break;
+		}
 
-			case 1: 
-					printLexer(argv[1]);
-					exit(0);
-					break;
+		else if(option == 1)
+		{
+			printLexer(argv[1]);
+			exit(0);
+			break;
+		}
 
-			case 2: 
+		else if(option == 2)
+		{
 
-					fputc('$',f1);
-					fclose(f1);
-					G=getGrammar(f3);
-					F=ComputeFirst(F,G);
-					F=ComputeFollow(F,G);
-					T=createParseTable(F,T,G);
-					printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
-					parseInputSourceCode(f4,T,G,f9);
-					temphead=returnhead();
-					countNodes(temphead, ParseTreeCount);
-					//printParseTree(f2);
+			fputc('$',f1);
+			fclose(f1);
+			G=getGrammar(f3);
+			F=ComputeFirst(F,G);
+			F=ComputeFollow(F,G);
+			T=createParseTable(F,T,G);
+			printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
+			parseInputSourceCode(f4,T,G,f9);
+			temphead=returnhead();
+			countNodes(temphead, ParseTreeCount);
+			//printParseTree(f2);
+
+			removedollar(argv[1]);
+			fclose(f4);
+			exit(0);
+			break;
+		}
+		else if(option == 3)
+		{
+			fputc('$',f1);
+			fclose(f1);
+			G=getGrammar(f3);
+			F=ComputeFirst(F,G);
+			F=ComputeFollow(F,G);
+			T=createParseTable(F,T,G);
+			printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
+			parseInputSourceCode(f4,T,G,f9);
+			temphead=returnhead();
+			countNodes(temphead, ParseTreeCount);
+			//printParseTree(f2);
+
+			printf("\n\nTraversal used: PreOrder - Parent -> LeftMost Child -> All other right children");
+
+			// Making and printing AST here:
+
+			callingAST(temphead);
+
+			countNodes(temphead, ASTCount);
+
+			printf("\n**************************************************   %sAbstract Syntax Tree%s   **************************************************\n", BOLDRED, RESET);
+			printf("------------------------------------------------------------------------------------------------------------------------------\n");
+			printf("Lexeme \t           LineNo   NodeToken \t      ValueIfNum    Parent \t\tisLeaf \t    NodeSymbol\n");
+			printf("------------------------------------------------------------------------------------------------------------------------------\n");
+
+			printParseTree(); // Printing AST here. */
+
+			printf("*********************************************************************************************************************************\n");
+
+			removedollar(argv[1]);
+			fclose(f4);
+			exit(0);
+			break;
+		}
+		else if(option == 4)
+		{
+			fputc('$',f1);
+			fclose(f1);
+			G=getGrammar(f3);
+			F=ComputeFirst(F,G);
+			F=ComputeFollow(F,G);
+			T=createParseTable(F,T,G);
+			printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
+			parseInputSourceCode(f4,T,G,f9);
+			temphead=returnhead();
+			countNodes(temphead, ParseTreeCount);
+			//printParseTree(f2);
+
+			sizePT = sizeof(temphead);
+
+			// Making and printing AST here:
+
+			callingAST(temphead);
+			countNodes(temphead, ASTCount);
+			//printParseTree(f2);
+
+			// Printing the compression percentage: 
+
+			sizeAST = sizeof(temphead);
+
+			printf("\n\n****************************************************************************");
+			printf("\n\tNo of Parse Tree Nodes: %d || Size of ParseTree: %d bytes\n",ParseTreeCount[0], ParseTreeCount[0]*sizePT);
+			printf("\tNo of AST Nodes: %d || Size of AST: %d bytes\n", ASTCount[0], ASTCount[0]*sizeAST);
+			comper = (((float)ParseTreeCount[0] - (float)ASTCount[0]) / (float)ParseTreeCount[0])*100;
+			printf("%s\tCompression Percentage:%s %0.2f %s",BOLDCYAN,RESET,comper,"%");
+			printf("\n****************************************************************************");
+
+			removedollar(argv[1]);
+			fclose(f4);
+			exit(0);
+			break;
+		}
+		else if(option == 5)
+		{
+			fputc('$',f1);
+			fclose(f1);
+			G=getGrammar(f3);
+			F=ComputeFirst(F,G);
+			F=ComputeFollow(F,G);
+			T=createParseTable(F,T,G);
+			printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
+			parseInputSourceCode(f4,T,G,f9);
+			temphead=returnhead();
+			countNodes(temphead, ParseTreeCount);
+			//printParseTree(f2);
+			//fprintf(f2,"\n\n*************************************************************************************** \n\n");
+			//fprintf(f2, "\nAST: \n\n");
+
+			// Making and printing AST here:
+
+			callingAST(temphead);
+			countNodes(temphead, ASTCount);
+
+			//printParseTree(f2);
+
+			// Symbol Table: 
+
+			//printf("\n\n%sErrors During SymbolTable Creation (if any):%s ",BOLDCYAN,RESET);
+
+			Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
+
+			//if(scopeError == 0)
+				//printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
+
+			printf("\n******************************************************   %sSYMBOL TABLE%s   *****************************************************************************\n", BOLDRED, RESET);
+			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------\n");
+			printf("IDENTIFIER \t     SCOPE \t     LINENUMB   WIDTH  isARRAY \tSTATIC/DYN     ARRAYRANGE     TYPE            OFFSET   NESTING   SCOPEPARENT\n");
+			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------\n");
+
+			printSymbolTable(Table);
+
+			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------\n");
+			printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n\n");
+
+			removedollar(argv[1]);
+			fclose(f4);
+			exit(0);
+			break;
+		}
+		else if(option == 6)
+		{
+			fputc('$',f1);
+			fclose(f1);
+			G=getGrammar(f3);
+			F=ComputeFirst(F,G);
+			F=ComputeFollow(F,G);
+			T=createParseTable(F,T,G);
+			printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
+			parseInputSourceCode(f4,T,G,f9);
+			temphead=returnhead();
+			countNodes(temphead, ParseTreeCount);
+			//printParseTree(f2);
+			//fprintf(f2,"\n\n*************************************************************************************** \n\n");
+			//fprintf(f2, "\nAST: \n\n");
+
+			// Making and printing AST here:
+
+			callingAST(temphead);
+			countNodes(temphead, ASTCount);
+
+			//printParseTree(f2);
+
+			// Symbol Table: 
+
+			//printf("\n\n%sErrors During SymbolTable Creation (if any):%s ",BOLDCYAN,RESET);
+
+			Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
+
+			//if(scopeError == 0)
+				//printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
+
+			printf("\n***** %sACTIVATION RECORDS TABLE%s *****\n", BOLDRED, RESET);
+			printf("------------------------------------\n");
+			printf("SCOPENAME \t     TOTALWIDTH \n");
+			printf("------------------------------------\n");
+
+			printActiveRecords(Table);
+
+			printf("------------------------------------\n");
+
+			removedollar(argv[1]);
+			fclose(f4);
+			exit(0);
+			break;
+		}
+		else if(option == 7)
+		{
+			fputc('$',f1);
+			fclose(f1);
+			G=getGrammar(f3);
+			F=ComputeFirst(F,G);
+			F=ComputeFollow(F,G);
+			T=createParseTable(F,T,G);
+			printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
+			parseInputSourceCode(f4,T,G,f9);
+			temphead=returnhead();
+			countNodes(temphead, ParseTreeCount);
+			//printParseTree(f2);
+			//fprintf(f2,"\n\n*************************************************************************************** \n\n");
+			//fprintf(f2, "\nAST: \n\n");
+
+			// Making and printing AST here:
+
+			callingAST(temphead);
+			countNodes(temphead, ASTCount);
+
+			//printParseTree(f2);
+
+			// Symbol Table: 
+
+			//printf("\n\n%sErrors During SymbolTable Creation (if any):%s ",BOLDCYAN,RESET);
+
+			Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
+
+			//if(scopeError == 0)
+				//printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
+
+			printf("\n*************************************************   %sARRAY TABLE%s   *************************************************\n", BOLDRED, RESET);
+			printf("-------------------------------------------------------------------------------------------------------------------\n");
+			printf("SCOPE \t\t   LINENO \t IDENTIFIER  \t     STATIC/DYN  ARRAYRANGE            TYPE       SCOPEPARENT\n");
+			printf("-------------------------------------------------------------------------------------------------------------------\n");
+
+			printSymbolTableArray(Table);
+
+			printf("-------------------------------------------------------------------------------------------------------------------\n");
+			printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n\n");
+
+			removedollar(argv[1]);
+			fclose(f4);
+			exit(0);
+			break;
+		}
+		else if(option == 8)
+		{
+			clock_t start_time, end_time;
+			double total_CPU_time, total_CPU_time_in_seconds;
+			start_time = clock();
+
+				fputc('$',f1);
+				fclose(f1);
+				G=getGrammar(f3);
+				F=ComputeFirst(F,G);
+				F=ComputeFollow(F,G);
+				T=createParseTable(F,T,G);
+				printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
+				parseInputSourceCode(f4,T,G,f9);
+				temphead=returnhead();
+				countNodes(temphead, ParseTreeCount);
+
+				// Making and printing AST here:
+
+				callingAST(temphead);
+				countNodes(temphead, ASTCount);
+
+				// Symbol Table: 
+
+				printf("\n\n%sErrors During TypeChecking and Semantic Analysis (if any):%s ",BOLDCYAN,RESET);
+
+				Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
+
+				// Type Checking:
+
+				CallingTypeChecker(temphead, Table, &typeErrors, &udvflag);
+
+				/*else
+				{
+					printf("\n\t%sPlease rectify the above declaration errors during SymbolTable creation before \n\tproceeding forward with semantic analysis as it may contain undeclared variables.%s\n",BOLDRED,RESET);
 
 					removedollar(argv[1]);
 					fclose(f4);
 					exit(0);
 					break;
-
-			case 3: 
-					fputc('$',f1);
-					fclose(f1);
-					G=getGrammar(f3);
-					F=ComputeFirst(F,G);
-					F=ComputeFollow(F,G);
-					T=createParseTable(F,T,G);
-					printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
-					parseInputSourceCode(f4,T,G,f9);
-					temphead=returnhead();
-					countNodes(temphead, ParseTreeCount);
-					//printParseTree(f2);
-
-					printf("\n\nTraversal used: PreOrder - Parent -> LeftMost Child -> All other right children");
-
-					// Making and printing AST here:
-
-					callingAST(temphead);
-
-					countNodes(temphead, ASTCount);
-
-					printf("\n**************************************************   %sAbstract Syntax Tree%s   **************************************************\n", BOLDRED, RESET);
-					printf("------------------------------------------------------------------------------------------------------------------------------\n");
-					printf("Lexeme \t           LineNo   NodeToken \t      ValueIfNum    Parent \t\tisLeaf \t    NodeSymbol\n");
-					printf("------------------------------------------------------------------------------------------------------------------------------\n");
-
-					printParseTree(); // Printing AST here. */
-
-					printf("*********************************************************************************************************************************\n");
-
-					removedollar(argv[1]);
-					fclose(f4);
-					exit(0);
-					break;
-
-			case 4: 
-					fputc('$',f1);
-					fclose(f1);
-					G=getGrammar(f3);
-					F=ComputeFirst(F,G);
-					F=ComputeFollow(F,G);
-					T=createParseTable(F,T,G);
-					printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
-					parseInputSourceCode(f4,T,G,f9);
-					temphead=returnhead();
-					countNodes(temphead, ParseTreeCount);
-					//printParseTree(f2);
-
-					sizePT = sizeof(temphead);
-
-					// Making and printing AST here:
-
-					callingAST(temphead);
-					countNodes(temphead, ASTCount);
-					//printParseTree(f2);
-
-					// Printing the compression percentage: 
-
-					sizeAST = sizeof(temphead);
-
-					printf("\n\n****************************************************************************");
-					printf("\n\tNo of Parse Tree Nodes: %d || Size of ParseTree: %d bytes\n",ParseTreeCount[0], ParseTreeCount[0]*sizePT);
-					printf("\tNo of AST Nodes: %d || Size of AST: %d bytes\n", ASTCount[0], ASTCount[0]*sizeAST);
-					comper = (((float)ParseTreeCount[0] - (float)ASTCount[0]) / (float)ParseTreeCount[0])*100;
-					printf("%s\tCompression Percentage:%s %0.2f %s",BOLDCYAN,RESET,comper,"%");
-					printf("\n****************************************************************************");
-
-					removedollar(argv[1]);
-					fclose(f4);
-					exit(0);
-					break;
-
-			case 5:
-					fputc('$',f1);
-					fclose(f1);
-					G=getGrammar(f3);
-					F=ComputeFirst(F,G);
-					F=ComputeFollow(F,G);
-					T=createParseTable(F,T,G);
-					printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
-					parseInputSourceCode(f4,T,G,f9);
-					temphead=returnhead();
-					countNodes(temphead, ParseTreeCount);
-					//printParseTree(f2);
-					//fprintf(f2,"\n\n*************************************************************************************** \n\n");
-					//fprintf(f2, "\nAST: \n\n");
-
-					// Making and printing AST here:
-
-					callingAST(temphead);
-					countNodes(temphead, ASTCount);
-
-					//printParseTree(f2);
-
-					// Symbol Table: 
-
-					//printf("\n\n%sErrors During SymbolTable Creation (if any):%s ",BOLDCYAN,RESET);
-
-					Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
-
-					//if(scopeError == 0)
-						//printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
-
-					printf("\n******************************************************   %sSYMBOL TABLE%s   *********************************************************************\n", BOLDRED, RESET);
-					printf("---------------------------------------------------------------------------------------------------------------------------------------------\n");
-					printf("IDENTIFIER \t     SCOPE \t     LINENUMB   WIDTH  isARRAY \tSTATIC/DYN     ARRAYRANGE     TYPE            OFFSET   NESTING    USAGE\n");
-					printf("---------------------------------------------------------------------------------------------------------------------------------------------\n");
-
-					printSymbolTable(Table);
-
-					printf("---------------------------------------------------------------------------------------------------------------------------------------------\n");
-					printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n");
-					printf("%s** NOTE **%s Symbol Table will be constructed wrong if you have declaration errors.\n",BOLDRED,RESET);
-					printf("\t   Please rectify all the above errors before moving forward to TypeChecking and Semantic Analysis.\n\n");
-
-					removedollar(argv[1]);
-					fclose(f4);
-					exit(0);
-					break;
-
-			case 6: 
-
-					fputc('$',f1);
-					fclose(f1);
-					G=getGrammar(f3);
-					F=ComputeFirst(F,G);
-					F=ComputeFollow(F,G);
-					T=createParseTable(F,T,G);
-					printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
-					parseInputSourceCode(f4,T,G,f9);
-					temphead=returnhead();
-					countNodes(temphead, ParseTreeCount);
-
-					// Making and printing AST here:
-
-					callingAST(temphead);
-					countNodes(temphead, ASTCount);
-
-					// Symbol Table: 
-
-					printf("\n\n%sErrors During TypeChecking and Semantic Analysis (if any):%s ",BOLDCYAN,RESET);
-
-					Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
-
-					// Type Checking:
-
-					CallingTypeChecker(temphead, Table, &typeErrors, &udvflag);
-
-					/*else
-					{
-						printf("\n\t%sPlease rectify the above declaration errors during SymbolTable creation before \n\tproceeding forward with semantic analysis as it may contain undeclared variables.%s\n",BOLDRED,RESET);
-
-						removedollar(argv[1]);
-						fclose(f4);
-						exit(0);
-						break;
-					}*/
-
-					if(typeErrors == 0)
-						printf("%s\t2. No errors found during Type Checking and Semantic Analysis.%s\n\n", BOLDWHITE, RESET);
-
-					removedollar(argv[1]);
-					fclose(f4);
-					exit(0);
-					break;
-
-			case 7: 
-
-					fputc('$',f1);
-					fclose(f1);
-					G=getGrammar(f3);
-					F=ComputeFirst(F,G);
-					F=ComputeFollow(F,G);
-					T=createParseTable(F,T,G);
-					printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
-					parseInputSourceCode(f4,T,G,f9);
-					temphead=returnhead();
-					countNodes(temphead, ParseTreeCount);
-					//printParseTree(f2);
-					//fprintf(f2,"\n\n*************************************************************************************** \n\n");
-					//fprintf(f2, "\nAST: \n\n");
-
-					// Making and printing AST here:
-
-					callingAST(temphead);
-					countNodes(temphead, ASTCount);
-					//printParseTree(f2);
-
-					// Symbol Table: 
-
-					printf("\n\n%sErrors During SymbolTable Creation (if any):%s ",BOLDCYAN,RESET);
-
-					Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
-
-					if(scopeError == 0)
-						printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
-
-					/*printf("\n**********************************   %sSYMBOL TABLE%s   ******************************************\n", BOLDRED, RESET);
-					printf("----------------------------------------------------------------------------------------------\n");
-					printf("IDENTIFIER \t USAGE \t\t TYPE \t     LINE NO. \t SCOPE \t     NESTING   WIDTH   OFFSET\n");
-					printf("----------------------------------------------------------------------------------------------\n");
-
-					printSymbolTable(Table);
-
-					printf("**********************************************************************************************\n");
-					*/
-
-					// Type Checking:
-
-					printf("\n%sType Checking Analysis:%s \n",BOLDCYAN,RESET);
-
-					if(scopeError == 0)
-						CallingTypeChecker(temphead, Table, &typeErrors, &udvflag);
-					else
-					{
-						printf("\n\t%sPlease rectify the declaration errors during SymbolTable creation before \n\tproceeding forward with semantic analysis as it may contain undeclared variables.%s\n",BOLDRED,RESET);
-
-						removedollar(argv[1]);
-						fclose(f4);
-						exit(0);
-						break;
-					}
-
-					if(typeErrors == 0)
-						printf("\n%s\t3. No errors found during Type Checking and Semantic Analysis.%s\n", BOLDWHITE, RESET);
-
-					// Call CodeGen here
-
-					if(typeErrors!=0)
-					{
-						printf("\n\t%sPlease rectify the semantic errors before proceeding forward \n\twith code gen as it may show errorneous behaviour.%s\n",BOLDRED,RESET);
-
-						removedollar(argv[1]);
-						fclose(f4);
-						exit(0);
-						break;
-					}
-					else
-						CallingCodeGen(temphead, Table, codegen);
-
-					removedollar(argv[1]);
-					fclose(f4);
-					exit(0);
-					break;
-
-			case 8: break;
-
-			case 9: break;
-
-			case 10: break;
-
-			default:
-					printf("\nWrong option, try again!\n");
-					exit(0);
-					break;
+				}*/
+
+				if(typeErrors == 0)
+					printf("%s\t2. No errors found during Type Checking and Semantic Analysis.%s\n\n", BOLDWHITE, RESET);
+
+			end_time = clock();
+			total_CPU_time = (double)(end_time - start_time);
+			total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
+
+			printf("\n\n**********************************************************");
+			printf("\n    Total CPU time is: %lf\n",total_CPU_time);
+			printf("    Total CPU time in seconds is: %lfs\n",total_CPU_time_in_seconds);
+			printf("    Total CPU time in miliseconds is: %lfms\n",total_CPU_time_in_seconds*1000);
+			printf("**********************************************************\n\n");
+
+			removedollar(argv[1]);
+			fclose(f4);
+			exit(0);
+			break;
+		}
+		else if(option == 9)
+		{
+
+			fputc('$',f1);
+			fclose(f1);
+			G=getGrammar(f3);
+			F=ComputeFirst(F,G);
+			F=ComputeFollow(F,G);
+			T=createParseTable(F,T,G);
+			printf("\n%sRunning Status: %s\n",BOLDRED,RESET);
+			parseInputSourceCode(f4,T,G,f9);
+			temphead=returnhead();
+			countNodes(temphead, ParseTreeCount);
+			//printParseTree(f2);
+			//fprintf(f2,"\n\n*************************************************************************************** \n\n");
+			//fprintf(f2, "\nAST: \n\n");
+
+			// Making and printing AST here:
+
+			callingAST(temphead);
+			countNodes(temphead, ASTCount);
+			//printParseTree(f2);
+
+			// Symbol Table: 
+
+			printf("\n\n%sErrors During SymbolTable Creation (if any):%s ",BOLDCYAN,RESET);
+
+			Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
+
+			if(scopeError == 0)
+				printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
+
+			/*printf("\n**********************************   %sSYMBOL TABLE%s   ******************************************\n", BOLDRED, RESET);
+			printf("----------------------------------------------------------------------------------------------\n");
+			printf("IDENTIFIER \t USAGE \t\t TYPE \t     LINE NO. \t SCOPE \t     NESTING   WIDTH   OFFSET\n");
+			printf("----------------------------------------------------------------------------------------------\n");
+
+			printSymbolTable(Table);
+
+			printf("**********************************************************************************************\n");
+			*/
+
+			// Type Checking:
+
+			printf("\n%sType Checking Analysis:%s \n",BOLDCYAN,RESET);
+
+			if(scopeError == 0)
+				CallingTypeChecker(temphead, Table, &typeErrors, &udvflag);
+			else
+			{
+				printf("\n\t%sPlease rectify the declaration errors during SymbolTable creation before \n\tproceeding forward with semantic analysis as it may contain undeclared variables.%s\n",BOLDRED,RESET);
+
+				removedollar(argv[1]);
+				fclose(f4);
+				exit(0);
+				break;
+			}
+
+			if(typeErrors == 0)
+				printf("\n%s\t3. No errors found during Type Checking and Semantic Analysis.%s\n", BOLDWHITE, RESET);
+
+			// Call CodeGen here
+
+			if(typeErrors!=0)
+			{
+				printf("\n\t%sPlease rectify the semantic errors before proceeding forward \n\twith code gen as it may show errorneous behaviour.%s\n",BOLDRED,RESET);
+
+				removedollar(argv[1]);
+				fclose(f4);
+				exit(0);
+				break;
+			}
+			else
+				CallingCodeGen(temphead, Table, codegen);
+
+			removedollar(argv[1]);
+			fclose(f4);
+			exit(0);
+			break;
+		}
+		else
+		{
+			printf("\nWrong option, try again!\n");
+			exit(0);
+			break;
 		}
 
 	}while(option!=0);

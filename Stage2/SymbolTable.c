@@ -342,7 +342,185 @@ void ReassignMRS(ParseTree *head, SymbolTable *globaltable, int *errors)
 /********************************************************************************************************************************/
 /********************************************************************************************************************************/
 
-/* MAIN Functions */ 
+/* MAIN Functions */
+
+void recActiveRecords(SymbolTable *func, int *tw, char *funcname)
+{
+	if(func == NULL)
+		return;
+
+	SymbolEntry *templist = func->nodehead;
+
+	while(templist != NULL)
+	{
+		*tw = *tw + templist->width;
+		templist = templist->next;
+	}
+
+	recActiveRecords(func->child, tw, funcname);
+	if(func->child != NULL)
+		recActiveRecords(func->child->right, tw, funcname);
+}
+
+void printActiveRecords(SymbolTable *Table)
+{
+	SymbolTable *temptable = Table->child;
+
+	while(temptable != NULL)
+	{
+		int totalwidth = 0;
+
+		char funcname[30];
+
+		strcpy(funcname,temptable->name);
+
+		recActiveRecords(temptable, &totalwidth, funcname);
+
+		printf("%-20s \t %d\n", temptable->name, totalwidth);
+
+		temptable = temptable->right;
+	}
+}
+
+void printSymbolTableArray(SymbolTable *table)
+{
+	if(table == NULL)
+		return;
+
+	SymbolTable *childtable;
+	SymbolEntry *EntryList;
+	int nesting = 0;
+
+	EntryList = table->nodehead;
+
+	SymbolTable *nest = table;
+
+	while(nest->parent != NULL)
+	{
+		nesting++;
+		nest = nest->parent;
+	}
+
+	while(EntryList != NULL)
+	{
+		if(EntryList->isArray)
+		{
+			char scopename[30];
+
+			char idname[30];
+			strcpy(idname, EntryList->name);
+
+			int usage = EntryList->usage;
+			char usagename[30];
+
+			switch(usage)
+			{
+				case 1: strcpy(usagename,"Variable");
+						break;
+
+				case 2: strcpy(usagename,"FuncDefin");
+						break;
+
+				case 3: strcpy(usagename,"InputList");
+						break; 
+
+				case 4: strcpy(usagename,"OutputList");
+						break;
+
+				case 5: strcpy(usagename,"FuncDeclar");
+						break;
+
+				case 6: strcpy(usagename,"FunDefDecl");
+						break;
+
+				default:strcpy(usagename,"** NONE **");
+						break;
+			}
+
+			char type[30];
+			strcpy(type, EntryList->type);
+
+			char arraytype[30];
+			char isA[20];
+			char isS[20];
+
+			if(EntryList->isArray == 1)
+			{
+				strcpy(isA,"Yes");
+
+				strcpy(arraytype,"[");
+
+				char index1[10];
+				char index2[10];
+
+				if(EntryList->startindex->isDynamic == 0 && EntryList->endindex->isDynamic == 0)
+					strcpy(isS,"Static");
+				else
+					strcpy(isS,"Dynamic");
+
+				if(EntryList->startindex->isDynamic == 0)
+				{
+					sprintf(index1,"%d,",EntryList->startindex->ifnumvalue);
+				}
+				else
+				{
+					strcpy(index1,EntryList->startindex->id);
+					strcat(index1,",");
+				}
+				if(EntryList->endindex->isDynamic == 0)
+				{
+					sprintf(index2,"%d]",EntryList->endindex->ifnumvalue);
+				}
+				else
+				{
+					strcpy(index2,EntryList->endindex->id);
+					strcat(index2,"]");
+				}
+
+				char cominx[30];
+
+				strcpy(cominx,index1);
+				strcat(cominx,index2);
+				strcat(arraytype,cominx);
+			}
+			else
+			{
+				strcpy(isA,"No");
+				strcpy(arraytype,"----");
+				strcpy(isS,"----");
+			}
+
+			int lineno = EntryList->lineno;
+
+			strcpy(scopename,EntryList->scope->name);
+
+			char scopeparent[30];
+
+			if(EntryList->scope->parent == NULL)
+				strcpy(scopeparent, "NULL");
+			else
+				strcpy(scopeparent, EntryList->scope->parent->name);
+
+			if(usage == 4)
+			{
+				strcpy(scopename,"output_plist");
+				nesting = 2;
+				strcpy(scopeparent,EntryList->scope->name);
+			}
+
+			int width = EntryList->width;
+			int offset = EntryList->offset;
+
+			printf("%-20s %d \t %-20s %-10s %-20s %-10s   %-10s\n", scopename, lineno, idname, isS, arraytype, type, scopeparent);
+
+		}
+		EntryList = EntryList->next;
+	}
+
+	printSymbolTableArray(table->child);
+	printSymbolTableArray(table->right);
+
+} 
 
 void printSymbolTable(SymbolTable *table)
 {
@@ -365,6 +543,8 @@ void printSymbolTable(SymbolTable *table)
 
 	while(EntryList != NULL)
 	{
+		char scopename[30];
+
 		char idname[30];
 		strcpy(idname, EntryList->name);
 
@@ -450,7 +630,6 @@ void printSymbolTable(SymbolTable *table)
 
 		int lineno = EntryList->lineno;
 
-		char scopename[30];
 		strcpy(scopename,EntryList->scope->name);
 
 		char scopeparent[30];
@@ -460,10 +639,17 @@ void printSymbolTable(SymbolTable *table)
 		else
 			strcpy(scopeparent, EntryList->scope->parent->name);
 
+		if(usage == 4)
+		{
+			strcpy(scopename,"output_plist");
+			nesting = 2;
+			strcpy(scopeparent,EntryList->scope->name);
+		}
+
 		int width = EntryList->width;
 		int offset = EntryList->offset;
 
-		printf("%-20s %-20s %d \t %d \t %-5s    %-10s    %-10s    %-10s \t %d \t %d \t %-10s\n", idname, scopename, lineno, width,isA,isS,arraytype,type,offset,nesting,usagename);
+		printf("%-20s %-20s %d \t %d \t %-5s    %-10s    %-10s    %-10s \t %d \t %d \t   %-10s\n", idname, scopename, lineno, width,isA,isS,arraytype,type,offset,nesting,scopeparent);
 
 		//printf("%-6s \t\t %-10s \t %d \t %d \t %-6s %-6s \t\t %-6s \t %-6s \t %d \t %d\n", idname, scopename, lineno, width,isA,isS,arraytype,type,offset,nesting);
 
@@ -760,8 +946,8 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors, 
 						
 						if(found == NULL)
 						{
-							/*printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, head->n->t->lineno,BOLDRED, RESET, head->n->t->value);
-							*errors = 1;*/
+							printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, head->n->t->lineno,BOLDRED, RESET, head->n->t->value);
+							*errors = 1;
 
 							// printf("\nThis ID is not declared: %s | LNO: %d\n", head->n->t->value, head->n->t->lineno);
 

@@ -44,9 +44,9 @@ start
     B := C;
     B[x] := x;
     B[3] := C[4] + 3;
-    while(b<a AND x<C[5] OR false)
+    while(b<a)
     start
         a := 10;
     end
     abc := 2.0;
-end
+end$
