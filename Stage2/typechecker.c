@@ -225,7 +225,7 @@ void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 		}
 		else
 		{
-			if(root->child->entry->isArray == 1)
+			if(root->child->entry->isArray == 1 && (strcmp(terms[root->parent->value],"expression") != 0))
 			{
 				printf("\t%sLine No: %d%s (Error) %sComplete Array '%s' cannot be used in any expression.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED,RESET, root->child->n->t->value);
 				*errors = *errors + 1;
@@ -566,18 +566,18 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 {
 	ParseTree *lhs = Ass->child;
 
-	if(lhs->entry->udv == 1)
-	{
-		printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED, RESET, lhs->n->t->value);
-		*errors = *errors + 1;
-		goto assskip;
-	}
+	ParseTree *IDARR = lhs->right;
 
-	if(lhs->entry->isArray == 1)
+	if(strcmp(terms[IDARR->value],"lvalueIDStmt") == 0)
 	{
-		ParseTree *IDARR = lhs->right;
+		if(lhs->entry->udv == 1)
+		{
+			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED, RESET, lhs->n->t->value);
+			*errors = *errors + 1;
+			goto RHSCHECK1;
+		}
 
-		if(strcmp(terms[IDARR->value],"lvalueIDStmt") == 0)
+		if(lhs->entry->isArray)
 		{
 			ParseTree *rhsID = IDARR->child->child->child;
 
@@ -625,7 +625,46 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 				*errors = *errors +1;
 			}
 		}
-		else
+
+		ParseTree *rhsexpr = Ass->child->right->child;
+
+		RHSCHECK1:
+
+			if(strcmp(terms[rhsexpr->child->value],"unary") == 0)
+			{
+				ParseTree *ue = rhsexpr->child->child->right->child; // new_NT
+
+				CheckExpRec(ue, errors, udvflag);
+
+				if(strcmp(lhs->entry->type, ue->type) != 0)
+				{
+					printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
+					*errors = *errors +1;
+				}
+			}
+			else
+			{
+				//printf("\nComes here for LHS: %s | RHS: %s | Lineno: %d\n" , lhs->n->t->value, terms[rhsexpr->child->value], lhs->n->t->lineno);
+
+				CheckExpRec(rhsexpr->child, errors, udvflag);
+
+				if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0)
+				{
+					printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
+					*errors = *errors +1;
+				}
+			}
+	}
+	else
+	{
+		if(lhs->entry->udv == 1)
+		{
+			printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED, RESET, lhs->n->t->value);
+			*errors = *errors + 1;
+			goto RHSCHECK2;
+		}
+
+		if(lhs->entry->isArray)
 		{
 			ParseTree *lhsindex = IDARR->child->child;
 
@@ -658,10 +697,16 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 					// Dynamic Array, index may / may not be static
 				}				
 			}
+		}
+		else
+		{
+			printf("\t%sLine No: %d%s (Error) %sVariable '%s' cannot index.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED,RESET, lhs->n->t->value);
+			*errors = *errors + 1;
+		}
 
-			// Now expression checking -> 
+		ParseTree *rhsexpr = Ass->child->right->child->right;
 
-			ParseTree *rhsexpr = Ass->child->right->child->right;
+		RHSCHECK2: // Now expression checking -> 
 
 			if(strcmp(terms[rhsexpr->child->value],"unary") == 0)
 			{
@@ -687,40 +732,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 					*errors = *errors +1;
 				}
 			}
-		}
 	}
-	else
-	{
-		ParseTree *rhsexpr = Ass->child->right->child;
-
-		if(strcmp(terms[rhsexpr->child->value],"unary") == 0)
-		{
-			ParseTree *ue = rhsexpr->child->child->right->child; // new_NT
-
-			CheckExpRec(ue, errors, udvflag);
-
-			if(strcmp(lhs->entry->type, ue->type) != 0)
-			{
-				printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
-				*errors = *errors +1;
-			}
-		}
-		else
-		{
-			//printf("\nComes here for LHS: %s | RHS: %s | Lineno: %d\n" , lhs->n->t->value, terms[rhsexpr->child->value], lhs->n->t->lineno);
-
-			CheckExpRec(rhsexpr->child, errors, udvflag);
-
-			if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0)
-			{
-				printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
-				*errors = *errors +1;
-			}
-		}
-	}
-
-	assskip:
-			return;
 }
 
 void CheckIPL(SymbolTable *table, ParseTree *IPL, int *errors, int *udvflag)

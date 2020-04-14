@@ -1,11 +1,143 @@
-b4 array 100 150 boolean
-v2 real
-p int
-v3 int -> error
-u int
+lvalueIDstmt ->
 
-data array 100 150 boolean
-weight real
-length int
-b array 35 50 real
-q int
+	if array ->
+
+	ParseTree *rhsID = IDARR->child->child->child;
+
+			if(strcmp(terms[rhsID->value],"ID") == 0)
+			{
+				if(rhsID->entry->isArray == 0)
+				{
+					printf("\t%sLine No: %d%s (Error) %sComplete Array '%s' cannot be assigned to non-array identifer '%s'.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET, lhs->n->t->value, rhsID->n->t->value);
+					*errors = *errors +1;
+				}
+				else
+				{
+					// No need to calculate expr type as only single ID is present.
+
+					if(strcmp(rhsID->entry->type, lhs->entry->type) == 0)
+					{
+						if(rhsID->entry->startindex->isDynamic == 0 && rhsID->entry->startindex->isDynamic == 0 && lhs->entry->endindex->isDynamic == 0 && lhs->entry->endindex->isDynamic == 0)
+						{
+							// Both static arrays
+							if((rhsID->entry->startindex->ifnumvalue == lhs->entry->startindex->ifnumvalue) && (rhsID->entry->endindex->ifnumvalue == lhs->entry->endindex->ifnumvalue))
+							{
+								// Do nothing.
+							}
+							else
+							{
+								printf("\t%sLine No: %d%s (Error) %sLHS Array '%s' start/end indices does not match the start/end indices of RHS Array '%s'.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET, lhs->n->t->value, rhsID->n->t->value);
+								*errors = *errors +1;
+							}
+						}
+						else
+						{
+							// Something is dynamic, might / might not be error;
+						}
+					}
+					else
+					{
+						printf("\t%sLine No: %d%s (Error) %sType of LHS Array '%s' does not match the type of RHS Array '%s'.\n", BOLDWHITE,lhs->n->t->lineno,BOLDRED, RESET, lhs->n->t->value, rhsID->n->t->value);
+						*errors = *errors +1;
+					}
+				}
+
+	else
+
+		ParseTree *rhsexpr = Ass->child->right->child;
+
+		if(strcmp(terms[rhsexpr->child->value],"unary") == 0)
+		{
+			ParseTree *ue = rhsexpr->child->child->right->child; // new_NT
+
+			CheckExpRec(ue, errors, udvflag);
+
+			if(strcmp(lhs->entry->type, ue->type) != 0)
+			{
+				printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
+				*errors = *errors +1;
+			}
+		}
+		else
+		{
+			//printf("\nComes here for LHS: %s | RHS: %s | Lineno: %d\n" , lhs->n->t->value, terms[rhsexpr->child->value], lhs->n->t->lineno);
+
+			CheckExpRec(rhsexpr->child, errors, udvflag);
+
+			if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0)
+			{
+				printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
+				*errors = *errors +1;
+			}
+		}
+
+lvalueARRStmt ->
+
+	if array -> 
+
+	
+			ParseTree *lhsindex = IDARR->child->child;
+
+			if(strcmp(lhsindex->entry->type,"INTEGER") != 0) // IF Array Index is integer or not
+			{
+				printf("\t%sLine No: %d%s (Error) %sArray '%s' cannot have non-integer type of index '%s'.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED,RESET,lhs->n->t->value, lhsindex->n->t->value);
+				*errors = *errors + 1;
+			}
+			else
+			{
+				if(lhs->entry->startindex->isDynamic == 0 && lhs->entry->endindex->isDynamic == 0)
+				{
+					if(strcmp(terms[lhsindex->value],"NUM") == 0)
+					{
+						if((atoi(lhsindex->n->t->value) <= lhs->entry->endindex->ifnumvalue) && (atoi(lhsindex->n->t->value) >= lhs->entry->startindex->ifnumvalue))
+						{}
+						else
+						{
+							printf("\t%sLine No: %d%s (Error) %sArray '%s' index '%s' is out of bounds.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED,RESET,lhs->n->t->value, lhsindex->n->t->value);
+							*errors = *errors + 1;
+						}
+					}
+					else
+					{
+						//Dynamic index but static array
+					}
+				}
+				else
+				{
+					// Dynamic Array, index may / may not be static
+				}				
+			}
+
+			// Now expression checking -> 
+
+			ParseTree *rhsexpr = Ass->child->right->child->right;
+
+			if(strcmp(terms[rhsexpr->child->value],"unary") == 0)
+			{
+				ParseTree *ue = rhsexpr->child->child->right->child; // new_NT
+
+				CheckExpRec(ue, errors, udvflag);
+
+				if(strcmp(lhs->entry->type, ue->type) != 0)
+				{
+					printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
+					*errors = *errors +1;
+				}
+			}
+			else
+			{
+				//printf("\nComes here for LHS: %s | RHS: %s | Lineno: %d\n" , lhs->n->t->value, terms[rhsexpr->child->value], lhs->n->t->lineno);
+
+				CheckExpRec(rhsexpr->child, errors, udvflag);
+
+				if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0)
+				{
+					printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
+					*errors = *errors +1;
+				}
+			}
+
+	else
+
+		// ERROR
+
