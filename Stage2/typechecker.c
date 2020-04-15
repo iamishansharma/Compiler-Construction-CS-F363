@@ -13,7 +13,11 @@
 
 	Type Checking and Semantics Analyser Rules ->
 
-	(->entry wala check kar for undeclared variables.)
+	IO SEMANTICS -> 
+
+	DONE	1. Get_Value ID should be declared previously. 
+
+	DONE	2. Print mei ID shoudl be declared, array out of bounds bhi check karo. 
 
 	IDENTIFIER SEMANTICS ->
 	
@@ -191,6 +195,13 @@ void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 				goto indexskip;
 			}
 
+			if(root->child->entry->isArray == 0)
+			{
+				printf("\t%sLine No: %d%s (Error) %sNon Array Variable '%s' cannot have index.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED,RESET, root->child->n->t->value);
+				*errors = *errors + 1;
+				goto indexskip;
+			}
+
 			if(strcmp(index->entry->type,"INTEGER") != 0) // IF Array Index is integer or not
 			{
 				printf("\t%sLine No: %d%s (Error) %sArray '%s' cannot have non-integer type of index '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED,RESET,root->child->n->t->value, index->n->t->value);
@@ -235,13 +246,18 @@ void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 		arraycheckskip: ;
 	}
 
+	if(strcmp(terms[root->value],"FALSE") == 0 || strcmp(terms[root->value],"TRUE") == 0)
+	{
+		strcpy(root->type, root->entry->type);
+	}
+
 	if(strcmp(terms[root->value],"var_id_num") == 0)
 	{
 		if(root->child->entry->udv == 1)
 		{
 			//printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, root->child->n->t->lineno,BOLDRED, RESET, root->child->n->t->value);
 			*errors = *errors + 1;
-			strcpy(root->type, "ERROR");
+			strcpy(root->type, "UDV");
 		}
 		else
 			strcpy(root->type, root->child->entry->type);
@@ -262,8 +278,18 @@ void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 			strcpy(root->type, "BOOLEAN");
 		else 
 		{
-			printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
-			*errors = *errors + 1;
+			if((strcmp(root->child->type,"UDV") == 0) || (strcmp(root->child->right->type,"UDV") == 0))
+			{
+				printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s' (Due to undeclared variable).\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
+				*errors = *errors + 1;
+				strcpy(root->type, "ERROR");
+			}
+			else
+			{	
+				printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
+				*errors = *errors + 1;
+				strcpy(root->type, "ERROR");
+			}
 		}
 
 		skiplop: ;
@@ -285,8 +311,18 @@ void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 			strcpy(root->type, "BOOLEAN");
 		else
 		{
-			printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
-			*errors = *errors + 1;
+			if((strcmp(root->child->type,"UDV") == 0) || (strcmp(root->child->right->type,"UDV") == 0))
+			{
+				printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s' (Due to undeclared variable).\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
+				*errors = *errors + 1;
+				strcpy(root->type, "ERROR");
+			}
+			else
+			{	
+				printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
+				*errors = *errors + 1;
+				strcpy(root->type, "ERROR");
+			}
 		}
 
 		rop: ;
@@ -308,8 +344,18 @@ void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 			strcpy(root->type, "REAL");
 		else
 		{
-			printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
-			*errors = *errors + 1;
+			if((strcmp(root->child->type,"UDV") == 0) || (strcmp(root->child->right->type,"UDV") == 0))
+			{
+				printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s' (Due to undeclared variable).\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
+				*errors = *errors + 1;
+				strcpy(root->type, "ERROR");
+			}
+			else
+			{	
+				printf("\t%sLine No: %d%s (Error) %sLeft Term and Right Term type mismatch in expression for '%s'.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED, RESET, root->n->t->value);
+				*errors = *errors + 1;
+				strcpy(root->type, "ERROR");
+			}
 		}
 
 		skiparop: ;
@@ -699,7 +745,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 		}
 		else
 		{
-			printf("\t%sLine No: %d%s (Error) %sVariable '%s' cannot index.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED,RESET, lhs->n->t->value);
+			printf("\t%sLine No: %d%s (Error) %sNon Array Variable '%s' cannot have index.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED,RESET, lhs->n->t->value);
 			*errors = *errors + 1;
 		}
 
@@ -1077,6 +1123,107 @@ void AssignType(ParseTree *head, int *udvflag)
 	AssignType(head->right, udvflag);
 }
 
+void CheckFuncDef(SymbolTable *table)
+{
+	SymbolEntry *templist = table->nodehead;
+
+	while(templist != NULL)
+	{
+		if(templist->usage == 5)
+		{
+			printf("\t%sLine No: %d%s (Warning) %sFunction '%s' was declared but never defined and called in the program.\n", BOLDWHITE, templist->lineno, BOLDCYAN, RESET, templist->name);
+		}
+		templist = templist->next;
+	}
+}
+void CheckIOStmt(ParseTree *IO, int *errors, int *udvflag)
+{
+	// get value 
+	if(strcmp(terms[IO->child->value],"GET_VALUE") == 0)
+	{
+		// kuch karna hi nahi hai because variable undeclared pehli hi ho gaya hoga
+	}
+	else
+	{
+		ParseTree *ID = IO->child->right->child;
+		ParseTree *index = ID->right;
+
+		if(ID->entry->udv == 1)
+		{
+			goto skipprint;
+		}
+		else
+		{
+			if(index == NULL)
+			{
+				// kuch karna hi nahi hai because variable undeclared pehli hi ho gaya hoga
+			}
+			else
+			{
+				if(ID->entry->isArray)
+				{
+					if(strcmp(terms[index->child->value],"ID") == 0)
+					{
+						//printf("\nID wale: %s LNO: %d\n", ID->n->t->value, ID->n->t->lineno);
+						if(index->child->entry->udv == 1)
+						{
+							return;
+						}
+						else
+						{
+							if(strcmp(index->child->entry->type, "INTEGER") != 0)
+							{
+								printf("\t%sLine No: %d%s (Error) %sArray '%s' cannot have non-integer type of index '%s'.\n", BOLDWHITE, ID->n->t->lineno, BOLDRED,RESET, ID->n->t->value, index->child->n->t->value);
+								*errors = *errors + 1;
+							}
+							else
+							{
+								// Dynamic Bound Checking
+							}
+						}
+					}
+					else
+					{
+						//printf("\nNON ID wale: %s LNO: %d\n", ID->n->t->value, ID->n->t->lineno);
+
+						if(strcmp(index->child->entry->type,"INTEGER") != 0)
+						{
+							// Yahan aayegi hi nahi because parser se hi RNUM accepted nahi hai.
+							printf("\t%sLine No: %d%s (Error) %sArray '%s' cannot have non-integer type of index '%s'.\n", BOLDWHITE, ID->n->t->lineno, BOLDRED,RESET, ID->n->t->value, index->child->n->t->value);
+							*errors = *errors + 1;
+						}
+						else
+						{
+							// Static Bound Check for num;
+
+							// Check for Static Array -> 
+
+							int indexval = atoi(index->child->n->t->value);
+
+							if(ID->entry->startindex->isDynamic == 0 && ID->entry->endindex->isDynamic == 0)
+							{
+								if(indexval >= ID->entry->startindex->ifnumvalue && indexval <= ID->entry->endindex->ifnumvalue)
+								{}
+								else
+								{
+									printf("\t%sLine No: %d%s (Error) %sArray '%s' index '%s' is out of bounds.\n", BOLDWHITE, ID->n->t->lineno, BOLDRED,RESET, ID->n->t->value, index->child->n->t->value);
+									*errors = *errors + 1;
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					printf("\t%sLine No: %d%s (Error) %sNon Array Variable '%s' cannot index.\n", BOLDWHITE, ID->n->t->lineno, BOLDRED,RESET, ID->n->t->value);
+					*errors = *errors + 1;
+				}
+			}
+		}
+		skipprint: ;
+	}
+}
+
 /* Auxilary Functions END */
 
 /********************************************************************************************************************************/
@@ -1088,6 +1235,7 @@ void CallingTypeChecker(ParseTree *head, SymbolTable *table, int *errors, int *u
 {
 	AssignType(head, udvflag);
 	TypeChecker(head, table, errors, udvflag);
+	CheckFuncDef(table);
 }
 
 void TypeChecker(ParseTree *head, SymbolTable *table, int *errors, int *udvflag)
@@ -1109,7 +1257,7 @@ void TypeChecker(ParseTree *head, SymbolTable *table, int *errors, int *udvflag)
 	}
 	else if(strcmp(terms[head->value],"ioStmt") == 0) // IOStmt
 	{
-		//CheckIOStmt(head, errors, udvflag);
+		CheckIOStmt(head, errors, udvflag);
 	}
 	else if(strcmp(terms[head->value],"iterativeStmt") == 0) // FOR and WHILE
 	{

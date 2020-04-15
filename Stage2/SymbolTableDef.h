@@ -120,6 +120,9 @@ struct symboltable
 	struct symboltable *right;
 
 	struct symbolnode *nodehead;
+
+	int startlno;
+	int endlno;
 };
 
 typedef struct symboltable SymbolTable;

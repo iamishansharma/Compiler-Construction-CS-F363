@@ -11,8 +11,6 @@
 	Anirudh Garg 2017A7PS0142P
 	Sanjeev Singla 2017A7PS0152P
 
-	// NESTING CHANGE KARNA HAI
-
 */
 
 #include "ast.h"
@@ -28,7 +26,7 @@ SymbolTable *driver;
 
 /* Auxilary Functions */
 
-SymbolTable *ScopeEntry(SymbolTable *table, char *scopename)
+SymbolTable *ScopeEntry(SymbolTable *table, char *scopename, int line)
 {
 	SymbolTable *newTable = (SymbolTable *)malloc(sizeof(SymbolTable));
 	strcpy(newTable->name, scopename);
@@ -37,6 +35,8 @@ SymbolTable *ScopeEntry(SymbolTable *table, char *scopename)
 	newTable->right = NULL;
 	newTable->left = NULL;
 	newTable->nodehead = NULL;
+	newTable->startlno = line;
+	newTable->endlno = 0;
 
 	if(table != NULL && (table->parent != NULL) && (strcmp(table->parent->name,"global") == 0))
 	{
@@ -65,7 +65,6 @@ SymbolTable *ScopeEntry(SymbolTable *table, char *scopename)
 		newTable->parent = table;
 
 	}
-
 	return newTable;
 }
 
@@ -501,6 +500,11 @@ void printSymbolTableArray(SymbolTable *table)
 			else
 				strcpy(scopeparent, EntryList->scope->parent->name);
 
+			if(usage == 3)
+			{
+				table->endlno = table->parent->endlno;
+			}
+
 			if(usage == 4)
 			{
 				strcpy(scopename,"output_plist");
@@ -511,7 +515,10 @@ void printSymbolTableArray(SymbolTable *table)
 			int width = EntryList->width;
 			int offset = EntryList->offset;
 
-			printf("%-20s %d \t %-20s %-10s %-20s %-10s   %-10s\n", scopename, lineno, idname, isS, arraytype, type, scopeparent);
+			int slno = EntryList->scope->startlno;
+			int elno = EntryList->scope->endlno;
+
+			printf("%-20s %-10d %-8d %-20s %-10s %-20s %-10s   %-10s\n", scopename, slno, elno, idname, isS, arraytype, type, scopeparent);
 
 		}
 		EntryList = EntryList->next;
@@ -529,6 +536,7 @@ void printSymbolTable(SymbolTable *table)
 
 	SymbolTable *childtable;
 	SymbolEntry *EntryList;
+
 	int nesting = 0;
 
 	EntryList = table->nodehead;
@@ -628,8 +636,6 @@ void printSymbolTable(SymbolTable *table)
 			strcpy(isS,"----");
 		}
 
-		int lineno = EntryList->lineno;
-
 		strcpy(scopename,EntryList->scope->name);
 
 		char scopeparent[30];
@@ -639,17 +645,26 @@ void printSymbolTable(SymbolTable *table)
 		else
 			strcpy(scopeparent, EntryList->scope->parent->name);
 
+		if(usage == 3)
+		{
+			table->endlno = table->parent->endlno;
+			nesting = 1;
+		}
+
 		if(usage == 4)
 		{
 			strcpy(scopename,"output_plist");
-			nesting = 2;
+			//nesting = 2;
 			strcpy(scopeparent,EntryList->scope->name);
 		}
+
+		int slno = EntryList->scope->startlno;
+		int elno = EntryList->scope->endlno;
 
 		int width = EntryList->width;
 		int offset = EntryList->offset;
 
-		printf("%-20s %-20s %d \t %d \t %-5s    %-10s    %-10s    %-10s \t %d \t %d \t   %-10s\n", idname, scopename, lineno, width,isA,isS,arraytype,type,offset,nesting,scopeparent);
+		printf("%-20s %-20s %d \t %d \t %d \t %-5s    %-10s    %-10s    %-10s %d \t %d \t   %-10s\n", idname, scopename, slno, elno, width,isA,isS,arraytype,type,offset,nesting,scopeparent);
 
 		//printf("%-6s \t\t %-10s \t %d \t %d \t %-6s %-6s \t\t %-6s \t %-6s \t %d \t %d\n", idname, scopename, lineno, width,isA,isS,arraytype,type,offset,nesting);
 
@@ -678,7 +693,7 @@ SymbolTable *CallingSymbolTable(ParseTree *head, int *errors, int *udvflag)
 
 	SymbolTable *table;
 
-	table = ScopeEntry(NULL, "global");
+	table = ScopeEntry(NULL, "global", 0);
 
 	globaltable = table;
 
@@ -949,27 +964,6 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors, 
 							printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, head->n->t->lineno,BOLDRED, RESET, head->n->t->value);
 							*errors = 1;
 
-							// printf("\nThis ID is not declared: %s | LNO: %d\n", head->n->t->value, head->n->t->lineno);
-
-							/*UDV *newNode = (UDV*)malloc(sizeof(UDV));
-							strcpy(newNode->id,head->n->t->value);
-							newNode->lineno = head->n->t->lineno;
-							newNode->next = NULL;
-
-							if(udvhead == NULL)
-								udvhead = newNode;
-							else
-							{
-								UDV *temp = udvhead;
-
-								while(temp->next != NULL)
-									temp = temp->next;
-
-								temp->next = newNode;
-							}
-
-							*udvflag = 1;*/
-
 							head->entry = (SymbolEntry *)malloc(sizeof(SymbolEntry));
 							head->entry->udv = 1;
 						}
@@ -985,30 +979,34 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors, 
 			{
 				if(strcmp(terms[(head->value)],"conditionalStmt") == 0)
 				{
-					newScope = ScopeEntry(scope, head->child->n->t->value);
+					newScope = ScopeEntry(scope, head->child->n->t->value,head->child->n->t->lineno);
 					ConstructSymbolTable(head, newScope, errors, udvflag);
 				}
 				else if(strcmp(terms[(head->value)],"module") == 0)
 				{
-					newScope = ScopeEntry(scope, head->child->n->t->value);
+					newScope = ScopeEntry(scope, head->child->n->t->value,head->child->n->t->lineno);
 					ConstructSymbolTable(head, newScope, errors, udvflag);
 				}
 				else if(strcmp(terms[(head->value)],"driverModule") == 0)
 				{
-					newScope = ScopeEntry(scope, "driver");
+					newScope = ScopeEntry(scope, "driver",head->child->n->t->lineno);
 					driver = newScope;
 					ConstructSymbolTable(head, newScope, errors, udvflag);
 				}
 				else if(strcmp(terms[(head->value)],"iterativeStmt") == 0)
 				{
-					newScope = ScopeEntry(scope, head->child->n->t->value);
+					newScope = ScopeEntry(scope, head->child->n->t->value,head->child->n->t->lineno);
 					ConstructSymbolTable(head, newScope, errors, udvflag);
 				}
 				else if(strcmp(terms[(head->value)],"input_plist") == 0)
 				{
 					//printf("\nINPL Scope: %s | Scope Parent: %s\n", scope->name, scope->parent->name);
-					newScope = ScopeEntry(scope, "input_plist");
+					newScope = ScopeEntry(scope, "input_plist",head->child->n->t->lineno);
 					ConstructSymbolTable(head, newScope, errors, udvflag);
+				}
+				else if(strcmp(terms[(head->value)],"END") == 0)
+				{
+					scope->endlno = head->n->t->lineno;
 				}
 				else
 				{

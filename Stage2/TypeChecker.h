@@ -30,6 +30,7 @@ void CheckWhileAssExpRec(ParseTree *root, int *errors, int *udvflag);
 void CheckFORID(ParseTree *iterID, ParseTree *func, int *errors, int *udvflag);
 void CheckWhileID(char *id, ParseTree *func, int *errors, int *udvflag);
 void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag);
+void CheckIOStmt(ParseTree *IO, int *errors, int *udvflag);
 void CheckFunctioninST(ParseTree *Func, int *errors, int *udvflag);
 SymbolTable *FindModule(char *id, SymbolTable *tables, int *udvflag);
 void CheckOPLifAssigned(ParseTree *func, int *errors, int *udvflag);

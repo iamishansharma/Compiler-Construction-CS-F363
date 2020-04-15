@@ -152,7 +152,6 @@ int main(int argc, char *argv[])
 		printf("\t3. Create Abstract Syntax Tree and print it in on console.\n");
 		printf("\t4. Display the sizes and compression percentage for Parse Tree and AST.\n");
 		printf("\t5. Create and display the Symbol Table.\n");
-		printf("\t6. Parse the file for type checking and semantic analysis. (Displays errors {if any}).\n");
 		printf("\t6. Print activation record details on console.\n");
 		printf("\t7. Print Static and Dynamic Arrays.\n");
 		printf("\t8. Parse the file for type checking and semantic analysis. (Displays errors {if any}).\n");
@@ -303,14 +302,14 @@ int main(int argc, char *argv[])
 			//if(scopeError == 0)
 				//printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
 
-			printf("\n******************************************************   %sSYMBOL TABLE%s   *****************************************************************************\n", BOLDRED, RESET);
-			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------\n");
-			printf("IDENTIFIER \t     SCOPE \t     LINENUMB   WIDTH  isARRAY \tSTATIC/DYN     ARRAYRANGE     TYPE            OFFSET   NESTING   SCOPEPARENT\n");
-			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------\n");
+			printf("\n*********************************************************   %sSYMBOL TABLE%s   ********************************************************************************\n", BOLDRED, RESET);
+			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+			printf("IDENTIFIER \t     SCOPE \t     LINESTART LINEEND WIDTH  isARRAY    STATIC/DYN     ARRAYRANGE    TYPE     OFFSET   NESTING   SCOPEPARENT\n");
+			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
 			printSymbolTable(Table);
 
-			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------\n");
+			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 			printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n\n");
 
 			removedollar(argv[1]);
@@ -396,14 +395,14 @@ int main(int argc, char *argv[])
 			//if(scopeError == 0)
 				//printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
 
-			printf("\n*************************************************   %sARRAY TABLE%s   *************************************************\n", BOLDRED, RESET);
-			printf("-------------------------------------------------------------------------------------------------------------------\n");
-			printf("SCOPE \t\t   LINENO \t IDENTIFIER  \t     STATIC/DYN  ARRAYRANGE            TYPE       SCOPEPARENT\n");
-			printf("-------------------------------------------------------------------------------------------------------------------\n");
+			printf("\n******************************************************   %sARRAY TABLE%s   ******************************************************\n", BOLDRED, RESET);
+			printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+			printf("SCOPE \t\t   LINESTART  LINEEND  \t IDENTIFIER  \t     STATIC/DYN  ARRAYRANGE            TYPE       SCOPEPARENT\n");
+			printf("-----------------------------------------------------------------------------------------------------------------------------\n");
 
 			printSymbolTableArray(Table);
 
-			printf("-------------------------------------------------------------------------------------------------------------------\n");
+			printf("-----------------------------------------------------------------------------------------------------------------------------\n");
 			printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n\n");
 
 			removedollar(argv[1]);
@@ -453,14 +452,14 @@ int main(int argc, char *argv[])
 					break;
 				}*/
 
-				if(typeErrors == 0)
-					printf("%s\t2. No errors found during Type Checking and Semantic Analysis.%s\n\n", BOLDWHITE, RESET);
+				if(typeErrors == 0 && scopeError == 0)
+					printf("%s\t2. No errors found during Type Checking and Semantic Analysis.%s\n", BOLDWHITE, RESET);
 
 			end_time = clock();
 			total_CPU_time = (double)(end_time - start_time);
 			total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
 
-			printf("\n\n**********************************************************");
+			printf("\n**********************************************************");
 			printf("\n    Total CPU time is: %lf\n",total_CPU_time);
 			printf("    Total CPU time in seconds is: %lfs\n",total_CPU_time_in_seconds);
 			printf("    Total CPU time in miliseconds is: %lfms\n",total_CPU_time_in_seconds*1000);
@@ -484,53 +483,34 @@ int main(int argc, char *argv[])
 			parseInputSourceCode(f4,T,G,f9);
 			temphead=returnhead();
 			countNodes(temphead, ParseTreeCount);
-			//printParseTree(f2);
-			//fprintf(f2,"\n\n*************************************************************************************** \n\n");
-			//fprintf(f2, "\nAST: \n\n");
 
 			// Making and printing AST here:
 
 			callingAST(temphead);
 			countNodes(temphead, ASTCount);
-			//printParseTree(f2);
 
 			// Symbol Table: 
 
-			printf("\n\n%sErrors During SymbolTable Creation (if any):%s ",BOLDCYAN,RESET);
+			printf("\n\n%sErrors During TypeChecking and Semantic Analysis (if any):%s ",BOLDCYAN,RESET);
 
 			Table = CallingSymbolTable(temphead, &scopeError, &udvflag);
 
-			if(scopeError == 0)
-				printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
-
-			/*printf("\n**********************************   %sSYMBOL TABLE%s   ******************************************\n", BOLDRED, RESET);
-			printf("----------------------------------------------------------------------------------------------\n");
-			printf("IDENTIFIER \t USAGE \t\t TYPE \t     LINE NO. \t SCOPE \t     NESTING   WIDTH   OFFSET\n");
-			printf("----------------------------------------------------------------------------------------------\n");
-
-			printSymbolTable(Table);
-
-			printf("**********************************************************************************************\n");
-			*/
-
 			// Type Checking:
 
-			printf("\n%sType Checking Analysis:%s \n",BOLDCYAN,RESET);
+			CallingTypeChecker(temphead, Table, &typeErrors, &udvflag);
 
-			if(scopeError == 0)
-				CallingTypeChecker(temphead, Table, &typeErrors, &udvflag);
-			else
+			/*else
 			{
-				printf("\n\t%sPlease rectify the declaration errors during SymbolTable creation before \n\tproceeding forward with semantic analysis as it may contain undeclared variables.%s\n",BOLDRED,RESET);
+				printf("\n\t%sPlease rectify the above declaration errors during SymbolTable creation before \n\tproceeding forward with semantic analysis as it may contain undeclared variables.%s\n",BOLDRED,RESET);
 
 				removedollar(argv[1]);
 				fclose(f4);
 				exit(0);
 				break;
-			}
+			}*/
 
-			if(typeErrors == 0)
-				printf("\n%s\t3. No errors found during Type Checking and Semantic Analysis.%s\n", BOLDWHITE, RESET);
+			if(typeErrors == 0 && scopeError == 0)
+				printf("%s\t2. No errors found during Type Checking and Semantic Analysis.%s\n\n", BOLDWHITE, RESET);
 
 			// Call CodeGen here
 

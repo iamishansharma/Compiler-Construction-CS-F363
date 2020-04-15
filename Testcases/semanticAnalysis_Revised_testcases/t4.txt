@@ -1,6 +1,6 @@
-** Test case 2: Testing symbol table creation for variable declaration and redeclaration checks**
-** Single level nesting using static array data type**
-
+** Test case 4: Testing symbol table creation for variable declaration and redeclaration checks**
+** Multiple level nesting using static array data type**
+**Variant of test case 2**
 
 <<module var_demo_array>>
 takes input [x:integer, m:array [2..20] of integer, p:real];
@@ -11,7 +11,16 @@ start
 	declare p: array[2..20] of integer;	**Not an error as local variable can shadow the definition of input parameter**
 	a:= m[5]+3;
 	p:= m;					** not an error**
+	k:=true;
 	p[10]:= a*b-20*h;			**ERROR: variable h is not declared**
+	while(k AND a<=m[11] OR false)
+	start
+		declare p:integer;
+		declare b: array[2..20] of integer;
+		b:= m;
+		b[2]:= u+m[6];			**ERROR: variable u is not declared**
+		a:= b[18]*18;
+	end
         n:= a - b;
 	declare b:real;				**ERROR: variable b is re-declared**
 	b:= b+3;
@@ -25,13 +34,43 @@ takes input[a: array[10..30] of integer, b:array[10..30] of integer, c:real];
 returns [m:boolean, n:integer];
 start
 	declare x,y: real;
+	declare k: integer;
 	get_value(y);
+	get_value(x);
 	declare A,B: array[4..10] of integer;
 	get_value(B);
 	declare C: array[10..30] of integer;
 	A:=B;
 	C:=a;
 	D:=C;					**ERROR: variable D is not declared**
+	for (k in 15..40)
+	start
+		x:=x+y;
+		declare u, v:real;
+		u := y+c*34.2;
+		v:= u-c*p-20.5E+2;		**ERROR: variable p is not declared**
+		switch(k)
+		start
+			case 10: declare A:real;
+				 declare B: array[10..30] of integer;
+				 declare E: array[4..10] of integer;
+				 B[15]:= k*20; 	**No error as index is within bounds computed statically**	
+				 B:=C;          **No error as C is available with static ancestor**
+				 E:= Q;		**ERROR: variable Q is not declared**
+				 break;
+			case 20: declare B: array[1..10] of real;      **ERROR: variable B is redeclared in the scope of switch**
+                                 A:= 12.90 + u*y - c;         **Not an error as u, y and c are avialble in the scopes of static ancestors**
+				 declare E: real;             **ERROR: variable E is re-declared**
+				 declare Q: integer;
+				 get_value(Q);
+				 E[7]:= k+12 - Q*10;          **not an error**
+				 break;
+			default: E[9]:= B[15]+Q;	      **not an error**
+				 break;			 	
+		end
+		x:=x+u*v;
+		n:= Q+1;				**ERROR: variable Q is not declared**
+	end
 	x:=c+y;	
 	C[18]:= a[18]+ b[18];
 	A[5]:= B[6]- 10;

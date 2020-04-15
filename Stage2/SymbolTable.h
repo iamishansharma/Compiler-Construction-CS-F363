@@ -37,7 +37,7 @@ UDV *udvhead;
 
 /* Auxilary Functions */
 
-SymbolTable *ScopeEntry(SymbolTable *parent, char *st);
+SymbolTable *ScopeEntry(SymbolTable *parent, char *st, int line);
 SymbolEntry *FindEntryEverywhere(char *id, SymbolTable *scope, int line, int isFunc, int *errors);
 int FindEntryInScope(char *id, SymbolTable *scope);
 void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, Index *endindex, int line, SymbolTable *scope, int *errors);

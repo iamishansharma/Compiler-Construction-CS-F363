@@ -25,6 +25,7 @@ int top=-1;         // top pointer
 ParseTree *head;
 ParseTree *flagforID;
 ParseTree *IDforMRU;
+ParseTree *endpt;
 
 /* **************************************************************************** */
 
@@ -232,6 +233,11 @@ void insert_in_tree(ParseTree *current, int rule, Grammar G, Node *n)
 				IDforMRU = childtemp;
 			else
 				flagforID = childtemp;
+		}
+
+		if(strcmp(terms[childtemp->value],"END")==0)
+		{
+			endpt = childtemp;
 		}
 
 		// Inserting the child node now inside current 
@@ -721,9 +727,15 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 		if(X==a)
 		{
 			//fprintf(fs,"ACTION: Popping top of stack because same terminal found at input\n");
+			
+			if(strcmp(terms[a],"END") == 0)
+			{
+				endpt->n->t->lineno = n->t->lineno;
+			}
+
 			pop();
 
-			if(strcmp(terms[a],"ID")==0)
+			if(strcmp(terms[a],"ID") == 0)
 			{
 				//printf("\n\n Stack top-1: %s \n\n", terms[stack[top-1]]);
 				if(strcmp(terms[stack[top]],"WITH") == 0)
