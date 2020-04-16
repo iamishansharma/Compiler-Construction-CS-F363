@@ -11,12 +11,16 @@
 	Anirudh Garg 2017A7PS0142P
 	Sanjeev Singla 2017A7PS0152P
 
+	// Symbol Table theek kar
+
 */
 
 #include "ast.h"
 #include "SymbolTable.h"
 
 SymbolTable *globaltable;
+int offsetinp = 0;
+int offsetmodule = 0;
 int offset = 0;
 SymbolEntry *AddEntryWala;
 SymbolTable *driver;
@@ -36,13 +40,7 @@ SymbolTable *ScopeEntry(SymbolTable *table, char *scopename, int line)
 	newTable->left = NULL;
 	newTable->nodehead = NULL;
 	newTable->startlno = line;
-	newTable->endlno = 0;
-
-	if(table != NULL && (table->parent != NULL) && (strcmp(table->parent->name,"global") == 0))
-	{
-		//printf("\nCame for function: %s\n",table->name);
-		offset = 0;
-	}
+	//newTable->endlno = 0;
 
 	// Insert scope in tree
 
@@ -63,8 +61,17 @@ SymbolTable *ScopeEntry(SymbolTable *table, char *scopename, int line)
 		}
 
 		newTable->parent = table;
-
 	}
+
+	if((newTable->parent != NULL) && strcmp(newTable->parent->name,"global")==0)
+	{
+		offsetmodule = 0;
+	}
+	else if(strcmp(newTable->name,"input_plist")==0)
+	{	
+		offsetinp = 0;
+	}
+
 	return newTable;
 }
 
@@ -231,56 +238,128 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 
 		if(scope->parent != NULL) // Some Nesting not gobal
 		{
-			newEntry->offset = offset;
+			if(usage == 3 || usage == 4)
+			{
+				newEntry->offset = offsetinp;
 
-			int ei = endindex->ifnumvalue;
-			int si = startindex->ifnumvalue;
+				int ei = endindex->ifnumvalue;
+				int si = startindex->ifnumvalue;
 
-			if(strcmp(type,"INTEGER") == 0)
-			{
-				offset += (ei-si+1)*2;
-				newEntry->width = (ei-si+1)*2;
-			}
-			else if(strcmp(type,"REAL") == 0)
-			{
-				offset += (ei-si+1)*4;
-				newEntry->width = (ei-si+1)*4;
-			}
-			else if(strcmp(type,"BOOLEAN") == 0)
-			{
-				offset += (ei-si+1)*1;
-				newEntry->width = (ei-si+1)*1;
-			}
-			else if(strcmp(type,"ARRAY") == 0)
-			{
-				if(startindex->isDynamic == 0 && endindex->isDynamic == 0)
+				if(isArray)
 				{
-					int dt = 0;
+					if(startindex->isDynamic == 0 && endindex->isDynamic == 0)
+					{
+						int dt = 0;
 
-					if(strcmp(type,"INTEGER") == 0)
-						dt = 2;
+						if(strcmp(type,"INTEGER") == 0)
+							dt = 2;
 
-					else if(strcmp(type,"REAL") == 0)
-						dt = 4;
+						else if(strcmp(type,"REAL") == 0)
+							dt = 4;
 
-					else if(strcmp(type,"BOOLEAN") == 0)
-						dt = 1;
+						else if(strcmp(type,"BOOLEAN") == 0)
+							dt = 1;
 
-					offset += (endindex->ifnumvalue-startindex->ifnumvalue+1)*dt;
-					newEntry->width = (endindex->ifnumvalue-startindex->ifnumvalue+1)*dt;
+						if(usage == 3)
+						{
+							//printf("\nID: %s |\n", newEntry->name);
+							newEntry->width = 5;
+							offsetinp += newEntry->width;
+						}
+						else
+						{
+							newEntry->width = 1 + (ei-si+1) * dt;
+							offsetinp += newEntry->width;
+						}
+					}
+					else
+					{
+						
+						newEntry->width = 5;
+						offsetinp += newEntry->width;
+					}
+
+					goto skipwidth1;
 				}
-				else
+
+				if(strcmp(type,"INTEGER") == 0)
 				{
-					newEntry->offset = -1;
-					newEntry->width = -1;
+					newEntry->width = 2;
+					offsetinp += newEntry->width;
 				}
+				else if(strcmp(type,"REAL") == 0)
+				{
+					newEntry->width = 4;
+					offsetinp += newEntry->width;
+				}
+				else if(strcmp(type,"BOOLEAN") == 0)
+				{
+					newEntry->width = 1;
+					offsetinp += newEntry->width;
+				}
+				skipwidth1: ;
 			}
 			else
 			{
-				// Wahan waise aayega nahi kabhi
-				newEntry->offset = -1;
-				newEntry->width = -1;
-			}
+				newEntry->offset = offsetmodule;
+
+				int ei = endindex->ifnumvalue;
+				int si = startindex->ifnumvalue;
+
+				if(isArray)
+				{
+					if(startindex->isDynamic == 0 && endindex->isDynamic == 0)
+					{
+						int dt = 0;
+
+						if(strcmp(type,"INTEGER") == 0)
+							dt = 2;
+
+						else if(strcmp(type,"REAL") == 0)
+							dt = 4;
+
+						else if(strcmp(type,"BOOLEAN") == 0)
+							dt = 1;
+
+						if(usage == 3)
+						{
+							//printf("\nID: %s |\n", newEntry->name);
+							newEntry->width = 5;
+							offsetmodule += newEntry->width;
+						}
+						else
+						{
+							newEntry->width = 1 + (ei-si+1) * dt;
+							offsetmodule += newEntry->width;
+						}
+					}
+					else
+					{
+						
+						newEntry->width = 1;
+						offsetmodule += newEntry->width;
+					}
+
+					goto skipwidth2;
+				}
+
+				if(strcmp(type,"INTEGER") == 0)
+				{
+					newEntry->width = 2;
+					offsetmodule += newEntry->width;
+				}
+				else if(strcmp(type,"REAL") == 0)
+				{
+					newEntry->width = 4;
+					offsetmodule += newEntry->width;
+				}
+				else if(strcmp(type,"BOOLEAN") == 0)
+				{
+					newEntry->width = 1;
+					offsetmodule += newEntry->width;
+				}
+				skipwidth2: ;
+			}	
 		}
 
 		SymbolEntry *nh = scope->nodehead;
@@ -393,6 +472,7 @@ void printSymbolTableArray(SymbolTable *table)
 	EntryList = table->nodehead;
 
 	SymbolTable *nest = table;
+	SymbolTable *sn = table;
 
 	while(nest->parent != NULL)
 	{
@@ -411,6 +491,11 @@ void printSymbolTableArray(SymbolTable *table)
 
 			int usage = EntryList->usage;
 			char usagename[30];
+
+			while(strcmp(sn->parent->name,"global") != 0)
+				sn = sn->parent;
+
+			strcpy(scopename,sn->name);
 
 			switch(usage)
 			{
@@ -491,8 +576,6 @@ void printSymbolTableArray(SymbolTable *table)
 
 			int lineno = EntryList->lineno;
 
-			strcpy(scopename,EntryList->scope->name);
-
 			char scopeparent[30];
 
 			if(EntryList->scope->parent == NULL)
@@ -500,10 +583,10 @@ void printSymbolTableArray(SymbolTable *table)
 			else
 				strcpy(scopeparent, EntryList->scope->parent->name);
 
-			if(usage == 3)
+			/*if(usage == 3)
 			{
 				table->endlno = table->parent->endlno;
-			}
+			}*/
 
 			if(usage == 4)
 			{
@@ -515,10 +598,10 @@ void printSymbolTableArray(SymbolTable *table)
 			int width = EntryList->width;
 			int offset = EntryList->offset;
 
-			int slno = EntryList->scope->startlno;
-			int elno = EntryList->scope->endlno;
+			int slno = EntryList->lineno;
+			//int elno = EntryList->scope->endlno;
 
-			printf("%-20s %-10d %-8d %-20s %-10s %-20s %-10s   %-10s\n", scopename, slno, elno, idname, isS, arraytype, type, scopeparent);
+			printf("%-20s %-10d %-20s %-10s %-20s %-10s\n", scopename, slno, idname, isS, arraytype, type);
 
 		}
 		EntryList = EntryList->next;
@@ -527,12 +610,15 @@ void printSymbolTableArray(SymbolTable *table)
 	printSymbolTableArray(table->child);
 	printSymbolTableArray(table->right);
 
-} 
+}
 
 void printSymbolTable(SymbolTable *table)
 {
 	if(table == NULL)
 		return;
+
+	if(table->parent == NULL)
+		goto skipglobal;
 
 	SymbolTable *childtable;
 	SymbolEntry *EntryList;
@@ -542,6 +628,7 @@ void printSymbolTable(SymbolTable *table)
 	EntryList = table->nodehead;
 
 	SymbolTable *nest = table;
+	SymbolTable *sn = table;
 
 	while(nest->parent != NULL)
 	{
@@ -552,6 +639,11 @@ void printSymbolTable(SymbolTable *table)
 	while(EntryList != NULL)
 	{
 		char scopename[30];
+
+		while(strcmp(sn->parent->name,"global") != 0)
+			sn = sn->parent;
+
+		strcpy(scopename,sn->name);
 
 		char idname[30];
 		strcpy(idname, EntryList->name);
@@ -636,40 +728,35 @@ void printSymbolTable(SymbolTable *table)
 			strcpy(isS,"----");
 		}
 
-		strcpy(scopename,EntryList->scope->name);
+		//strcpy(scopename,EntryList->scope->name);
 
-		char scopeparent[30];
-
-		if(EntryList->scope->parent == NULL)
-			strcpy(scopeparent, "NULL");
-		else
-			strcpy(scopeparent, EntryList->scope->parent->name);
-
-		if(usage == 3)
+		/*if(usage == 3)
 		{
 			table->endlno = table->parent->endlno;
 			nesting = 1;
-		}
+		}*/
 
 		if(usage == 4)
 		{
-			strcpy(scopename,"output_plist");
+			//strcpy(scopename,"output_plist");
 			//nesting = 2;
-			strcpy(scopeparent,EntryList->scope->name);
+			//strcpy(scopeparent,EntryList->scope->name);
 		}
 
-		int slno = EntryList->scope->startlno;
-		int elno = EntryList->scope->endlno;
+		int slno = EntryList->lineno;
+		//int elno = EntryList->scope->endlno;
 
 		int width = EntryList->width;
 		int offset = EntryList->offset;
 
-		printf("%-20s %-20s %d \t %d \t %d \t %-5s    %-10s    %-10s    %-10s %d \t %d \t   %-10s\n", idname, scopename, slno, elno, width,isA,isS,arraytype,type,offset,nesting,scopeparent);
+		printf("%-20s %-20s %-3d \t %d \t %-5s    %-10s    %-10s    %-10s %d \t %d\n", idname, scopename, slno, width,isA,isS,arraytype,type,offset,nesting);
 
 		//printf("%-6s \t\t %-10s \t %d \t %d \t %-6s %-6s \t\t %-6s \t %-6s \t %d \t %d\n", idname, scopename, lineno, width,isA,isS,arraytype,type,offset,nesting);
 
 		EntryList = EntryList->next;
 	}
+
+	skipglobal: ;
 
 	printSymbolTable(table->child);
 	printSymbolTable(table->right);
@@ -808,6 +895,8 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors, 
 				{
 
 					ParseTree *datatype = head->right->child;
+
+					//printf("\nID: %s | DT: %s\n",head->n->t->value,terms[datatype->value]);
 
 					if(strcmp(terms[(datatype->value)],"ARRAY") == 0)
 					{
@@ -1000,13 +1089,12 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors, 
 				}
 				else if(strcmp(terms[(head->value)],"input_plist") == 0)
 				{
-					//printf("\nINPL Scope: %s | Scope Parent: %s\n", scope->name, scope->parent->name);
 					newScope = ScopeEntry(scope, "input_plist",head->child->n->t->lineno);
 					ConstructSymbolTable(head, newScope, errors, udvflag);
 				}
 				else if(strcmp(terms[(head->value)],"END") == 0)
 				{
-					scope->endlno = head->n->t->lineno;
+					//scope->endlno = head->n->t->lineno;
 				}
 				else
 				{

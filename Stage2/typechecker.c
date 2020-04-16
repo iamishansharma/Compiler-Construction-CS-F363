@@ -135,6 +135,8 @@ int asscidwhile = 0; // used to count assigned no of id's in while expression
 
 int flagudvexp = 0;
 
+int flagass = 0;
+
 /********************************************************************************************************************************/
 /********************************************************************************************************************************/
 
@@ -258,6 +260,7 @@ void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 			//printf("%s\tLine No: %d %s(Error)%s The identifier '%s' should be declared before its use.\n", BOLDWHITE, root->child->n->t->lineno,BOLDRED, RESET, root->child->n->t->value);
 			*errors = *errors + 1;
 			strcpy(root->type, "UDV");
+			flagass = 1;
 		}
 		else
 			strcpy(root->type, root->child->entry->type);
@@ -298,7 +301,7 @@ void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 	{
 		CheckExpRec(root->child, errors, udvflag);
 		CheckExpRec(root->child->right, errors, udvflag);
-
+		
 		if((strcmp(root->child->type,"ERROR") == 0) || (strcmp(root->child->right->type,"ERROR") == 0))
 		{
 			strcpy(root->type, "ERROR");
@@ -630,6 +633,9 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 
 			if(strcmp(terms[rhsID->value],"ID") == 0)
 			{
+				if(rhsID->entry->udv == 1)
+					goto skipthis;
+
 				if(rhsID->entry->isArray == 0)
 				{
 					printf("\t%sLine No: %d%s (Error) %sComplete Array '%s' cannot be assigned to non-array identifer '%s'.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET, lhs->n->t->value, rhsID->n->t->value);
@@ -665,6 +671,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 						*errors = *errors +1;
 					}
 				}
+				skipthis: ;
 			}
 			else
 			{
@@ -679,9 +686,11 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 		{
 			ParseTree *ue = rhsexpr->child->child->right->child; // new_NT
 
+			flagass = 0;
+
 			CheckExpRec(ue, errors, udvflag);
 
-			if(strcmp(lhs->entry->type, ue->type) != 0 && (lhs->entry->udv != 1))
+			if(strcmp(lhs->entry->type, ue->type) != 0 && (lhs->entry->udv != 1) && (flagass == 0))
 			{
 				printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
 				*errors = *errors +1;
@@ -691,9 +700,11 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 		{
 			//printf("\nComes here for LHS: %s | RHS: %s | Lineno: %d\n" , lhs->n->t->value, terms[rhsexpr->child->value], lhs->n->t->lineno);
 
+			flagass = 0;
+
 			CheckExpRec(rhsexpr->child, errors, udvflag);
 
-			if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0 && (lhs->entry->udv != 1))
+			if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0 && (lhs->entry->udv != 1) && (flagass == 0))
 			{
 				printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
 				*errors = *errors +1;
@@ -757,9 +768,11 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 			{
 				ParseTree *ue = rhsexpr->child->child->right->child; // new_NT
 
+				flagass = 0;
+
 				CheckExpRec(ue, errors, udvflag);
 
-				if(strcmp(lhs->entry->type, ue->type) != 0)
+				if(strcmp(lhs->entry->type, ue->type) != 0 && (flagass == 0))
 				{
 					printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
 					*errors = *errors +1;
@@ -769,9 +782,11 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 			{
 				//printf("\nComes here for LHS: %s | RHS: %s | Lineno: %d\n" , lhs->n->t->value, terms[rhsexpr->child->value], lhs->n->t->lineno);
 
+				flagass = 0;
+
 				CheckExpRec(rhsexpr->child, errors, udvflag);
 
-				if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0)
+				if(strcmp(lhs->entry->type, rhsexpr->child->type) != 0 && (flagass == 0))
 				{
 					printf("\t%sLine No: %d%s (Error) %sAssignment Statement LHS type does not match with RHS type.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET);
 					*errors = *errors +1;
@@ -1245,7 +1260,7 @@ void TypeChecker(ParseTree *head, SymbolTable *table, int *errors, int *udvflag)
 
 	if(strcmp(terms[head->value],"expression") == 0) // Expression Checker
 	{
-		//CheckExpCall(head, errors); // Is this really required ? 
+		//CheckExpCall(head, errors); // Is this really required ? Na bitsh.
 	}
 	else if(strcmp(terms[head->value],"conditionalStmt") == 0) // SWITCH 
 	{

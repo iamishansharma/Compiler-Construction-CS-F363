@@ -71,7 +71,7 @@ struct symbolnode
 	char name[30];
 
 	int usage;
-	// ^^^^^^^^^^^
+
 	// 1: Variable
 	// 2. Function Def
 	// 3. Input Parameters
@@ -80,32 +80,20 @@ struct symbolnode
 	// 6. Function Def and Dec
 
 	char type[30];
-
 	int isArray;
-
 	Index *startindex;
 	Index *endindex;
-
 	int offset;
 	int width;
-
 	int lineno;
-
 	struct symbolnode *next;
-
 	struct symboltable *scope; // Gets which scope this node is in
-
 	int isAss;
-
 	int mrsreq; // used to have the value of latest line no if func decl is required. 
-
 	int declno; // used to store declaration line no of function 
-
 	int deflno; // used to store the defination line no of function
-
-	char temporary[5]; // Temporary Variable used for SymbolEntry in CodeGen
-
 	int udv; // flag for UDV
+	char temporary[5]; // Temporary Variable used for SymbolEntry in CodeGen
 };
 
 typedef struct symbolnode SymbolEntry;
@@ -118,11 +106,11 @@ struct symboltable
 	struct symboltable *child;
 	struct symboltable *left;
 	struct symboltable *right;
-
 	struct symbolnode *nodehead;
-
 	int startlno;
 	int endlno;
+
+	//int offsetper;
 };
 
 typedef struct symboltable SymbolTable;

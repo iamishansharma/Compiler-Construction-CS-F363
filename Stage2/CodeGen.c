@@ -72,14 +72,16 @@ void MergeCodeBlocks(CodeBlock *cb1, CodeBlock *cb2)
 	}
 }
 
-void PrintCodeBlock(CodeBlock *cb)
+void AssignTemporaries(SymbolTable *driver, CodeBlock *cb)
 {
+	SymbolEntry *temp = driver->nodehead;
 
-}
+	while(temp != NULL)
+	{
+		//get temporary 
 
-void PrintToFile(CodeBlock *cb, FILE *fp)
-{
-
+		temp = temp->next;
+	}
 }
 
 void codeGenIO(ParseTree *IO)
@@ -122,12 +124,34 @@ void CodeGenRec(ParseTree *head)
 
 }
 
-void AddTemporaries(SymbolTable *table, CodeBlock *cb)
+void PrintToFile(CodeBlock *cb, FILE *f)
 {
+	CodeLine *temp = cb->top;
 
+	while(temp != NULL)
+	{
+		fprintf(f,"%s\n",temp->line);
+		temp = temp->next;
+	}
 }
 
 void CallingCodeGen(ParseTree *head, SymbolTable *table, FILE *f)
 {
+	if(strcmp(terms[head->child->value], "driverModule") == 0)
+	{
+		CodeBlock *main, *bss;
 
+		main = createCodeBlock();
+		bss = createCodeBlock();
+
+		AddCodeLine("section .bss",bss);
+
+		AssignTemporaries(table->child, bss);
+
+		PrintToFile(bss,f);
+	}
+	else
+	{
+		printf("\n%sCode Gen Error:%s Such Source Code hasn't been implemented in our project. Please use testcases with driver module with non dynamic arrays only.\n\n",BOLDRED,RESET);
+	}
 }

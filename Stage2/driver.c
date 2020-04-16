@@ -92,41 +92,7 @@ void calculateCPUtime(FILE *f4, ParseTable T, Grammar G)
 
 int main(int argc, char *argv[])
 {
-	Grammar G;
-	FirstAndFollow F;
-	ParseTable T;
-
-	FILE *f3=fopen("grammar.txt","r"); // for reading grammar file
-
-	FILE *f1=fopen(argv[1],"a"); // appending $
-
-	FILE *f9;
-
-	FILE *codegen = fopen(argv[2],"w");
-
-	FILE *f4=fopen(argv[1],"r"); // now reading that file
-
-	int ParseTreeCount[1]={0};
-
-	int ASTCount[1]={0};
-
-	float comper;
-
-	char scope[100];
-
 	int option=-1;
-
-	SymbolTable *Table;
-
-	int scopeError = 0;
-
-	int typeErrors = 0;
-
-	int sizePT = 0;
-
-	int sizeAST = 0;
-
-	int udvflag = 0;
 
 	if(argc!=3)
 	{
@@ -136,15 +102,35 @@ int main(int argc, char *argv[])
 
 	do
 	{
+		Grammar G;
+		FirstAndFollow F;
+		ParseTable T;
+		FILE *f3=fopen("grammar.txt","r"); // for reading grammar file
+		FILE *f1=fopen(argv[1],"a"); // appending $
+		FILE *f9;
+		FILE *codegen = fopen(argv[2],"w");
+		FILE *f4=fopen(argv[1],"r"); // now reading that file
+		int ParseTreeCount[1]={0};
+		int ASTCount[1]={0};
+		float comper;
+		char scope[100];
+		SymbolTable *Table;
+		int scopeError = 0;
+		int typeErrors = 0;
+		int sizePT = 0;
+		int sizeAST = 0;
+		int udvflag = 0;
+
 		printf("\n\n************************* %sERPLAG Compiler Stage2%s ***************************\n",BOLDYELLOW,RESET);
 		printf("%sBatch 14:%s | Ishan Sharma 2016B2A70773P | Sarthak Sahu 2015B5A70749P   |\n",BOLDRED,RESET);
 		printf("\t  | Anirudh Garg 2017A7PS0142P | Sanjeev Singla 2017A7PS0152P |\n");
 		printf("****************************************************************************\n");
-		printf("%sStatus:%s  \n",BOLDRED,RESET);
-		printf("\t%s1. AST is being generated as required\n",BOLDGREEN);
-		printf("\t2. Symbol Table is being populated as required.%s\n",RESET);
-		printf("\t3. Type Checking and Semantic Check are working as required. \n");
-		printf("\t4. Code Gen?\n\n");
+		printf("%sWork Status:%s  \n",BOLDRED,RESET);
+		printf("\t%s1. AST is being generated as required.\n",BOLDGREEN);
+		printf("\t2. Symbol Table is being populated as required.\n");
+		printf("\t3. Type Checking and Semantic Check are working as required.\n");
+		printf("\t    Level 4 of Error Reporting, 16 or more errors have been implemented.\n");
+		printf("\t4. Code Gen -> Programs with only driver module and only static arrays could be implemented.%s\n\n",RESET);
 		printf("Please select one of the following options (Please use only 1 option in one run of code) ->\n\n");
 		printf("\t0. Exit the program.\n");
 		printf("\t1. Display token list on console.\n");
@@ -302,14 +288,14 @@ int main(int argc, char *argv[])
 			//if(scopeError == 0)
 				//printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
 
-			printf("\n*********************************************************   %sSYMBOL TABLE%s   ********************************************************************************\n", BOLDRED, RESET);
-			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------------\n");
-			printf("IDENTIFIER \t     SCOPE \t     LINESTART LINEEND WIDTH  isARRAY    STATIC/DYN     ARRAYRANGE    TYPE     OFFSET   NESTING   SCOPEPARENT\n");
-			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+			printf("\n*********************************************************   %sSYMBOL TABLE%s   **********************************************\n", BOLDRED, RESET);
+			printf("-------------------------------------------------------------------------------------------------------------------------\n");
+			printf("IDENTIFIER \t     SCOPE \t\tLINENO WIDTH  isARRAY    STATIC/DYN     ARRAYRANGE    TYPE     OFFSET   NESTING\n");
+			printf("-------------------------------------------------------------------------------------------------------------------------\n");
 
 			printSymbolTable(Table);
 
-			printf("-----------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+			printf("-------------------------------------------------------------------------------------------------------------------------\n");
 			printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n\n");
 
 			removedollar(argv[1]);
@@ -395,14 +381,14 @@ int main(int argc, char *argv[])
 			//if(scopeError == 0)
 				//printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
 
-			printf("\n******************************************************   %sARRAY TABLE%s   ******************************************************\n", BOLDRED, RESET);
-			printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-			printf("SCOPE \t\t   LINESTART  LINEEND  \t IDENTIFIER  \t     STATIC/DYN  ARRAYRANGE            TYPE       SCOPEPARENT\n");
-			printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+			printf("\n******************************************************   %sARRAY TABLE%s   *******************************\n", BOLDRED, RESET);
+			printf("------------------------------------------------------------------------------------------------------\n");
+			printf("SCOPE \t\t   LINENO \tIDENTIFIER  \t     STATIC/DYN  ARRAYRANGE            TYPE\n");
+			printf("------------------------------------------------------------------------------------------------------\n");
 
 			printSymbolTableArray(Table);
 
-			printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+			printf("------------------------------------------------------------------------------------------------------\n");
 			printf("Declaration Errors (if any) have been displayed just above symbol table, scroll up to see them.\n\n");
 
 			removedollar(argv[1]);
@@ -453,7 +439,10 @@ int main(int argc, char *argv[])
 				}*/
 
 				if(typeErrors == 0 && scopeError == 0)
+				{
 					printf("%s\t2. No errors found during Type Checking and Semantic Analysis.%s\n", BOLDWHITE, RESET);
+					printf("\n%sCode Compiles Successfully..........%s\n", BOLDWHITE, RESET);
+				}
 
 			end_time = clock();
 			total_CPU_time = (double)(end_time - start_time);
@@ -510,9 +499,10 @@ int main(int argc, char *argv[])
 			}*/
 
 			if(typeErrors == 0 && scopeError == 0)
-				printf("%s\t2. No errors found during Type Checking and Semantic Analysis.%s\n\n", BOLDWHITE, RESET);
-
-			// Call CodeGen here
+			{
+				printf("%s\t2. No errors found during Type Checking and Semantic Analysis.%s\n", BOLDWHITE, RESET);
+				printf("\n%sCode Compiles Successfully..........%s\n", BOLDWHITE, RESET);
+			}
 
 			if(typeErrors!=0)
 			{

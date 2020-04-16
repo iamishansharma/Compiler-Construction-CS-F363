@@ -147,4 +147,3 @@ start
 	B:= C;
 	C:= D;				        **ERROR: type mismatch error**        
 end
-

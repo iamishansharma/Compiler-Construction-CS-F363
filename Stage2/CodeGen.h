@@ -42,8 +42,6 @@ void getLabel();
 CodeBlock *createCodeBlock();
 void AddCodeLine(char *buffer, CodeBlock *cb);
 void MergeCodeBlocks(CodeBlock *cb1, CodeBlock *cb2);
-void PrintCodeBlock(CodeBlock *cb);
-void PrintToFile(CodeBlock *cb, FILE *fp);
 void codeGenIO(ParseTree *IO);
 void CodeGenAssg(ParseTree *Ass);
 void CodeGenSwitch(ParseTree *Swt);
