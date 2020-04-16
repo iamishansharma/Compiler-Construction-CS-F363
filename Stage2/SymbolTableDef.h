@@ -62,6 +62,7 @@ struct index
 	char id[30];
 	int ifnumvalue;
 	int isDynamic;
+	struct symbolnode *index;
 };
 
 typedef struct index Index;

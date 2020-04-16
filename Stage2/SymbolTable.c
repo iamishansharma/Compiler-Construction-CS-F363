@@ -158,7 +158,7 @@ void AddEntry(char *id, int usage, char *type, int isArray, Index *startindex, I
 		}
 		else
 		{
-			printf("\t%sLine No: %d%s (Error) %sThe identifier '%s' cannot declared multiple times in the same scope (%s).\n", BOLDWHITE, line, BOLDRED, RESET, id,scope->name);
+			printf("\t%sLine No: %d%s (Error) %sThe identifier '%s' was declared multiple times in the same scope (%s).\n", BOLDWHITE, line, BOLDRED, RESET, id,scope->name);
 			foundornot = 1; // FOUND already, therefore don't insert in table
 			*errors = 1;
 		}
@@ -431,7 +431,9 @@ void recActiveRecords(SymbolTable *func, int *tw, char *funcname)
 
 	while(templist != NULL)
 	{
-		*tw = *tw + templist->width;
+		if(templist->usage !=3 && templist->usage !=4)
+			*tw = *tw + templist->width;
+
 		templist = templist->next;
 	}
 
@@ -623,21 +625,20 @@ void printSymbolTable(SymbolTable *table)
 	SymbolTable *childtable;
 	SymbolEntry *EntryList;
 
-	int nesting = 0;
-
 	EntryList = table->nodehead;
 
-	SymbolTable *nest = table;
 	SymbolTable *sn = table;
-
-	while(nest->parent != NULL)
-	{
-		nesting++;
-		nest = nest->parent;
-	}
 
 	while(EntryList != NULL)
 	{
+		int nesting = 0;
+		SymbolTable *nest = table;
+		while(nest->parent != NULL)
+		{
+			nesting++;
+			nest = nest->parent;
+		}
+
 		char scopename[30];
 
 		while(strcmp(sn->parent->name,"global") != 0)
@@ -649,6 +650,7 @@ void printSymbolTable(SymbolTable *table)
 		strcpy(idname, EntryList->name);
 
 		int usage = EntryList->usage;
+
 		char usagename[30];
 
 		switch(usage)
@@ -673,6 +675,11 @@ void printSymbolTable(SymbolTable *table)
 
 			default:strcpy(usagename,"** NONE **");
 					break;
+		}
+
+		if(EntryList->usage == 4 || EntryList->usage == 3)
+		{
+			nesting = 0;
 		}
 
 		char type[30];
@@ -735,13 +742,6 @@ void printSymbolTable(SymbolTable *table)
 			table->endlno = table->parent->endlno;
 			nesting = 1;
 		}*/
-
-		if(usage == 4)
-		{
-			//strcpy(scopename,"output_plist");
-			//nesting = 2;
-			//strcpy(scopeparent,EntryList->scope->name);
-		}
 
 		int slno = EntryList->lineno;
 		//int elno = EntryList->scope->endlno;
@@ -1045,7 +1045,7 @@ void ConstructSymbolTable(ParseTree *headroot, SymbolTable *scope, int *errors, 
 					}
 					else
 					{
-						
+
 						found = FindEntryEverywhere(head->n->t->value, scope, head->n->t->lineno, 0, errors);
 						
 						if(found == NULL)

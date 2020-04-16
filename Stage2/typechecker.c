@@ -125,6 +125,8 @@
 
 				Also, the type checking of A[13], for type of index (NUM), is done at compile time.
 
+			5. Dynamic array type checking
+
 */
 
 #include "TypeChecker.h"
@@ -132,10 +134,10 @@
 #include "SymbolTable.h"
 
 int asscidwhile = 0; // used to count assigned no of id's in while expression
-
 int flagudvexp = 0;
-
 int flagass = 0;
+int defaultbool = 0;
+int defaultint = 0;
 
 /********************************************************************************************************************************/
 /********************************************************************************************************************************/
@@ -240,7 +242,7 @@ void CheckExpRec(ParseTree *root, int *errors, int *udvflag)
 		{
 			if(root->child->entry->isArray == 1 && (strcmp(terms[root->parent->value],"expression") != 0))
 			{
-				printf("\t%sLine No: %d%s (Error) %sComplete Array '%s' cannot be used in any expression.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED,RESET, root->child->n->t->value);
+				printf("\t%sLine No: %d%s (Error) %sComplete Array '%s' cannot be used in any arithematic/relational/logical expression.\n", BOLDWHITE, root->child->n->t->lineno, BOLDRED,RESET, root->child->n->t->value);
 				*errors = *errors + 1;
 			}
 		}
@@ -381,6 +383,7 @@ void CheckSwitch(ParseTree *swt, int *errors, int *udvflag)
 		ParseTree *temp = switchID;
 
 		int found = 0;
+		defaultint = 0;
 
 		while(temp != NULL)
 		{
@@ -389,6 +392,8 @@ void CheckSwitch(ParseTree *swt, int *errors, int *udvflag)
 				found = 1;
 				break;
 			}
+			//defaultint = temp->n->t->lineno;
+			//printf("\nTerms: %s\n", terms[temp->value]);
 			temp = temp->right;
 		}
 
@@ -410,7 +415,7 @@ void CheckSwitch(ParseTree *swt, int *errors, int *udvflag)
 
 		if(!found)
 		{
-			printf("\t%sLine No: %d%s (Error) %s'default' case statement missing for 'switch' with integer identifier.\n", BOLDWHITE,switchID->n->t->lineno,BOLDRED, RESET);
+			printf("\t%sLine No: %d%s (Error) %s'default' case statement missing for 'switch' with integer identifier.\n", BOLDWHITE, switchID->n->t->lineno,BOLDRED, RESET);
 			*errors = *errors +1;
 		}
 	}
@@ -436,12 +441,13 @@ void CheckSwitch(ParseTree *swt, int *errors, int *udvflag)
 		ParseTree *temp = switchID;
 
 		int found = 0;
+		defaultbool = 0;
 
 		while(temp != NULL)
 		{
 			if(strcmp(terms[temp->value],"default") == 0)
 			{
-				printf("\t%sLine No: %d%s (Error) %s'switch' with 'boolean' identifier cannot have 'default' case.\n", BOLDWHITE, switchID->n->t->lineno,BOLDRED, RESET);
+				printf("\t%sLine No: %d%s (Error) %s'switch' with 'boolean' identifier cannot have 'default' case.\n", BOLDWHITE, temp->n->t->lineno,BOLDRED, RESET);
 				*errors = *errors +1;
 			}
 			temp = temp->right;
@@ -675,7 +681,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 			}
 			else
 			{
-				printf("\t%sLine No: %d%s (Error) %sComplete Array '%s' cannot be assigned to an arithematic expression.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET, lhs->n->t->value);
+				printf("\t%sLine No: %d%s (Error) %sComplete Array '%s' cannot be assigned to an arithematic/relational/logical expression.\n", BOLDWHITE, lhs->n->t->lineno, BOLDRED, RESET, lhs->n->t->value);
 				*errors = *errors +1;
 			}
 		}
@@ -1238,6 +1244,42 @@ void CheckIOStmt(ParseTree *IO, int *errors, int *udvflag)
 		skipprint: ;
 	}
 }
+void CheckArrayDynamicType(ParseTree *head, int *errors, int *udvflag)
+{
+	if(head == NULL)
+		return;
+
+	if(head->parent != NULL)
+	{
+		if(strcmp(terms[head->parent->value],"index") == 0)
+		{
+			if(head->parent->parent != NULL)
+			{
+				if(strcmp(terms[head->parent->parent->value],"range_arrays") == 0)
+				{
+					if(strcmp(terms[head->value],"ID") == 0 )
+					{
+						if(head->entry->udv == 1)
+						{
+
+						}
+						else
+						{
+							if(strcmp(head->entry->type,"INTEGER") != 0)
+							{
+								printf("\t%sLine No: %d%s (Error) %sArray/s cannot have non-integer type of index '%s' at declaration.\n", BOLDWHITE, head->n->t->lineno, BOLDRED,RESET, head->n->t->value);
+								*errors = *errors + 1;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	CheckArrayDynamicType(head->child, errors, udvflag);
+	CheckArrayDynamicType(head->right, errors, udvflag);
+}
 
 /* Auxilary Functions END */
 
@@ -1250,6 +1292,7 @@ void CallingTypeChecker(ParseTree *head, SymbolTable *table, int *errors, int *u
 {
 	AssignType(head, udvflag);
 	TypeChecker(head, table, errors, udvflag);
+	CheckArrayDynamicType(head, errors, udvflag);
 	CheckFuncDef(table);
 }
 

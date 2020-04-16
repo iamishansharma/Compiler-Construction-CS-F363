@@ -60,7 +60,7 @@ void ConstructAST(ParseTree *head)
 					case 104: // SQBC
 					case 105: // COLON
 					case 106: // OF
-					//case 107: // END
+					case 107: // END
 					case 108: // BC
 					case 109: // WITH
 					case 110: // PARAMETERS

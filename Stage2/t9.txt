@@ -17,7 +17,6 @@ declare module function2;
 declare module function4;
 declare module switch_int_default;
 
-
 <<module switch_var_demo1>>
 takes input [x: integer, y: real, z:boolean];
 returns [u: integer];

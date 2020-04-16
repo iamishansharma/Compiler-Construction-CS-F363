@@ -59,6 +59,7 @@ void printLexer(char *filename)
 		{
 			printf("     %-12d %-20s %-20s\n",n->t->lineno,n->t->value,n->t->token);
 		}
+		
 	}while(buffer[fwd]!='\0');
 }
 
@@ -249,7 +250,7 @@ int main(int argc, char *argv[])
 			printf("\tNo of AST Nodes: %d || Size of AST: %d bytes\n", ASTCount[0], ASTCount[0]*sizeAST);
 			comper = (((float)ParseTreeCount[0] - (float)ASTCount[0]) / (float)ParseTreeCount[0])*100;
 			printf("%s\tCompression Percentage:%s %0.2f %s",BOLDCYAN,RESET,comper,"%");
-			printf("\n****************************************************************************");
+			printf("\n****************************************************************************\n");
 
 			removedollar(argv[1]);
 			fclose(f4);

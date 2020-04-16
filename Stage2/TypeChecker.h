@@ -36,6 +36,7 @@ SymbolTable *FindModule(char *id, SymbolTable *tables, int *udvflag);
 void CheckOPLifAssigned(ParseTree *func, int *errors, int *udvflag);
 void CheckOPLifAssignedRec(char *id, ParseTree *func, int *errors, int *udvflag);
 void AssignType(ParseTree *head, int *udvflag);
+void CheckArrayDynamicType(ParseTree *head, int *errors, int *udvflag);
 
 // Main Functions -> 
 

@@ -134,7 +134,7 @@ u		var_demo_array		18-24			2	no	---			---				integer		47	2
 b		var_demo_array		18-24			39	yes	static			[2,20]		integer		49	2
 z2		var_demo_array		8-31			1	yes	dynamic			[a,b]		integer		88	1
 z3		var_demo_array		8-31			1	yes	dynamic			[a,b]		integer		89	1
-x1		var_demo_array		8-31			4	no	---			---				integer		90	1
+x1		var_demo_array		8-31			4	no	---			---				real		90	1
 a		f1					37-80			5	yes	dynamic			[g1,g2]		integer		0	0
 b		f1					37-80			5	yes	static			[10,30]		integer		5	0
 c		f1					37-80			4	no	---			---				real		10	0
@@ -174,9 +174,4 @@ r 		driver				85-117			4	no	---			---				real		105	1
 w 		driver				85-117			2	no	---			---				integer		109	1
 D		driver				85-117			43	yes	static			[20,40]		integer		111	1
 
-Scope Name galat hai.
-Offsets galat hai.
-
-**
-
-$
+**$$
