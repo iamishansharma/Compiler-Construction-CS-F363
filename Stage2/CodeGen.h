@@ -42,15 +42,16 @@ void getLabel();
 CodeBlock *createCodeBlock();
 void AddCodeLine(char *buffer, CodeBlock *cb);
 void MergeCodeBlocks(CodeBlock *cb1, CodeBlock *cb2);
-void codeGenIO(ParseTree *IO);
-void CodeGenAssg(ParseTree *Ass);
-void CodeGenSwitch(ParseTree *Swt);
-void CodeGenExprRec(ParseTree *Expr);
-void CodeGenExpr(ParseTree *Expr);
-void CodeGenIter(ParseTree *Iter);
-void CodeGenStmts(ParseTree *Stmt);
-void CodeGenRec(ParseTree *head);
+void codeGenIO(ParseTree *IO, CodeBlock *main);
+void CodeGenAssg(ParseTree *Ass, CodeBlock *main);
+void CodeGenSwitch(ParseTree *Swt, CodeBlock *main);
+void CodeGenExprRec(ParseTree *Expr, CodeBlock *main);
+void CodeGenExpr(ParseTree *Expr, CodeBlock *main);
+void CodeGenIter(ParseTree *Iter, CodeBlock *main);
+void CodeGenStmts(ParseTree *Stmt, CodeBlock *main);
+void CodeGenRec(ParseTree *head, CodeBlock *main);
 void AddTemporaries(SymbolTable *table, CodeBlock *cb);
+void PrintToFile(CodeBlock *cb, FILE *f);
 void CallingCodeGen(ParseTree *head, SymbolTable *table, FILE *f);
 
 #endif

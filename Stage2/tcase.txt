@@ -1,8 +1,9 @@
 <<<driver program>>>
 start
-    declare a: integer;
-    declare low:integer;
-    declare high:integer;
-    declare ArrayDC: array[low..high] of boolean;
-    ArrayDC[a] := false;
+end
+
+<<module var_demo>>
+takes input [x:integer, w: boolean, p:real];
+start
+	
 end

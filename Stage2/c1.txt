@@ -25,5 +25,3 @@ Output: 9
 Similarly run the generated assembly code for other input values and verify.
 
 **
-
-

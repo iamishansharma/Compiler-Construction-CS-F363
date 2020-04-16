@@ -1326,7 +1326,7 @@ void TypeChecker(ParseTree *head, SymbolTable *table, int *errors, int *udvflag)
 		CheckAssignStmt(head, errors, udvflag);
 		//printf("\nEnding Assignment\n");
 	}
-	else if(strcmp(terms[head->value],"module") == 0)
+	else if(strcmp(terms[head->value],"module") == 0 && head->child->right->right != NULL)
 	{
 		CheckOPLifAssigned(head, errors, udvflag);
 	}
