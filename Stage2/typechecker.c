@@ -1166,6 +1166,9 @@ void CheckIOStmt(ParseTree *IO, int *errors, int *udvflag)
 	}
 	else
 	{
+		if((strcmp(terms[IO->child->right->value],"FALSE")==0) || (strcmp(terms[IO->child->right->value],"TRUE")==0))
+			goto skipIOFT;
+
 		ParseTree *ID = IO->child->right->child;
 		ParseTree *index = ID->right;
 
@@ -1242,6 +1245,8 @@ void CheckIOStmt(ParseTree *IO, int *errors, int *udvflag)
 			}
 		}
 		skipprint: ;
+
+		skipIOFT: ;
 	}
 }
 void CheckArrayDynamicType(ParseTree *head, int *errors, int *udvflag)

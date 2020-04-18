@@ -10,8 +10,8 @@ start
 	b:= 9;
 	get_value(x);
 	get_value(y);
-	z:= x + y*b +(a-b)*y+ a*2 - b*x;	
-        print(z);
+	z:= x + y*b + (a-b)*y + a*2 - b*x;	
+    print(z);
 end
 
 ** On the console

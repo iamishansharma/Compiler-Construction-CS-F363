@@ -43,6 +43,8 @@ struct parsetree
 
 	char type[30];
 
+	char temporary[10];
+
 };
 
 typedef struct parsetree ParseTree;
