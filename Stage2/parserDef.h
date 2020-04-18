@@ -45,6 +45,8 @@ struct parsetree
 
 	char temporary[10];
 
+	int isCG;
+
 };
 
 typedef struct parsetree ParseTree;

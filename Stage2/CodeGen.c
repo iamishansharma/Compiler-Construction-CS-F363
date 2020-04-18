@@ -29,74 +29,66 @@ int daflag = 0;
 
 CodeBlock *bss;
 
-void getTemporary()
+void getTemp()
 {
 	sprintf(tempbuf,"ri%d", tempno);
 	tempno++;
 }
 
-void getTemporaryFloat()
-{
-	sprintf(tempbuf,"xmm%d", tempfloatno);
-	tempfloatno++;
-}
-
-void getLabel()
+void getL()
 {
 	sprintf(labelbuf,"l%d",labelno);
 	labelno++;
 }
 
-CodeBlock *createCodeBlock()
+CodeBlock *cCB()
 {
 	CodeBlock *cb = (CodeBlock *)malloc(sizeof(CodeBlock));
-	cb->top = NULL;
-	cb->bot = NULL;
+	cb->upar = NULL;
+	cb->niche = NULL;
 	return cb;
 }
 
-void AddCodeLine(char *line, CodeBlock *cb)
+void ACLine(char *line, CodeBlock *cb)
 {
 	// Add line at the bottom of CodeBlock
-	
+
 	CodeLine *newLine;
 	newLine = (CodeLine *)malloc(sizeof(CodeLine));
 	newLine->next = NULL;
 	strcpy(newLine->line,line);
 
-	if(cb->bot == NULL && cb->top == NULL)
-		cb->top = cb->bot = newLine;
+	if(cb->niche == NULL && cb->upar == NULL)
+		cb->upar = cb->niche = newLine;
 	else
 	{
-		//printf("\nBot Line: %s\n",cb->bot->line);
-		cb->bot->next = newLine;
-		//printf("\nNew Bot Line: %s\n", cb->bot->next->line);
-		cb->bot = newLine;
+		cb->niche->next = newLine;
+		cb->niche = newLine;
 	}
 }
 
-void MergeCodeBlocks(CodeBlock *cb1, CodeBlock *cb2)
+void MCB(CodeBlock *cb1, CodeBlock *cb2)
 {
-	// Merge cb1 and cb2, put cb1 on top, cb2 on Bottom
+	// Merge cb1 and cb2, put cb1 on upar, cb2 on Bottom
 
-	if(cb1->top == NULL)
+	if(cb1->upar == NULL)
 	{
-		if(cb2->top == NULL)
+		if(cb2->upar == NULL)
 		{}
 		else
 		{
-			cb1->top = cb2->top;
-			cb1->bot = cb2->bot;
+			cb1->upar = cb2->upar;
+			cb1->niche = cb2->niche;
 		}
 	}
 	else
 	{
-		if(cb2->top == NULL)
+		if(cb2->upar == NULL)
 		{}
 		else
 		{
-			cb1->bot->next = cb2->top;
-			cb1->bot = cb2->bot;
+			cb1->niche->next = cb2->upar;
+			cb1->niche = cb2->niche;
 		}
 	}
 }
@@ -112,10 +104,10 @@ void AssignTemporaries(SymbolTable *table, CodeBlock *cb)
 	{
 		if(strcmp(temp->type,"REAL") == 0)
 		{
-			getTemporary();
+			getTemp();
 		}
 		else
-			getTemporary();
+			getTemp();
 		
 
 		strcpy(temp->temporary,tempbuf);
@@ -133,7 +125,7 @@ void AssignTemporaries(SymbolTable *table, CodeBlock *cb)
 		else
 			sprintf(cgbuffer,"\t%s: \tresd %d ; ID: %s | Line No: %d",temp->temporary,1,temp->name,temp->lineno);
 
-		AddCodeLine(cgbuffer,cb);
+		ACLine(cgbuffer,cb);
 		temp = temp->next;
 	}
 
@@ -149,7 +141,7 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 
 		char getvbuf[100];
 		sprintf(getvbuf,"\t\t; Getting A Value In ID: %s",id->n->t->value);
-		AddCodeLine(getvbuf,main);
+		ACLine(getvbuf,main);
 
 		if(id->entry->isArray)
 		{
@@ -157,67 +149,100 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 			int end = id->entry->endindex->ifnumvalue;
 			int tot = end - start + 1;
 
-			// Handle Arrays
+			ACLine("\t\tpush rbp",main);
+			ACLine("\t\tmov rdi, in_format_int_a ; printing array integer format",main); 
+			ACLine("\t\tmov rax, 0",main);
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tmov rsi, dword %d", tot);
+			ACLine(cgbuffer,main);
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tmov rdx, dword %d", start);
+			ACLine(cgbuffer,main);
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tmov rcx, dword %d", end);
+			ACLine(cgbuffer,main);
+			ACLine("\t\tcall printf",main);
+			ACLine("\t\tpop rbp",main);
+
+			// for loop for array here -> 
+			ACLine("\t\tpush rbp",main);
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tmov r14, dword 0");
+			ACLine(cgbuffer,main);
+			ACLine("\tarlp: ",main);
+			ACLine("\t\tmov rdi, in_format",main);
+			ACLine("\t\tmov rax, 0",main);
+			sprintf(cgbuffer,"\t\tlea rsi, [%s + 4*r14]",id->entry->temporary);
+			ACLine(cgbuffer,main);
+			ACLine("\t\tcall scanf",main);
+			ACLine("\t\tinc r14",main);
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tcmp r14, %d",tot);
+			ACLine(cgbuffer,main);
+			ACLine("\t\tjne arlp",main);
+			ACLine("\t\tpop rbp\n",main);
 		}
 		else
 		{
 			if(strcmp(id->entry->type,"INTEGER") == 0)
 			{
-				AddCodeLine("\t\tpush rbp",main);
-				AddCodeLine("\t\tmov rdi, in_format_int ; printing integer format",main); 
+				ACLine("\t\tpush rbp",main);
+				ACLine("\t\tmov rdi, in_format_int ; printing integer format",main); 
 
-				AddCodeLine("\t\tmov rax, 0",main);
-				AddCodeLine("\t\tcall printf",main);
-				AddCodeLine("\t\tpop rbp",main);
+				ACLine("\t\tmov rax, 0",main);
+				ACLine("\t\tcall printf",main);
+				ACLine("\t\tpop rbp",main);
 
-				AddCodeLine("\t\tpush rbp",main);
-				AddCodeLine("\t\tmov rdi, in_format",main);
-				AddCodeLine("\t\tmov rax, 0",main);
+				ACLine("\t\tpush rbp",main);
+				//ACLine("\t\tpush rax",main);
+				ACLine("\t\tmov rdi, in_format",main);
+				ACLine("\t\tmov rax, 0",main);
 
 				sprintf(cgbuffer,"\t\tmov rsi, %s",id->entry->temporary);
-				AddCodeLine(cgbuffer,main);
-				AddCodeLine("\t\tcall scanf",main);
-				AddCodeLine("\t\tpop rbp\n",main);
+				ACLine(cgbuffer,main);
+				ACLine("\t\tcall scanf",main);
+				//ACLine("\t\tpop rax",main);
+				ACLine("\t\tpop rbp\n",main);
 			}
 			else if(strcmp(id->entry->type,"REAL") == 0)
 			{
 				// Not working because float registers nahi hai.
-				AddCodeLine("\t\tpush rbp",main);
-				AddCodeLine("\t\tmov rdi, in_format_real ; printing real format",main);
-				AddCodeLine("\t\tmov rax, 0",main);
-				AddCodeLine("\t\tcall printf",main);
-				AddCodeLine("\t\tpop rbp",main);
+				ACLine("\t\tpush rbp",main);
+				ACLine("\t\tmov rdi, in_format_real ; printing real format",main);
+				ACLine("\t\tmov rax, 0",main);
+				ACLine("\t\tcall printf",main);
+				ACLine("\t\tpop rbp",main);
 
-				AddCodeLine("\t\tpush rbp",main);
-				AddCodeLine("\t\tmov rdi, in_format",main);
-				AddCodeLine("\t\tmov rax, 0",main);
+				ACLine("\t\tpush rbp",main);
+				ACLine("\t\tmov rdi, in_format",main);
+				ACLine("\t\tmov rax, 0",main);
 
 				sprintf(cgbuffer,"\t\tmov rsi, %s",id->entry->temporary);
-				AddCodeLine(cgbuffer,main);
-				AddCodeLine("\t\tcall scanf",main);
-				AddCodeLine("\t\tpop rbp\n",main);
+				ACLine(cgbuffer,main);
+				ACLine("\t\tcall scanf",main);
+				ACLine("\t\tpop rbp\n",main);
 			}
 			else if(strcmp(id->entry->type,"BOOLEAN") == 0)
 			{
-				AddCodeLine("\t\tpush rbp",main);
-				AddCodeLine("\t\tmov rdi, in_format_boolean ; printing boolean format",main);
-				AddCodeLine("\t\tmov rax, 0",main);
-				AddCodeLine("\t\tcall printf",main);
-				AddCodeLine("\t\tpop rbp",main);
+				ACLine("\t\tpush rbp",main);
+				ACLine("\t\tmov rdi, in_format_boolean ; printing boolean format",main);
+				ACLine("\t\tmov rax, 0",main);
+				ACLine("\t\tcall printf",main);
+				ACLine("\t\tpop rbp",main);
 
-				AddCodeLine("\t\tpush rbp",main);
-				AddCodeLine("\t\tmov rdi, in_format",main);
-				AddCodeLine("\t\tmov rax, 0",main);
+				ACLine("\t\tpush rbp",main);
+				ACLine("\t\tmov rdi, in_format",main);
+				ACLine("\t\tmov rax, 0",main);
 
 				sprintf(cgbuffer,"\t\tmov rsi, %s",id->entry->temporary);
-				AddCodeLine(cgbuffer,main);
-				AddCodeLine("\t\tcall scanf",main);
-				AddCodeLine("\t\tpop rbp\n",main);
+				ACLine(cgbuffer,main);
+				ACLine("\t\tcall scanf",main);
+				ACLine("\t\tpop rbp\n",main);
 			}
 		}
 	}
-	else
-	{
+	else // print
+	{	
 		ParseTree *tfvar = IO->child->right;
 
 		if(strcmp(terms[tfvar->value],"FALSE") == 0 || strcmp(terms[tfvar->value],"TRUE") == 0)
@@ -231,14 +256,20 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 
 			char pbuf[100];
 			sprintf(pbuf,"\t\t; Printing %s", tfvar->n->t->value);
-			AddCodeLine(pbuf,main);
+			ACLine(pbuf,main);
 
-			AddCodeLine("\t\tmov rax,1",main);
-			AddCodeLine("\t\tmov rdi,1",main);
+			ACLine("\t\tpush rbp",main);
+			ACLine("\t\tmov rdi, out_format_m",main);
+			ACLine("\t\tmov rax, 0",main);
+			ACLine("\t\tcall printf",main);
+			ACLine("\t\tpop rbp\n",main);
+
+			ACLine("\t\tmov rax,1",main);
+			ACLine("\t\tmov rdi,1",main);
 			sprintf(cgbuffer,"\t\tmov rsi, %s", fort);
-			AddCodeLine(cgbuffer,main);
-			AddCodeLine("\t\tmov rdx, 13",main);
-			AddCodeLine("\t\tsyscall\n",main);
+			ACLine(cgbuffer,main);
+			ACLine("\t\tmov rdx, 13",main);
+			ACLine("\t\tsyscall\n",main);
 		}	
 		else
 		{
@@ -248,10 +279,194 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 			{
 				if(id->entry->isArray)
 				{
-					// Handle Arrays
+					if(id->right == NULL) // full array
+					{
+						//printf("\nFull array\n");
+						if(strcmp(id->entry->type,"INTEGER") == 0)
+						{
+							int tot = id->entry->endindex->ifnumvalue - id->entry->startindex->ifnumvalue + 1;
 
-						// Indexed
-						// Whole
+							char pbuf[100];
+							sprintf(pbuf,"\t\t; Printing INTEGER ARRAY ID: %s",id->n->t->value);
+							ACLine(pbuf,main);
+							ACLine("\t\tpush rbp",main);
+							ACLine("\t\tmov rdi, out_format_m",main);
+							ACLine("\t\tmov rax, 0",main);
+							ACLine("\t\tcall printf",main);
+							ACLine("\t\tpop rbp\n",main);
+
+							ACLine("\t\tpush rbp",main);
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t\tmov r13, dword 0");
+							ACLine(cgbuffer,main);
+							ACLine("\tarplp: mov rdi, out_format",main);
+							ACLine("\t\tmov rax, 0",main);
+							sprintf(cgbuffer,"\t\tmov rsi, [%s + 4*r13]", id->entry->temporary);
+							ACLine(cgbuffer,main);
+							ACLine("\t\tcall printf",main);
+							ACLine("\t\tinc r13",main);
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t\tcmp r13, %d",tot);
+							ACLine(cgbuffer,main);
+							ACLine("\t\tjne arplp",main);
+							ACLine("\t\tpop rbp\n",main);
+						}
+						else if(strcmp(id->entry->type,"BOOLEAN") == 0)
+						{
+							int tot = id->entry->endindex->ifnumvalue - id->entry->startindex->ifnumvalue + 1;
+
+							char pbuf[100];
+							sprintf(pbuf,"\t\t; Printing BOOLEAN ARRAY ID: %s",id->n->t->value);
+							ACLine(pbuf,main);
+							ACLine("\t\tpush rbp",main);
+							ACLine("\t\tmov rdi, out_format_m",main);
+							ACLine("\t\tmov rax, 0",main);
+							ACLine("\t\tcall printf",main);
+							ACLine("\t\tpop rbp\n",main);
+
+							ACLine("\t\tpush rbp",main);
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t\tmov r12, dword 0");
+							ACLine(cgbuffer,main);
+
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\tarplpb: cmp [%s + 4*r12], dword 1",id->entry->temporary);
+							ACLine(cgbuffer,main);
+
+							getL();
+							char truelabel[20];
+							strcpy(truelabel,labelbuf);
+
+							getL();
+							char falselabel[20];
+							strcpy(falselabel,labelbuf);
+
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t\tje %s", truelabel);
+							ACLine(cgbuffer,main);
+
+							// FALSE
+							ACLine("\t\tmov rdi, falseout",main);
+							ACLine("\t\tmov rax, 0",main);
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t\tjmp %s", falselabel);
+							ACLine(cgbuffer,main);
+							
+							// TRUE
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t%s: mov rdi, trueout", truelabel);
+							ACLine(cgbuffer,main);
+							ACLine("\t\tmov rax, 0",main);
+							memset(cgbuffer,0,100);
+							ACLine(cgbuffer,main);
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t%s: ", falselabel);
+							ACLine(cgbuffer,main);
+							ACLine("\t\tcall printf",main);
+							ACLine("\t\tinc r12",main);
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t\tcmp r12, %d",tot);
+							ACLine(cgbuffer,main);
+							ACLine("\t\tjne arplpb",main);
+							ACLine("\t\tpop rbp\n",main);
+						}
+					}
+					else // index wala
+					{
+						ParseTree *index = id->right->child;
+
+						if(strcmp(terms[index->value],"ID") == 0)
+						{
+							// Dynamic Index
+							if(strcmp(id->entry->type,"INTEGER") == 0)
+							{
+
+							}
+							else if(strcmp(id->entry->type,"BOOLEAN") == 0)
+							{
+
+							}
+						}
+						else // NUM ID
+						{
+							int indexval = atoi(index->n->t->value) - id->entry->startindex->ifnumvalue;
+
+							if(strcmp(id->entry->type,"INTEGER") == 0)
+							{
+								char pbuf[100];
+								sprintf(pbuf,"\t\t; Printing INTEGER ARRAY (Indexed) ID: %s",id->n->t->value);
+								ACLine(pbuf,main);
+								ACLine("\t\tpush rbp",main);
+								ACLine("\t\tmov rdi, out_format_m",main);
+								ACLine("\t\tmov rax, 0",main);
+								ACLine("\t\tcall printf",main);
+								ACLine("\t\tpop rbp\n",main);
+								ACLine("\t\tpush rbp",main);
+								ACLine("\t\tmov rdi, out_format",main);
+								ACLine("\t\tmov rax, 0",main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tmov r11, dword %d", indexval);
+								ACLine(cgbuffer,main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tmov rsi, [%s + 4*r11]", id->entry->temporary);
+								ACLine(cgbuffer,main);
+								ACLine("\t\tcall printf",main);
+								ACLine("\t\tpop rbp\n",main);
+							}
+							else if(strcmp(id->entry->type,"BOOLEAN") == 0)
+							{
+								char pbuf[100];
+								sprintf(pbuf,"\t\t; Printing BOOLEAN ARRAY (Indexed) ID: %s",id->n->t->value);
+								ACLine(pbuf,main);
+								ACLine("\t\tpush rbp",main);
+								ACLine("\t\tmov rdi, out_format_m",main);
+								ACLine("\t\tmov rax, 0",main);
+								ACLine("\t\tcall printf",main);
+								ACLine("\t\tpop rbp\n",main);
+
+								ACLine("\t\tpush rbp",main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tmov r10, dword %d",indexval);
+								ACLine(cgbuffer,main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tcmp [%s + 4*r10], dword 1",id->entry->temporary);
+								ACLine(cgbuffer,main);
+
+								getL();
+								char truelabel[20];
+								strcpy(truelabel,labelbuf);
+
+								getL();
+								char falselabel[20];
+								strcpy(falselabel,labelbuf);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tje %s", truelabel);
+								ACLine(cgbuffer,main);
+
+								// FALSE
+								ACLine("\t\tmov rdi, falseout",main);
+								ACLine("\t\tmov rax, 0",main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tjmp %s", falselabel);
+								ACLine(cgbuffer,main);
+								
+								// TRUE
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t%s: mov rdi, trueout", truelabel);
+								ACLine(cgbuffer,main);
+								ACLine("\t\tmov rax, 0",main);
+								memset(cgbuffer,0,100);
+								ACLine(cgbuffer,main);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t%s: ", falselabel);
+								ACLine(cgbuffer,main);
+								ACLine("\t\tcall printf",main);
+								ACLine("\t\tpop rbp\n",main);
+							}
+						}
+					}
 				}
 				else
 				{
@@ -259,70 +474,82 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 					{
 						char pbuf[100];
 						sprintf(pbuf,"\t\t; Printing INTEGER ID: %s",id->n->t->value);
-						AddCodeLine(pbuf,main);
-						AddCodeLine("\t\tpush rbp",main);
-						AddCodeLine("\t\tmov rdi, out_format",main);
-						AddCodeLine("\t\tmov rax, 0",main);
+						ACLine(pbuf,main);
+						ACLine("\t\tpush rbp",main);
+						ACLine("\t\tmov rdi, out_format_m",main);
+						ACLine("\t\tmov rax, 0",main);
+						ACLine("\t\tcall printf",main);
+						ACLine("\t\tpop rbp\n",main);
+						ACLine("\t\tpush rbp",main);
+						ACLine("\t\tmov rdi, out_format",main);
+						ACLine("\t\tmov rax, 0",main);
 						sprintf(cgbuffer,"\t\tmov rsi, [%s]", id->entry->temporary);
-						AddCodeLine(cgbuffer,main);
+						ACLine(cgbuffer,main);
+						ACLine("\t\tcall printf",main);
+						ACLine("\t\tpop rbp\n",main);
 					}
 					else
 					{
 						char pbuf[100];
 						sprintf(pbuf,"\t\t; Printing BOOLEAN ID: %s",id->n->t->value);
-						AddCodeLine(pbuf,main);
-						AddCodeLine("\t\tpush rbp",main);
+						ACLine(pbuf,main);
+						ACLine("\t\tpush rbp",main);
+						ACLine("\t\tmov rdi, out_format_m",main);
+						ACLine("\t\tmov rax, 0",main);
+						ACLine("\t\tcall printf",main);
+						ACLine("\t\tpop rbp\n",main);
+
+						ACLine("\t\tpush rbp",main);
 
 						memset(cgbuffer,0,100);
 						sprintf(cgbuffer,"\t\tcmp [%s], dword 1",id->entry->temporary);
-						AddCodeLine(cgbuffer,main);
+						ACLine(cgbuffer,main);
 
-						getLabel();
+						getL();
 						char truelabel[20];
 						strcpy(truelabel,labelbuf);
 
-						getLabel();
+						getL();
 						char falselabel[20];
 						strcpy(falselabel,labelbuf);
 
 						memset(cgbuffer,0,100);
 						sprintf(cgbuffer,"\t\tje %s", truelabel);
-						AddCodeLine(cgbuffer,main);
+						ACLine(cgbuffer,main);
 
 						// FALSE
-						AddCodeLine("\t\tmov rdi, falseout",main);
-						AddCodeLine("\t\tmov rax, 0",main);
+						ACLine("\t\tmov rdi, falseout",main);
+						ACLine("\t\tmov rax, 0",main);
 						memset(cgbuffer,0,100);
 						sprintf(cgbuffer,"\t\tjmp %s", falselabel);
-						AddCodeLine(cgbuffer,main);
+						ACLine(cgbuffer,main);
 						
 						// TRUE
 						memset(cgbuffer,0,100);
 						sprintf(cgbuffer,"\t%s: mov rdi, trueout", truelabel);
-						AddCodeLine(cgbuffer,main);
-						AddCodeLine("\t\tmov rax, 0",main);
+						ACLine(cgbuffer,main);
+						ACLine("\t\tmov rax, 0",main);
 						memset(cgbuffer,0,100);
-						AddCodeLine(cgbuffer,main);
+						ACLine(cgbuffer,main);
 
 						memset(cgbuffer,0,100);
 						sprintf(cgbuffer,"\t%s: ", falselabel);
-						AddCodeLine(cgbuffer,main);
+						ACLine(cgbuffer,main);
+						ACLine("\t\tcall printf",main);
+						ACLine("\t\tpop rbp\n",main);
 					}
 				}
 			}
 			else if(strcmp(terms[id->value],"RNUM") == 0)
 			{
 				//sprintf(cgbuffer,"\t\tmov rsi, dword %s", id->n->t->value);
-				//AddCodeLine(cgbuffer,main);
+				//ACLine(cgbuffer,main);
 			}
 			else if(strcmp(terms[id->value],"NUM") == 0)
 			{
 				//sprintf(cgbuffer,"\t\tmov rsi, dword %s", id->n->t->value);
-				//AddCodeLine(cgbuffer,main);
+				//ACLine(cgbuffer,main);
 			}
-
-			AddCodeLine("\t\tcall printf",main);
-			AddCodeLine("\t\tpop rbp\n",main);
 		}
 	}
 }
@@ -331,13 +558,15 @@ void CodeGenAssg(ParseTree *Ass, CodeBlock *main)
 {
 	memset(cgbuffer,0,100); // to clear memory
 	sprintf(cgbuffer,"\t; Assignment Statement for '%s' at LineNo: %d", Ass->child->n->t->value, Ass->child->n->t->lineno);
-	AddCodeLine(cgbuffer,main);
+	ACLine(cgbuffer,main);
 
 	if(strcmp(terms[Ass->child->right->value],"lvalueIDStmt") == 0)
 	{
 		if(Ass->child->entry->isArray)
 		{
 			// Complete array assignment
+			ParseTree *lhs = Ass->child;
+			ParseTree *rhs = Ass->child->right->child->child;
 		}
 		else
 		{
@@ -349,11 +578,11 @@ void CodeGenAssg(ParseTree *Ass, CodeBlock *main)
 
 			memset(cgbuffer,0,100); // to clear memory
 			sprintf(cgbuffer,"\t\tmov eax, [%s]", expr->child->temporary);
-			AddCodeLine(cgbuffer,main);
+			ACLine(cgbuffer,main);
 
 			memset(cgbuffer,0,100); // to clear memory
 			sprintf(cgbuffer,"\t\tmov [%s], eax\n", Ass->child->entry->temporary);
-			AddCodeLine(cgbuffer,main);
+			ACLine(cgbuffer,main);
 		}
 	}
 	else
@@ -381,8 +610,33 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 		{
 			if(ID->entry->isArray)
 			{
-				// Indexed
-				// Non Indexed
+				// Indexed hi hoga, warna recurse possible nahi hai
+				getTemp();
+				strcpy(expr->temporary, tempbuf);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
+				ACLine(cgbuffer,bss);
+
+				if(strcmp(terms[ID->right->child->value],"ID") == 0)
+				{
+					// Dynamic Index
+				}
+				else
+				{
+					int indexval = atoi(ID->right->child->n->t->value) - ID->entry->startindex->ifnumvalue;
+
+					ACLine("\t\tpush rbp",main);
+					memset(cgbuffer,0,100);
+					sprintf(cgbuffer,"\t\tmov r9, %d", indexval);
+					ACLine(cgbuffer,main);
+					memset(cgbuffer,0,100); // to clear memory
+					sprintf(cgbuffer,"\t\tmov eax, [%s + 4*r9]\n", ID->entry->temporary);
+					ACLine(cgbuffer,main);
+					memset(cgbuffer,0,100); // to clear memory
+					sprintf(cgbuffer,"\t\tmov [%s], eax", expr->temporary);
+					ACLine(cgbuffer,main);
+					ACLine("\t\tpop rbp\n",main);
+				}
 			}
 			else
 			{
@@ -391,56 +645,56 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 		}
 		else if(strcmp(terms[ID->value],"RNUM")==0)
 		{
-			getTemporary();
+			getTemp();
 			strcpy(expr->temporary, tempbuf);
 			memset(cgbuffer,0,100);
 			sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-			AddCodeLine(cgbuffer,bss);
+			ACLine(cgbuffer,bss);
 
 			memset(cgbuffer, 0, 100);
 			sprintf(cgbuffer, "\t\tmov [%s], dword %s\n", expr->temporary, ID->n->t->value);
 
-			AddCodeLine(cgbuffer, main);
+			ACLine(cgbuffer, main);
 		}
 		else if(strcmp(terms[ID->value],"NUM")==0)
 		{
-			getTemporary();
+			getTemp();
 			strcpy(expr->temporary, tempbuf);
 			memset(cgbuffer,0,100);
 			sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-			AddCodeLine(cgbuffer,bss);
+			ACLine(cgbuffer,bss);
 
 			memset(cgbuffer, 0, 100);
 			sprintf(cgbuffer, "\t\tmov [%s], dword %s\n", expr->temporary, ID->n->t->value);
 
-			AddCodeLine(cgbuffer, main);
+			ACLine(cgbuffer, main);
 		}
 	}
 	else if(strcmp(terms[expr->value],"FALSE") == 0)
 	{
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
-		AddCodeLine("\t; FALSE specific",main);
+		ACLine("\t; FALSE specific",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], dword 0", expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 	}
 	else if(strcmp(terms[expr->value],"TRUE") == 0)
 	{
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
-		AddCodeLine("\t; FALSE specific",main);
+		ACLine("\t; TRUE specific",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], dword 1", expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 	}
 	else if(strcmp(terms[expr->value],"PLUS") == 0)
 	{
@@ -449,27 +703,27 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; Addition",main);
+		ACLine("\t\t; Addition",main);
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t\tadd eax, ebx", main);
+		ACLine("\t\tadd eax, ebx", main);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], eax\n", expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 	}
 	else if(strcmp(terms[expr->value],"MINUS") == 0)
 	{
@@ -478,27 +732,27 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; Subtraction",main);
+		ACLine("\t\t; Subtraction",main);
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t\tsub eax, ebx", main);
+		ACLine("\t\tsub eax, ebx", main);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], eax\n", expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 	}
 	else if(strcmp(terms[expr->value],"MUL") == 0)
 	{
@@ -507,27 +761,27 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; Multiplication",main);
+		ACLine("\t\t; Multiplication",main);
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t\timul ebx", main);
+		ACLine("\t\timul ebx", main);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], eax\n", expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 	}
 	else if(strcmp(terms[expr->value],"DIV") == 0)
 	{
@@ -536,292 +790,292 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; Division",main);
+		ACLine("\t\t; Division",main);
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t\tidiv ebx", main);
+		ACLine("\t\tidiv ebx", main);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], eax\n", expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 	}
 	else if(strcmp(terms[expr->value],"LE") == 0)
 	{
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; Less Than Equal To",main);
+		ACLine("\t\t; Less Than Equal To",main);
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t\tcmp eax, ebx", main);
+		ACLine("\t\tcmp eax, ebx", main);
 
-		getLabel();
+		getL();
 		char truelabel[20];
 		strcpy(truelabel,labelbuf);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tjle %s", truelabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
 		// False
-		AddCodeLine("\t; FALSE RELOP",main);
+		ACLine("\t; FALSE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], dword 0", expr->temporary);
-		AddCodeLine(cgbuffer, main);
-		getLabel();
+		ACLine(cgbuffer, main);
+		getL();
 		char falselabel[20];
 		strcpy(falselabel,labelbuf);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tjmp %s", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		// True
-		AddCodeLine("\t; TRUE RELOP",main);
+		ACLine("\t; TRUE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s: mov [%s], dword 1", truelabel, expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s:", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 	}
 	else if(strcmp(terms[expr->value],"LT") == 0)
 	{
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; Less Than",main);
+		ACLine("\t\t; Less Than",main);
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t\tcmp eax, ebx", main);
+		ACLine("\t\tcmp eax, ebx", main);
 
-		getLabel();
+		getL();
 		char truelabel[20];
 		strcpy(truelabel,labelbuf);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tjl %s", truelabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
 		// False
-		AddCodeLine("\t; FALSE RELOP",main);
+		ACLine("\t; FALSE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], dword 0", expr->temporary);
-		AddCodeLine(cgbuffer, main);
-		getLabel();
+		ACLine(cgbuffer, main);
+		getL();
 		char falselabel[20];
 		strcpy(falselabel,labelbuf);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tjmp %s", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		// True
-		AddCodeLine("\t; TRUE RELOP",main);
+		ACLine("\t; TRUE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s: mov [%s], dword 1", truelabel, expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s:", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 	}
 	else if(strcmp(terms[expr->value],"GE") == 0)
 	{
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; Greater Than Equal To",main);
+		ACLine("\t\t; Greater Than Equal To",main);
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t\tcmp eax, ebx", main);
+		ACLine("\t\tcmp eax, ebx", main);
 
-		getLabel();
+		getL();
 		char truelabel[20];
 		strcpy(truelabel,labelbuf);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tjge %s", truelabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
 		// False
-		AddCodeLine("\t; FALSE RELOP",main);
+		ACLine("\t; FALSE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], dword 0", expr->temporary);
-		AddCodeLine(cgbuffer, main);
-		getLabel();
+		ACLine(cgbuffer, main);
+		getL();
 		char falselabel[20];
 		strcpy(falselabel,labelbuf);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tjmp %s", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		// True
-		AddCodeLine("\t; TRUE RELOP",main);
+		ACLine("\t; TRUE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s: mov [%s], dword 1", truelabel, expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s:", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 	}
 	else if(strcmp(terms[expr->value],"GT") == 0)
 	{
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; Greater Than",main);
+		ACLine("\t\t; Greater Than",main);
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t\tcmp eax, ebx", main);
+		ACLine("\t\tcmp eax, ebx", main);
 
-		getLabel();
+		getL();
 		char truelabel[20];
 		strcpy(truelabel,labelbuf);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tjg %s", truelabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
 		// False
-		AddCodeLine("\t; FALSE RELOP",main);
+		ACLine("\t; FALSE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], dword 0", expr->temporary);
-		AddCodeLine(cgbuffer, main);
-		getLabel();
+		ACLine(cgbuffer, main);
+		getL();
 		char falselabel[20];
 		strcpy(falselabel,labelbuf);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tjmp %s", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		// True
-		AddCodeLine("\t; TRUE RELOP",main);
+		ACLine("\t; TRUE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s: mov [%s], dword 1", truelabel, expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s:", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 	}
 	else if(strcmp(terms[expr->value],"NE") == 0)
 	{
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; Not Equal To",main);
+		ACLine("\t\t; Not Equal To",main);
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t\tcmp eax, ebx", main);
+		ACLine("\t\tcmp eax, ebx", main);
 
-		getLabel();
+		getL();
 		char truelabel[20];
 		strcpy(truelabel,labelbuf);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tjne %s", truelabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
 		// False
-		AddCodeLine("\t; FALSE RELOP",main);
+		ACLine("\t; FALSE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], dword 0", expr->temporary);
-		AddCodeLine(cgbuffer, main);
-		getLabel();
+		ACLine(cgbuffer, main);
+		getL();
 		char falselabel[20];
 		strcpy(falselabel,labelbuf);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tjmp %s", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		// True
-		AddCodeLine("\t; TRUE RELOP",main);
+		ACLine("\t; TRUE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s: mov [%s], dword 1", truelabel, expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s:", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 	}
 	else if(strcmp(terms[expr->value],"EQ") == 0)
@@ -829,53 +1083,53 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; Equal To",main);
+		ACLine("\t\t; Equal To",main);
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t\tcmp eax, ebx", main);
+		ACLine("\t\tcmp eax, ebx", main);
 
-		getLabel();
+		getL();
 		char truelabel[20];
 		strcpy(truelabel,labelbuf);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tje %s", truelabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
 		// False
-		AddCodeLine("\t; FALSE RELOP",main);
+		ACLine("\t; FALSE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov [%s], dword 0", expr->temporary);
-		AddCodeLine(cgbuffer, main);
-		getLabel();
+		ACLine(cgbuffer, main);
+		getL();
 		char falselabel[20];
 		strcpy(falselabel,labelbuf);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tjmp %s", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		// True
-		AddCodeLine("\t; TRUE RELOP",main);
+		ACLine("\t; TRUE RELOP",main);
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s: mov [%s], dword 1", truelabel, expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t%s:", falselabel);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 	}
 	else if(strcmp(terms[expr->value],"AND") == 0)
@@ -883,7 +1137,7 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; AND",main);
+		ACLine("\t\t; AND",main);
 
 		// Short Circuit logic -> 
 
@@ -899,57 +1153,57 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		getLabel();
+		getL();
 		char lsetfalse[20];
 		strcpy(lsetfalse,labelbuf);
 
-		getLabel();
+		getL();
 		char ljumptrue[20];
 		strcpy(ljumptrue,labelbuf);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
-		AddCodeLine("\t; if left == 0, goto lsetfalse", main);
+		ACLine("\t; if left == 0, goto lsetfalse", main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tcmp eax, dword 0");
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tje %s", lsetfalse);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t; if right == 0, goto lsetfalse", main);
+		ACLine("\t; if right == 0, goto lsetfalse", main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tcmp ebx, dword 0");
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tje %s", lsetfalse);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t; 11 case, set parent = True", main);
+		ACLine("\t; 11 case, set parent = True", main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov [%s], dword 1", expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tjmp %s", ljumptrue);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t; 00/01/10 case, set Parent = False", main);
+		ACLine("\t; 00/01/10 case, set Parent = False", main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t%s: mov [%s], dword 0", lsetfalse, expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t%s:", ljumptrue);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 	}
 	else if(strcmp(terms[expr->value],"OR") == 0)
@@ -957,7 +1211,7 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 		CodeGenExprRec(expr->child, main);
 		CodeGenExprRec(expr->child->right, main);
 
-		AddCodeLine("\t\t; OR",main);
+		ACLine("\t\t; OR",main);
 
 		// Short Circuit logic -> 
 
@@ -973,57 +1227,57 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov eax, [%s]", expr->child->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
 		memset(cgbuffer, 0, 100);
 		sprintf(cgbuffer, "\t\tmov ebx, [%s]", expr->child->right->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		getLabel();
+		getL();
 		char lsettrue[20];
 		strcpy(lsettrue,labelbuf);
 
-		getLabel();
+		getL();
 		char ljumpfalse[20];
 		strcpy(ljumpfalse,labelbuf);
 
-		getTemporary();
+		getTemp();
 		strcpy(expr->temporary, tempbuf);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer,"\t%s: \tresd %d", expr->temporary,1);
-		AddCodeLine(cgbuffer,bss);
+		ACLine(cgbuffer,bss);
 
-		AddCodeLine("\t; if left == 1, goto lsettrue", main);
+		ACLine("\t; if left == 1, goto lsettrue", main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tcmp eax, dword 1");
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tje %s", lsettrue);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t; if right == 1, goto lsettrue", main);
+		ACLine("\t; if right == 1, goto lsettrue", main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tcmp ebx, dword 0");
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tje %s", lsettrue);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t; 00 case, set parent = false", main);
+		ACLine("\t; 00 case, set parent = false", main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tmov [%s], dword 0", expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t\tjmp %s", ljumpfalse);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 
-		AddCodeLine("\t; 11/01/10 case, set Parent = true", main);
+		ACLine("\t; 11/01/10 case, set Parent = true", main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t%s: mov [%s], dword 1", lsettrue, expr->temporary);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 		memset(cgbuffer,0,100);
 		sprintf(cgbuffer, "\t%s:", ljumpfalse);
-		AddCodeLine(cgbuffer, main);
+		ACLine(cgbuffer, main);
 	
 	}
 }
@@ -1054,7 +1308,52 @@ void CodeGenExpr(ParseTree *expr, CodeBlock *main)
 
 void CodeGenIter(ParseTree *Iter, CodeBlock *main)
 {
+	if(strcmp(terms[Iter->child->value],"FOR") == 0)
+	{
+		ParseTree *ID = Iter->child->right;
+		ParseTree *low = Iter->child->right->right->child;
+		ParseTree *high = Iter->child->right->right->child->right;
+		int lowval = atoi(Iter->child->right->right->child->n->t->value);
+		int highval = atoi(Iter->child->right->right->child->right->n->t->value);
+		ParseTree *Stmt = Iter->child->right->right->right;
 
+		char getvbuf[100];
+		sprintf(getvbuf,"\t\t; FOR iterative stmt ID: %s", ID->n->t->value);
+		ACLine(getvbuf,main);
+
+		//ACLine("\t\tpush rbp",main);
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tmov r15, dword %d", lowval);
+		ACLine(cgbuffer,main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tmov [%s], r15", ID->entry->temporary);
+		ACLine(cgbuffer,main);
+
+		getL();
+		char forloop[20];
+		strcpy(forloop,labelbuf);
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\t%s: ",forloop);
+		ACLine(cgbuffer,main);
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tmov [%s], r15", ID->entry->temporary);
+		ACLine(cgbuffer,main);
+
+		CodeGenRec(Stmt, main);
+
+		ACLine("\t\tinc r15",main);
+		sprintf(cgbuffer,"\t\tcmp r15, %d", highval+1);
+		ACLine(cgbuffer,main);
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tjne %s",forloop);
+		ACLine(cgbuffer,main);
+		//ACLine("\t\tpop rbp\n",main);
+	}
+	else
+	{
+		// WHILE
+	}
 }
 
 void CodeGenStmts(ParseTree *Stmt, CodeBlock *main)
@@ -1067,20 +1366,24 @@ void CodeGenRec(ParseTree *head, CodeBlock *main)
 	if(head == NULL)
 		return;
 
-	if(strcmp(terms[head->value],"conditionalStmt") == 0)
+	if(strcmp(terms[head->value],"conditionalStmt") == 0 && head->isCG == 0)
 	{
+		head->isCG = 1;
 		CodeGenSwitch(head, main);
 	}
-	else if(strcmp(terms[head->value],"ioStmt") == 0)
+	else if(strcmp(terms[head->value],"ioStmt") == 0 && head->isCG == 0)
 	{
+		head->isCG = 1;
 		codeGenIO(head, main);
 	}
-	else if(strcmp(terms[head->value],"iterativeStmt") == 0)
+	else if(strcmp(terms[head->value],"iterativeStmt") == 0 && head->isCG == 0)
 	{
+		head->isCG = 1;
 		CodeGenIter(head, main);
 	}
-	else if(strcmp(terms[head->value],"assignmentStmt") == 0)
+	else if(strcmp(terms[head->value],"assignmentStmt") == 0 && head->isCG == 0)
 	{
+		head->isCG = 1;
 		CodeGenAssg(head, main);
 	}
 
@@ -1088,9 +1391,9 @@ void CodeGenRec(ParseTree *head, CodeBlock *main)
 	CodeGenRec(head->right, main);
 }
 
-void PrintToFile(CodeBlock *cb, FILE *f)
+void PTF(CodeBlock *cb, FILE *f)
 {
-	CodeLine *temp = cb->top;
+	CodeLine *temp = cb->upar;
 
 	while(temp != NULL)
 	{
@@ -1105,10 +1408,10 @@ void CallingCodeGen(ParseTree *head, SymbolTable *table, FILE *f)
 	{
 		CodeBlock *main;
 
-		main = createCodeBlock();
-		bss = createCodeBlock();
+		main = cCB();
+		bss = cCB();
 
-		AddCodeLine("section .bss\n", bss);
+		ACLine("section .bss\n", bss);
 
 		AssignTemporaries(table->child, bss);
 
@@ -1118,26 +1421,30 @@ void CallingCodeGen(ParseTree *head, SymbolTable *table, FILE *f)
 			return;
 		}
 
-		AddCodeLine("\nextern printf, scanf\n", main);
-		AddCodeLine("global main \n", main);
+		ACLine("\nextern printf, scanf\n", main);
+		ACLine("global main \n", main);
 
 		// .data section strings ->
 
 		//******************************************************************************************\\
 			
-			AddCodeLine("\nsection .data\n", main);
-			AddCodeLine("\tin_format:            db \"%d\", 0", main);
-			AddCodeLine("\tin_format_int:        db \"Input: Enter an integer value -> \", 10, 0", main);
-			AddCodeLine("\tin_format_real:       db \"Input: Enter a real value -> \", 10, 0", main);
-			AddCodeLine("\tin_format_boolean:    db \"Input: Enter a boolean value -> \", 10, 0", main);
-			AddCodeLine("\tout_format:           db \"Output: %d\", 10, 0", main);
-			AddCodeLine("\ttrueout:              db \"Output: True\", 10, 0", main);
-			AddCodeLine("\tfalseout:             db \"Output: False\", 10, 0\n", main);
+			ACLine("\nsection .data\n", main);
+			ACLine("\tin_format:            db \"%d\", 0", main);
+			ACLine("\tin_format_int:        db \"Input: Enter an integer value -> \", 10, 0", main);
+			ACLine("\tin_format_int_a:      db \"Input: Enter %d array elements of integer type for range %d to %d -> \", 10, 0", main);
+			ACLine("\tin_format_real:       db \"Input: Enter a real value -> \", 10, 0", main);
+			ACLine("\tin_format_real_a:     db \"Input: Enter %d array elements of real type for range %d to %d -> \", 10, 0", main);
+			ACLine("\tin_format_boolean:    db \"Input: Enter a boolean value -> \", 10, 0", main);
+			ACLine("\tin_format_boolean_a:  db \"Input: Enter %d array elements of boolean type for range %d to %d -> \", 10, 0", main);
+			ACLine("\tout_format_m:         db \"Output:\", 10, 0", main);
+			ACLine("\tout_format:           db \"%d\", 10, 0", main);
+			ACLine("\ttrueout:              db \"True\", 10, 0", main);
+			ACLine("\tfalseout:             db \"False\", 10, 0\n", main);
 
 		//******************************************************************************************\\
 
-		AddCodeLine("section .text", main);
-		AddCodeLine("\nmain:", main);
+		ACLine("section .text", main);
+		ACLine("\nmain:", main);
 
 		// Recursing the AST for statements -> 
 
@@ -1149,14 +1456,14 @@ void CallingCodeGen(ParseTree *head, SymbolTable *table, FILE *f)
 
 		// Exiting Code -> 
 
-		AddCodeLine("\n\t;exit code", main);
-		AddCodeLine("\texit: mov eax, 1", main);
-		AddCodeLine("\t\tmov ebx, 0", main);
-		AddCodeLine("\t\tint 80h\n", main);
+		ACLine("\n\t;exit code", main);
+		ACLine("\texit: mov eax, 1", main);
+		ACLine("\t\tmov ebx, 0", main);
+		ACLine("\t\tint 80h\n", main);
 
-		MergeCodeBlocks(main,bss);
+		MCB(main,bss);
 
-		PrintToFile(main,f);
+		PTF(main,f);
 
 		printf("\n%sPlease use the following instructions to assemble, link and execute the \"code.asm\" file - %s\n", BOLDCYAN, RESET);
 		printf("\n\tnasm -f elf64 -o code.o code.asm\n");

@@ -26,6 +26,7 @@ ParseTree *head;
 ParseTree *flagforID;
 ParseTree *IDforMRU;
 ParseTree *endpt;
+ParseTree *num2for;
 
 /* **************************************************************************** */
 
@@ -219,6 +220,7 @@ void insert_in_tree(ParseTree *current, int rule, Grammar G, Node *n)
 		childtemp->right = NULL;
 		childtemp->child = NULL;
 		childtemp->parent = current;
+		childtemp->isCG = 0;
 
 		if(childtemp->value >= NTER)
 			childtemp->isleaf = 1;
@@ -259,6 +261,11 @@ void insert_in_tree(ParseTree *current, int rule, Grammar G, Node *n)
 			lchild->n = n;
 		}
 		i++;
+
+		if(strcmp(terms[childtemp->value],"NUM")==0 && childtemp->right == NULL)
+		{
+			num2for = childtemp;
+		}
 	}
 }
 
@@ -661,6 +668,7 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 	head->parent = NULL;
 	head->left = NULL;
 	head->isVisited = 0;
+	head->isCG = 0;
 
 	Node *n=(Node*)malloc(sizeof(Node));
 	n->t=(Token*)malloc(sizeof(Token));
@@ -722,15 +730,18 @@ void parseInputSourceCode(FILE *f, ParseTable T, Grammar G, FILE *fs)
 
 		int a=compareTerm(n->t->token);
 
-		//printf("Top of stack: %s | Input Token: %s | Input Token Lexeme: %s | Line No: %d\n", terms[X], terms[a], n->t->value, n->t->lineno);
+		//printf("Top of stack: %s | Second Topest: %s | Input Token: %s | Input Token Lexeme: %s | Line No: %d\n", terms[X], terms[stack[top-1]], terms[a], n->t->value, n->t->lineno);
 
 		if(X==a)
-		{
-			//fprintf(fs,"ACTION: Popping top of stack because same terminal found at input\n");
-			
+		{	
 			if(strcmp(terms[a],"END") == 0)
 			{
 				endpt->n->t->lineno = n->t->lineno;
+			}
+
+			if(strcmp(terms[stack[top-1]],"BC") == 0 && strcmp(terms[stack[top]],"NUM") == 0)
+			{
+				num2for->n = n;
 			}
 
 			pop();

@@ -21,7 +21,7 @@
 
 struct codeline
 {
-	char line[100];
+	char line[400];
 	struct codeline *next;
 };
 
@@ -29,19 +29,19 @@ typedef struct codeline CodeLine;
 
 struct codeblock
 {
-	CodeLine *top;
-	CodeLine *bot;
+	CodeLine *upar;
+	CodeLine *niche;
 };
 
 typedef struct codeblock CodeBlock;
 
 // Functions - 
 
-void getTemporary();
-void getLabel();
-CodeBlock *createCodeBlock();
-void AddCodeLine(char *buffer, CodeBlock *cb);
-void MergeCodeBlocks(CodeBlock *cb1, CodeBlock *cb2);
+void getTemp();
+void getL();
+CodeBlock *cCB();
+void ACLine(char *buffer, CodeBlock *cb);
+void MCB(CodeBlock *cb1, CodeBlock *cb2);
 void codeGenIO(ParseTree *IO, CodeBlock *main);
 void CodeGenAssg(ParseTree *Ass, CodeBlock *main);
 void CodeGenSwitch(ParseTree *Swt, CodeBlock *main);
@@ -51,7 +51,7 @@ void CodeGenIter(ParseTree *Iter, CodeBlock *main);
 void CodeGenStmts(ParseTree *Stmt, CodeBlock *main);
 void CodeGenRec(ParseTree *head, CodeBlock *main);
 void AddTemporaries(SymbolTable *table, CodeBlock *cb);
-void PrintToFile(CodeBlock *cb, FILE *f);
+void PTF(CodeBlock *cb, FILE *f);
 void CallingCodeGen(ParseTree *head, SymbolTable *table, FILE *f);
 
 #endif

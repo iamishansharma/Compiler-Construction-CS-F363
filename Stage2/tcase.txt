@@ -1,16 +1,11 @@
 <<<driver program>>>
 start
 	declare x: integer;
-	declare y: integer;
-	declare z1: boolean;
-	declare z2: boolean;
-	declare z3: boolean;
-	get_value(x);
-	get_value(y);
-	z1 := true;
-	z2 := true;
-	print(z1);
-	print(z2);
-	z3 := z1 AND z2;
-	print(z3);
+	declare z: integer;
+	get_value(z);
+	for(x in 1..4)
+	start
+		get_value(z);
+		print(z);
+	end
 end
