@@ -127,11 +127,13 @@ int main(int argc, char *argv[])
 		printf("\t  | Anirudh Garg 2017A7PS0142P | Sanjeev Singla 2017A7PS0152P |\n");
 		printf("****************************************************************************\n");
 		printf("%sWork Status:%s  \n",BOLDRED,RESET);
-		printf("\t%s1. AST is being generated as required.\n",BOLDGREEN);
+		printf("\t%s1. AST is being generated as required.\n",BOLDWHITE);
 		printf("\t2. Symbol Table is being populated as required.\n");
-		printf("\t3. Type Checking and Semantic Check are working as required.\n");
+		printf("\t3. Type Checking and Semantic Check are integrated together in Option 8 and are working as required.\n");
 		printf("\t    Level 4 of Error Reporting, 16 or more errors have been implemented.\n");
-		printf("\t4. Code Gen -> Programs with only driver module and only static arrays could be implemented.%s\n\n",RESET);
+		printf("\t4. Code Gen -> Programs with only driver module and only static arrays could be implemented.\n");
+		printf("\t\t       Expressions, Switch, For, While, Print, Get_Value have been implemented.\n");
+		printf("\t\t       c1.txt, c2.txt, c3.txt, c4.txt, c5.txt, c6.txt working as expected.%s\n\n",RESET);
 		printf("Please select one of the following options (Please use only 1 option in one run of code) ->\n\n");
 		printf("\t0. Exit the program.\n");
 		printf("\t1. Display token list on console.\n");
@@ -176,7 +178,15 @@ int main(int argc, char *argv[])
 			parseInputSourceCode(f4,T,G,f9);
 			temphead=returnhead();
 			countNodes(temphead, ParseTreeCount);
-			//printParseTree(f2);
+
+			printf("\n*******************************************************   %sParse Tree%s   *******************************************************\n", BOLDRED, RESET);
+			printf("------------------------------------------------------------------------------------------------------------------------------\n");
+			printf("Lexeme \t           LineNo   NodeToken \t      ValueIfNum    Parent \t\tisLeaf \t    NodeSymbol\n");
+			printf("------------------------------------------------------------------------------------------------------------------------------\n");
+
+			printParseTree(); // Printing PT here. 
+
+			printf("*********************************************************************************************************************************\n");
 
 			removedollar(argv[1]);
 			fclose(f4);
@@ -245,12 +255,12 @@ int main(int argc, char *argv[])
 
 			sizeAST = sizeof(temphead);
 
-			printf("\n\n****************************************************************************");
-			printf("\n\tNo of Parse Tree Nodes: %d || Size of ParseTree: %d bytes\n",ParseTreeCount[0], ParseTreeCount[0]*sizePT);
-			printf("\tNo of AST Nodes: %d || Size of AST: %d bytes\n", ASTCount[0], ASTCount[0]*sizeAST);
+			printf("\n\n*************************************************************************************************");
+			printf("\n\tNo of Parse Tree Nodes: %d\t|\tAllocated Memory of ParseTree: %d bytes\n",ParseTreeCount[0], ParseTreeCount[0]*sizePT);
+			printf("\tNo of AST Nodes: %d \t\t|\tAllocated Memory of AST: %d bytes\n", ASTCount[0], ASTCount[0]*sizeAST);
 			comper = (((float)ParseTreeCount[0] - (float)ASTCount[0]) / (float)ParseTreeCount[0])*100;
-			printf("%s\tCompression Percentage:%s %0.2f %s",BOLDCYAN,RESET,comper,"%");
-			printf("\n****************************************************************************\n");
+			printf("%s\tCompression Percentage:%s ((%d-%d)/%d)*100 = %0.2f %s",BOLDCYAN,RESET,ParseTreeCount[0]*sizePT,ASTCount[0]*sizeAST,ParseTreeCount[0]*sizePT,comper,"%");
+			printf("\n*************************************************************************************************\n");
 
 			removedollar(argv[1]);
 			fclose(f4);
@@ -382,7 +392,7 @@ int main(int argc, char *argv[])
 			//if(scopeError == 0)
 				//printf("%s\t2. Symbol Table built successfully.%s\n", BOLDWHITE, RESET);
 
-			printf("\n******************************************************   %sARRAY TABLE%s   *******************************\n", BOLDRED, RESET);
+			printf("\n*******************************************   %sARRAY TABLE%s   ******************************************\n", BOLDRED, RESET);
 			printf("------------------------------------------------------------------------------------------------------\n");
 			printf("SCOPE \t\t   LINENO \tIDENTIFIER  \t     STATIC/DYN  ARRAYRANGE            TYPE\n");
 			printf("------------------------------------------------------------------------------------------------------\n");

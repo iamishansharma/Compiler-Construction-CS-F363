@@ -482,6 +482,15 @@ void CheckIterStmt(ParseTree *Iter, int *errors, int *udvflag)
 			*errors = *errors +1;
 		}
 
+		int lowval = atoi(Iter->child->right->right->child->n->t->value);
+		int highval = atoi(Iter->child->right->right->child->right->n->t->value);
+
+		if(highval < lowval)
+		{
+			printf("\t%sLine No: %d%s (Error) %sIn 'for' construct the end value '%d' cannot be smaller than start value '%d' \n", BOLDWHITE, iterID->n->t->lineno, BOLDRED, RESET, highval, lowval);
+			*errors = *errors +1;
+		}
+
 		ParseTree *forexp = Iter->child->right->right->right;
 
 		CheckFORID(iterID, forexp, errors, udvflag);
@@ -1052,7 +1061,7 @@ void CheckOPLifAssigned(ParseTree *func, int *errors, int *udvflag)
 			{
 				if(OPL->entry->isAss == 0)
 				{
-					printf("\t%sLine No: %d%s (Error) %sOutput Parameter '%s' was not assigned in function '%s' call.\n", BOLDWHITE, OPL->n->t->lineno, BOLDRED, RESET, OPL->n->t->value, func->child->n->t->value);
+					printf("\t%sLine No: %d%s (Error) %sOutput Parameter '%s' was not assigned anywhere inside function '%s'.\n", BOLDWHITE, OPL->n->t->lineno, BOLDRED, RESET, OPL->n->t->value, func->child->n->t->value);
 					*errors = *errors + 1;
 				}
 			}
@@ -1286,6 +1295,46 @@ void CheckArrayDynamicType(ParseTree *head, int *errors, int *udvflag)
 	CheckArrayDynamicType(head->right, errors, udvflag);
 }
 
+void CheckStaticArrayDecIndex(ParseTree *head, int *errors)
+{
+	if(head == NULL)
+		return;
+
+	if(strcmp(terms[head->value],"ID") == 0)
+	{
+		if(head->entry->isArray)
+		{
+			if(strcmp(terms[head->parent->value],"input_plist") == 0)
+			{	
+				//printf("\nHenlo 1 Lno: %d\n" , head->n->t->lineno);
+				if(head->entry->startindex->isDynamic == 0 && head->entry->startindex->isDynamic == 0)
+				{
+					if(head->entry->startindex->ifnumvalue > head->entry->endindex->ifnumvalue)
+					{
+						printf("\t%sLine No: %d%s (Error) %sArray '%s' cannot have higher index '%d' less than lower index '%d'.\n", BOLDWHITE, head->n->t->lineno, BOLDRED,RESET, head->n->t->value, head->entry->endindex->ifnumvalue, head->entry->startindex->ifnumvalue);
+						*errors = *errors + 1;
+					}
+				}
+			}
+			else if(strcmp(terms[head->parent->value],"idList") == 0 && strcmp(terms[head->parent->parent->value],"declareStmt") == 0)
+			{
+				//printf("\nHenlo 2 Lno: %d\n", head->n->t->lineno);
+				if(head->entry->startindex->isDynamic == 0 && head->entry->startindex->isDynamic == 0)
+				{
+					if(head->entry->startindex->ifnumvalue > head->entry->endindex->ifnumvalue)
+					{
+						printf("\t%sLine No: %d%s (Error) %sArray '%s' cannot have higher index '%d' less than lower index '%d'.\n", BOLDWHITE, head->n->t->lineno, BOLDRED,RESET, head->n->t->value, head->entry->endindex->ifnumvalue, head->entry->startindex->ifnumvalue);
+						*errors = *errors + 1;
+					}
+				}
+			}
+		}
+	}
+
+	CheckStaticArrayDecIndex(head->child, errors);
+	CheckStaticArrayDecIndex(head->right, errors);
+}
+
 /* Auxilary Functions END */
 
 /********************************************************************************************************************************/
@@ -1299,6 +1348,7 @@ void CallingTypeChecker(ParseTree *head, SymbolTable *table, int *errors, int *u
 	TypeChecker(head, table, errors, udvflag);
 	CheckArrayDynamicType(head, errors, udvflag);
 	CheckFuncDef(table);
+	CheckStaticArrayDecIndex(head, errors);
 }
 
 void TypeChecker(ParseTree *head, SymbolTable *table, int *errors, int *udvflag)

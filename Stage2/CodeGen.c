@@ -13,8 +13,6 @@
 
 	To Do: 
 
-		Unary minus wala negation
-
 		While
 
 		Switch
@@ -27,12 +25,9 @@ int labelno = 1;
 int tempno = 1;
 int templocal = 1;
 int tempfloatno = 0;
-
 char tempbuf[10];
 char labelbuf[10];
-
 char cgbuffer[100];
-
 int daflag = 0;
 
 CodeBlock *bss;
@@ -952,6 +947,202 @@ void CodeGenAssg(ParseTree *Ass, CodeBlock *main)
 void CodeGenSwitch(ParseTree *Swt, CodeBlock *main)
 {
 
+	ParseTree *swtID = Swt->child->right;
+
+	ACLine("\t; Switch Statements",main);
+
+	if(strcmp(swtID->entry->type,"INTEGER") == 0)
+	{
+		ParseTree *temp = Swt->child->right->right->child;
+
+		getL();
+		char exitswt[20];
+		strcpy(exitswt,labelbuf);
+
+		char caselabels[50][50];
+
+		int totcases = 0;
+
+		while(temp != NULL)
+		{
+			if(strcmp(terms[temp->value],"CASE") == 0)
+			{
+				getL();
+				strcpy(caselabels[totcases++],labelbuf);
+			}
+			temp = temp->right;
+		}
+
+		getL();
+		strcpy(caselabels[totcases],labelbuf);
+
+		temp = Swt->child->right->right->child;
+
+		int tci = 0;
+
+		while(temp != NULL)
+		{
+			if(strcmp(terms[temp->value],"CASE") == 0)
+			{
+				int caseVal = atoi(temp->right->child->n->t->value);
+				ParseTree *casestmt = temp->right->right;
+
+				// Compare and skip or go 
+
+				ACLine("\t; CASE",main);
+
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\t%s: ", caselabels[tci]);
+				ACLine(cgbuffer,main);
+
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tmov ebx, [%s]", swtID->entry->temporary);
+				ACLine(cgbuffer,main);
+
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tcmp ebx, %d", caseVal);
+				ACLine(cgbuffer,main);
+
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tjne %s", caselabels[tci+1]);
+				ACLine(cgbuffer,main);
+
+				tci++;
+
+				CodeGenSwitchRec(casestmt, main);
+
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tjmp %s\n", exitswt);
+				ACLine(cgbuffer,main);
+			}
+			temp = temp->right;
+		}
+
+		ParseTree *defaultstmt = Swt->child->right->right->right->child;
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\t%s: ", caselabels[totcases]);
+		ACLine(cgbuffer,main);
+
+		CodeGenSwitchRec(defaultstmt, main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\t%s: ", exitswt);
+		ACLine(cgbuffer,main);
+	}
+	else if(strcmp(swtID->entry->type,"BOOLEAN") == 0)
+	{
+		ParseTree *case1 = Swt->child->right->right->child->right->child;
+		ParseTree *case1stmt = Swt->child->right->right->child->right->right;
+		ParseTree *case2 = Swt->child->right->right->child->right->right->right->right->right->child;
+		ParseTree *case2stmt = Swt->child->right->right->child->right->right->right->right->right->right;
+
+		//printf("\nCase1: %s | Value: %s | Case2: %s | Value: %s\n", terms[case1stmt->value], case1stmt->n->t->value, terms[case2stmt->value], case2stmt->n->t->value);
+
+		int caseVal = 0;
+
+		getL();
+		char exitswt[20];
+		strcpy(exitswt,labelbuf);
+
+		getL();
+		char label1[20];
+		strcpy(label1,labelbuf);
+
+		getL();
+		char label2[20];
+		strcpy(label2,labelbuf);
+
+		ACLine("\t; CASE",main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\t%s: ", label1);
+		ACLine(cgbuffer,main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tmov ebx, [%s]", swtID->entry->temporary);
+		ACLine(cgbuffer,main);
+
+		if(strcmp(terms[case1->value],"TRUE") == 0)
+			caseVal = 1;
+		else
+			caseVal = 0;
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tcmp ebx, %d", caseVal);
+		ACLine(cgbuffer,main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tjne %s", label2);
+		ACLine(cgbuffer,main);
+
+		CodeGenSwitchRec(case1stmt, main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tjmp %s\n", exitswt);
+		ACLine(cgbuffer,main);
+
+		ACLine("\t; CASE",main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\t%s: ", label2);
+		ACLine(cgbuffer,main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tmov ebx, [%s]", swtID->entry->temporary);
+		ACLine(cgbuffer,main);
+
+		if(strcmp(terms[case2->value],"TRUE") == 0)
+			caseVal = 1;
+		else
+			caseVal = 0;
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tcmp ebx, %d", caseVal);
+		ACLine(cgbuffer,main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tjne %s", exitswt);
+		ACLine(cgbuffer,main);
+
+		CodeGenSwitchRec(case2stmt, main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\t%s: \n", exitswt);
+		ACLine(cgbuffer,main);
+	}
+}
+
+void CodeGenSwitchRec(ParseTree *head, CodeBlock *main)
+{
+	if(head == NULL || strcmp(terms[head->value],"BREAK") == 0)
+		return;
+
+	//printf("\nTerms: %s\n", terms[head->value]);
+
+	if(strcmp(terms[head->value],"conditionalStmt") == 0 && head->isCG == 0)
+	{
+		head->isCG = 1;
+		CodeGenSwitch(head, main);
+	}
+	else if(strcmp(terms[head->value],"ioStmt") == 0 && head->isCG == 0)
+	{
+		head->isCG = 1;
+		codeGenIO(head, main);
+	}
+	else if(strcmp(terms[head->value],"iterativeStmt") == 0 && head->isCG == 0)
+	{
+		head->isCG = 1;
+		CodeGenIter(head, main);
+	}
+	else if(strcmp(terms[head->value],"assignmentStmt") == 0 && head->isCG == 0)
+	{
+		head->isCG = 1;
+		CodeGenAssg(head, main);
+	}
+
+	CodeGenSwitchRec(head->child, main);
+	CodeGenSwitchRec(head->right, main);
 }
 
 void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
@@ -1702,11 +1893,26 @@ void CodeGenExpr(ParseTree *expr, CodeBlock *main)
 		{
 			// Negate the CodeGEnExprRec
 
-			//CodeGenExprRec(unaryexpr, main);
+			CodeGenExprRec(unaryexpr, main);
+
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tmov ebx, [%s] ; Unary Minus", unaryexpr->temporary);
+			ACLine(cgbuffer, main);
+
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tneg ebx ; Unary Minus");
+			ACLine(cgbuffer, main);
+
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tmov [%s], ebx ; Unary Minus\n", unaryexpr->temporary);
+			ACLine(cgbuffer, main);
+
+			strcpy(expr->child->temporary,unaryexpr->temporary);
 		}
 		else
 		{
-			//CodeGenExprRec(unaryexpr, main);
+			CodeGenExprRec(unaryexpr, main);
+			strcpy(expr->child->temporary,unaryexpr->temporary);
 		}
 	}
 	else
@@ -1757,13 +1963,47 @@ void CodeGenIter(ParseTree *Iter, CodeBlock *main)
 	}
 	else
 	{
-		// WHILE
+		ParseTree *whileexpr = Iter->child->right;
+		ParseTree *Stmts = Iter->child->right->right;
+
+		ACLine("\t; While Statement",main);
+
+		getL();
+		char wcond[20];
+		strcpy(wcond,labelbuf);
+
+		getL();
+		char skipwhile[20];
+		strcpy(skipwhile,labelbuf);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\t%s: ", wcond);
+		ACLine(cgbuffer,main);
+
+		CodeGenExprRec(whileexpr, main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tmov ebx, [%s]", whileexpr->temporary);
+		ACLine(cgbuffer,main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tcmp ebx, 1");
+		ACLine(cgbuffer,main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tjne %s\n", skipwhile);
+		ACLine(cgbuffer,main);
+
+		CodeGenRec(Stmts, main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\tjmp %s\n", wcond);
+		ACLine(cgbuffer,main);
+
+		memset(cgbuffer,0,100);
+		sprintf(cgbuffer,"\t\t%s: \n", skipwhile);
+		ACLine(cgbuffer,main);
 	}
-}
-
-void CodeGenStmts(ParseTree *Stmt, CodeBlock *main)
-{
-
 }
 
 void CodeGenRec(ParseTree *head, CodeBlock *main)
