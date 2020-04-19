@@ -26,18 +26,14 @@ start
 		  z:= z+k+a*2;
 		  print(z);
     end
-	z:= x + y*b +(a-b)*y+ a*2 - b*x;
+    z:= x + y*b +(a-b)*y+ a*2 - b*x;
 	v:= z > 10 OR a<=b AND x<y AND u;	**follows left to right associativity**
-        print(z);
+    print(z);
 	print(u);
-	get_value(A); 
-                          
-**Note: Implement get_value(A) using type information of A. Your code template should first inform user of the size, range indices and type of data and read accordingly to populate the memory locations allocated for elements of A**
-   
-        y:= a+x+A[13]*2 + A[14]*3 +A[15];                **bound checking at compile time must have been done before code generation**
+	get_value(A);   
+    y:= a+x+A[13]*2 + A[14]*3 +A[15];
 	print(y);	
 	print(A);
-
 end
 
 ** Expected output
@@ -68,23 +64,23 @@ Output: 23
 Input: Enter an integer value
 3
 Output: 10
-Output: 43
+Output: 54
 Input: Enter an integer value
 6
 Output: 13
-Output: 47
+Output: 92
 Input: Enter an integer value
 9
 Output: 16
-Output: 54
+Output: 137
 Input: Enter an integer value
 -8
 Output: -1
-Output: 21
+Output: 149
 Input: Enter an integer value
 10
 Output: 17
-Output: 58
+Output: 198
 Output: 9
 Output: true
 Input: Enter 6 array elements of integer type for range 10 to 15

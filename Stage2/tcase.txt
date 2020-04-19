@@ -1,11 +1,6 @@
 <<<driver program>>>
 start
-	declare x: integer;
-	declare z: integer;
-	get_value(z);
-	for(x in 1..4)
-	start
-		get_value(z);
-		print(z);
-	end
+	declare A: array[1..5] of integer;
+	get_value(A);
+	print(A);
 end

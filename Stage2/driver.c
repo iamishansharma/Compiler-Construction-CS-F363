@@ -505,7 +505,7 @@ int main(int argc, char *argv[])
 				printf("\n%sCode Compiles Successfully..........%s\n", BOLDWHITE, RESET);
 			}
 
-			if(typeErrors!=0)
+			if(typeErrors!=0 || scopeError!=0)
 			{
 				printf("\n\t%sPlease rectify the semantic errors before proceeding forward \n\twith code gen as it may show errorneous behaviour.%s\n",BOLDRED,RESET);
 

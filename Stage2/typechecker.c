@@ -730,7 +730,7 @@ void CheckAssignStmt(ParseTree *Ass, int *errors, int *udvflag)
 		{
 			ParseTree *lhsindex = IDARR->child->child;
 
-			if(strcmp(lhsindex->entry->type,"INTEGER") != 0) // IF Array Index is integer or not
+			if(strcmp(lhsindex->entry->type,"INTEGER") != 0 && lhsindex->entry->udv == 0) // IF Array Index is integer or not
 			{
 				printf("\t%sLine No: %d%s (Error) %sArray '%s' cannot have non-integer type of index '%s'.\n", BOLDWHITE, lhs->n->t->lineno,BOLDRED,RESET,lhs->n->t->value, lhsindex->n->t->value);
 				*errors = *errors + 1;

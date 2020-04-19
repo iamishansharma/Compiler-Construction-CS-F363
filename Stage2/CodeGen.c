@@ -11,6 +11,14 @@
 	Anirudh Garg 2017A7PS0142P
 	Sanjeev Singla 2017A7PS0152P
 
+	To Do: 
+
+		Unary minus wala negation
+
+		While
+
+		Switch
+
 */
 
 #include "CodeGen.h"
@@ -117,7 +125,7 @@ void AssignTemporaries(SymbolTable *table, CodeBlock *cb)
 			if(temp->startindex->isDynamic == 0 && temp->endindex->isDynamic == 0)
 			{
 				int range = temp->endindex->ifnumvalue - temp->startindex->ifnumvalue + 1;
-				sprintf(cgbuffer,"\t%s: \tresd %d ; ID: %s | Line No:%d",temp->temporary,range,temp->name,temp->lineno);
+				sprintf(cgbuffer,"\t%s: \tresd %d ; ID: %s | Line No: %d",temp->temporary,range,temp->name,temp->lineno);
 			}
 			else
 				daflag = 1;
@@ -145,42 +153,100 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 
 		if(id->entry->isArray)
 		{
-			int start = id->entry->startindex->ifnumvalue;
-			int end = id->entry->endindex->ifnumvalue;
-			int tot = end - start + 1;
+			if(strcmp(id->entry->type,"INTEGER") == 0 || strcmp(id->entry->type,"REAL") == 0)
+			{
+				int start = id->entry->startindex->ifnumvalue;
+				int end = id->entry->endindex->ifnumvalue;
+				int tot = end - start + 1;
 
-			ACLine("\t\tpush rbp",main);
-			ACLine("\t\tmov rdi, in_format_int_a ; printing array integer format",main); 
-			ACLine("\t\tmov rax, 0",main);
-			memset(cgbuffer,0,100);
-			sprintf(cgbuffer,"\t\tmov rsi, dword %d", tot);
-			ACLine(cgbuffer,main);
-			memset(cgbuffer,0,100);
-			sprintf(cgbuffer,"\t\tmov rdx, dword %d", start);
-			ACLine(cgbuffer,main);
-			memset(cgbuffer,0,100);
-			sprintf(cgbuffer,"\t\tmov rcx, dword %d", end);
-			ACLine(cgbuffer,main);
-			ACLine("\t\tcall printf",main);
-			ACLine("\t\tpop rbp",main);
+				getL();
+				char arlp[20];
+				strcpy(arlp,labelbuf);
 
-			// for loop for array here -> 
-			ACLine("\t\tpush rbp",main);
-			memset(cgbuffer,0,100);
-			sprintf(cgbuffer,"\t\tmov r14, dword 0");
-			ACLine(cgbuffer,main);
-			ACLine("\tarlp: ",main);
-			ACLine("\t\tmov rdi, in_format",main);
-			ACLine("\t\tmov rax, 0",main);
-			sprintf(cgbuffer,"\t\tlea rsi, [%s + 4*r14]",id->entry->temporary);
-			ACLine(cgbuffer,main);
-			ACLine("\t\tcall scanf",main);
-			ACLine("\t\tinc r14",main);
-			memset(cgbuffer,0,100);
-			sprintf(cgbuffer,"\t\tcmp r14, %d",tot);
-			ACLine(cgbuffer,main);
-			ACLine("\t\tjne arlp",main);
-			ACLine("\t\tpop rbp\n",main);
+				ACLine("\t\tpush rbp",main);
+				ACLine("\t\tmov rdi, in_format_int_a ; printing array integer format",main); 
+				ACLine("\t\tmov rax, 0",main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tmov rsi, dword %d", tot);
+				ACLine(cgbuffer,main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tmov rdx, dword %d", start);
+				ACLine(cgbuffer,main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tmov rcx, dword %d", end);
+				ACLine(cgbuffer,main);
+				ACLine("\t\tcall printf",main);
+				ACLine("\t\tpop rbp",main);
+
+				// for loop for array here -> 
+				ACLine("\t\tpush rbp",main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tmov r14, dword 0");
+				ACLine(cgbuffer,main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t%s: ", arlp);
+				ACLine(cgbuffer,main);
+				ACLine("\t\tmov rdi, in_format",main);
+				ACLine("\t\tmov rax, 0",main);
+				sprintf(cgbuffer,"\t\tlea rsi, [%s + 4*r14]",id->entry->temporary);
+				ACLine(cgbuffer,main);
+				ACLine("\t\tcall scanf",main);
+				ACLine("\t\tinc r14",main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tcmp r14, %d",tot);
+				ACLine(cgbuffer,main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tjne %s", arlp);
+				ACLine(cgbuffer,main);
+				ACLine("\t\tpop rbp\n",main);
+			}
+			else
+			{
+				int start = id->entry->startindex->ifnumvalue;
+				int end = id->entry->endindex->ifnumvalue;
+				int tot = end - start + 1;
+
+				ACLine("\t\tpush rbp",main);
+				ACLine("\t\tmov rdi, in_format_boolean_a ; printing array integer format",main); 
+				ACLine("\t\tmov rax, 0",main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tmov rsi, dword %d", tot);
+				ACLine(cgbuffer,main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tmov rdx, dword %d", start);
+				ACLine(cgbuffer,main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tmov rcx, dword %d", end);
+				ACLine(cgbuffer,main);
+				ACLine("\t\tcall printf",main);
+				ACLine("\t\tpop rbp",main);
+
+				getL();
+				char arlp[20];
+				strcpy(arlp,labelbuf);
+
+				// for loop for array here -> 
+				ACLine("\t\tpush rbp",main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tmov r14, dword 0");
+				ACLine(cgbuffer,main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t%s: ", arlp);
+				ACLine(cgbuffer,main);
+				ACLine("\t\tmov rdi, in_format",main);
+				ACLine("\t\tmov rax, 0",main);
+				sprintf(cgbuffer,"\t\tlea rsi, [%s + 4*r14]",id->entry->temporary);
+				ACLine(cgbuffer,main);
+				ACLine("\t\tcall scanf",main);
+				ACLine("\t\tinc r14",main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tcmp r14, %d",tot);
+				ACLine(cgbuffer,main);
+				memset(cgbuffer,0,100);
+				sprintf(cgbuffer,"\t\tjne %s", arlp);
+				ACLine(cgbuffer,main);
+				ACLine("\t\tpop rbp\n",main);
+			}
 		}
 		else
 		{
@@ -290,16 +356,23 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 							sprintf(pbuf,"\t\t; Printing INTEGER ARRAY ID: %s",id->n->t->value);
 							ACLine(pbuf,main);
 							ACLine("\t\tpush rbp",main);
-							ACLine("\t\tmov rdi, out_format_m",main);
+							ACLine("\t\tmov rdi, out_format_ma",main);
 							ACLine("\t\tmov rax, 0",main);
 							ACLine("\t\tcall printf",main);
 							ACLine("\t\tpop rbp\n",main);
 
+							getL();
+							char arlp[20];
+							strcpy(arlp,labelbuf);
+							
 							ACLine("\t\tpush rbp",main);
 							memset(cgbuffer,0,100);
 							sprintf(cgbuffer,"\t\tmov r13, dword 0");
 							ACLine(cgbuffer,main);
-							ACLine("\tarplp: mov rdi, out_format",main);
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t%s: ", arlp);
+							ACLine(cgbuffer,main);
+							ACLine("\t\tmov rdi, out_format",main);
 							ACLine("\t\tmov rax, 0",main);
 							sprintf(cgbuffer,"\t\tmov rsi, [%s + 4*r13]", id->entry->temporary);
 							ACLine(cgbuffer,main);
@@ -308,7 +381,9 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 							memset(cgbuffer,0,100);
 							sprintf(cgbuffer,"\t\tcmp r13, %d",tot);
 							ACLine(cgbuffer,main);
-							ACLine("\t\tjne arplp",main);
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t\tjne %s", arlp);
+							ACLine(cgbuffer,main);
 							ACLine("\t\tpop rbp\n",main);
 						}
 						else if(strcmp(id->entry->type,"BOOLEAN") == 0)
@@ -319,10 +394,14 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 							sprintf(pbuf,"\t\t; Printing BOOLEAN ARRAY ID: %s",id->n->t->value);
 							ACLine(pbuf,main);
 							ACLine("\t\tpush rbp",main);
-							ACLine("\t\tmov rdi, out_format_m",main);
+							ACLine("\t\tmov rdi, out_format_ma",main);
 							ACLine("\t\tmov rax, 0",main);
 							ACLine("\t\tcall printf",main);
 							ACLine("\t\tpop rbp\n",main);
+
+							getL();
+							char arlp[20];
+							strcpy(arlp,labelbuf);
 
 							ACLine("\t\tpush rbp",main);
 							memset(cgbuffer,0,100);
@@ -330,7 +409,11 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 							ACLine(cgbuffer,main);
 
 							memset(cgbuffer,0,100);
-							sprintf(cgbuffer,"\tarplpb: cmp [%s + 4*r12], dword 1",id->entry->temporary);
+							sprintf(cgbuffer,"\t%s: ", arlp);
+							ACLine(cgbuffer,main);
+
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t\tcmp [%s + 4*r12], dword 1",id->entry->temporary);
 							ACLine(cgbuffer,main);
 
 							getL();
@@ -367,7 +450,9 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 							memset(cgbuffer,0,100);
 							sprintf(cgbuffer,"\t\tcmp r12, %d",tot);
 							ACLine(cgbuffer,main);
-							ACLine("\t\tjne arplpb",main);
+							memset(cgbuffer,0,100);
+							sprintf(cgbuffer,"\t\tjne %s", arlp);
+							ACLine(cgbuffer,main);
 							ACLine("\t\tpop rbp\n",main);
 						}
 					}
@@ -380,11 +465,168 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 							// Dynamic Index
 							if(strcmp(id->entry->type,"INTEGER") == 0)
 							{
+								//printf("\nYahan aaya\n");
+								char pbuf[100];
+								sprintf(pbuf,"\t\t; Printing INTEGER ARRAY (Dynamic Indexed) ID: %s",id->n->t->value);
+								ACLine(pbuf,main);
+								ACLine("\t\tpush rbp",main);
+								ACLine("\t\tmov rdi, out_format_m",main);
+								ACLine("\t\tmov rax, 0",main);
+								ACLine("\t\tcall printf",main);
+								ACLine("\t\tpop rbp\n",main);
 
+								ACLine("\t\tpush rbp",main);
+								ACLine("\t\tmov rdi, out_format",main);
+								ACLine("\t\tmov rax, 0",main);
+
+								getL();
+								char iofb[20];
+								strcpy(iofb,labelbuf);
+
+								getL();
+								char doa[20];
+								strcpy(doa,labelbuf);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tmov r11d, [%s]", index->entry->temporary);
+								ACLine(cgbuffer,main);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tcmp r11d, %d", id->entry->startindex->ifnumvalue);
+								ACLine(cgbuffer,main);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tjnge %s", iofb);
+								ACLine(cgbuffer,main);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tcmp r11d, %d", id->entry->endindex->ifnumvalue);
+								ACLine(cgbuffer,main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tjle %s", doa);
+								ACLine(cgbuffer,main);
+
+								ACLine("\n\t; array index out of bounds error", main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t%s: ", iofb);
+								ACLine(cgbuffer,main);
+								ACLine("\t\tpush rbp",main);
+								ACLine("\t\tmov rdi, array_iofb",main);
+								ACLine("\t\tmov rax, 0",main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tmov rsi, dword %d", id->n->t->lineno);
+								ACLine(cgbuffer,main);
+								ACLine("\t\tcall printf",main);
+								ACLine("\t\tpop rbp\n",main);
+								ACLine("\t\tjmp exit",main);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t%s: sub r11d, %d", doa, id->entry->startindex->ifnumvalue);
+								ACLine(cgbuffer,main);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tmov rsi, [%s + 4*r11d]", id->entry->temporary);
+								ACLine(cgbuffer,main);
+								ACLine("\t\tcall printf",main);
+								ACLine("\t\tpop rbp\n",main);
 							}
 							else if(strcmp(id->entry->type,"BOOLEAN") == 0)
 							{
+								char pbuf[100];
+								sprintf(pbuf,"\t\t; Printing BOOLEAN ARRAY (Dynamic Indexed) ID: %s",id->n->t->value);
+								ACLine(pbuf,main);
+								ACLine("\t\tpush rbp",main);
+								ACLine("\t\tmov rdi, out_format_m",main);
+								ACLine("\t\tmov rax, 0",main);
+								ACLine("\t\tcall printf",main);
+								ACLine("\t\tpop rbp\n",main);
 
+								ACLine("\t\tpush rbp",main);
+								ACLine("\t\tmov rdi, out_format",main);
+								ACLine("\t\tmov rax, 0",main);
+
+								getL();
+								char iofb[20];
+								strcpy(iofb,labelbuf);
+
+								getL();
+								char doa[20];
+								strcpy(doa,labelbuf);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tmov r10d, [%s]", index->entry->temporary);
+								ACLine(cgbuffer,main);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tcmp r10d, %d", id->entry->startindex->ifnumvalue);
+								ACLine(cgbuffer,main);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tjnge %s", iofb);
+								ACLine(cgbuffer,main);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tcmp r10d, %d", id->entry->endindex->ifnumvalue);
+								ACLine(cgbuffer,main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tjle %s", doa);
+								ACLine(cgbuffer,main);
+
+								ACLine("\n\t; array index out of bounds error", main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t%s: ", iofb);
+								ACLine(cgbuffer,main);
+								ACLine("\t\tpush rbp",main);
+								ACLine("\t\tmov rdi, array_iofb",main);
+								ACLine("\t\tmov rax, 0",main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tmov rsi, dword %d", id->n->t->lineno);
+								ACLine(cgbuffer,main);
+								ACLine("\t\tcall printf",main);
+								ACLine("\t\tpop rbp\n",main);
+								ACLine("\t\tjmp exit",main);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t%s: sub r10d, %d", doa, id->entry->startindex->ifnumvalue);
+								ACLine(cgbuffer,main);
+
+								ACLine("\t\tpush rbp",main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tcmp [%s + 4*r10d], dword 1",id->entry->temporary);
+								ACLine(cgbuffer,main);
+
+								getL();
+								char truelabel[20];
+								strcpy(truelabel,labelbuf);
+
+								getL();
+								char falselabel[20];
+								strcpy(falselabel,labelbuf);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tje %s", truelabel);
+								ACLine(cgbuffer,main);
+
+								// FALSE
+								ACLine("\t\tmov rdi, falseout",main);
+								ACLine("\t\tmov rax, 0",main);
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t\tjmp %s", falselabel);
+								ACLine(cgbuffer,main);
+								
+								// TRUE
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t%s: mov rdi, trueout", truelabel);
+								ACLine(cgbuffer,main);
+								ACLine("\t\tmov rax, 0",main);
+								memset(cgbuffer,0,100);
+								ACLine(cgbuffer,main);
+
+								memset(cgbuffer,0,100);
+								sprintf(cgbuffer,"\t%s: ", falselabel);
+								ACLine(cgbuffer,main);
+								ACLine("\t\tcall printf",main);
+								ACLine("\t\tpop rbp\n",main);
 							}
 						}
 						else // NUM ID
@@ -394,7 +636,7 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 							if(strcmp(id->entry->type,"INTEGER") == 0)
 							{
 								char pbuf[100];
-								sprintf(pbuf,"\t\t; Printing INTEGER ARRAY (Indexed) ID: %s",id->n->t->value);
+								sprintf(pbuf,"\t\t; Printing INTEGER ARRAY (Static Indexed) ID: %s",id->n->t->value);
 								ACLine(pbuf,main);
 								ACLine("\t\tpush rbp",main);
 								ACLine("\t\tmov rdi, out_format_m",main);
@@ -416,7 +658,7 @@ void codeGenIO(ParseTree *IO, CodeBlock *main)
 							else if(strcmp(id->entry->type,"BOOLEAN") == 0)
 							{
 								char pbuf[100];
-								sprintf(pbuf,"\t\t; Printing BOOLEAN ARRAY (Indexed) ID: %s",id->n->t->value);
+								sprintf(pbuf,"\t\t; Printing BOOLEAN ARRAY (Static Indexed) ID: %s",id->n->t->value);
 								ACLine(pbuf,main);
 								ACLine("\t\tpush rbp",main);
 								ACLine("\t\tmov rdi, out_format_m",main);
@@ -566,15 +808,49 @@ void CodeGenAssg(ParseTree *Ass, CodeBlock *main)
 		{
 			// Complete array assignment
 			ParseTree *lhs = Ass->child;
-			ParseTree *rhs = Ass->child->right->child->child;
+			ParseTree *rhs = Ass->child->right->child->child->child;
+
+			memset(cgbuffer,0,100); // to clear memory
+			sprintf(cgbuffer,"\t; Full Array '%s' with '%s' at LineNo: %d", lhs->n->t->value, rhs->n->t->value, lhs->n->t->lineno);
+			ACLine(cgbuffer,main);
+
+			int lowval = lhs->entry->startindex->ifnumvalue;
+			int highval = lhs->entry->endindex->ifnumvalue;
+
+			ACLine("\t\tpush rbp",main);
+
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tmov r15, dword 0");
+			ACLine(cgbuffer,main);
+
+			getL();
+			char forloop[20];
+			strcpy(forloop,labelbuf);
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\t%s: ",forloop);
+			ACLine(cgbuffer,main);
+
+			memset(cgbuffer,0,100); // to clear memory
+			sprintf(cgbuffer,"\t\tmov eax, [%s + 4*r15]", rhs->entry->temporary);
+			ACLine(cgbuffer,main);
+
+			memset(cgbuffer,0,100); // to clear memory
+			sprintf(cgbuffer,"\t\tmov [%s + 4*r15], eax", lhs->entry->temporary);
+			ACLine(cgbuffer,main);
+
+			ACLine("\t\tinc r15",main);
+			sprintf(cgbuffer,"\t\tcmp r15, %d", highval+1);
+			ACLine(cgbuffer,main);
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tjne %s\n",forloop);
+			ACLine(cgbuffer,main);
+			ACLine("\t\tpop rbp",main);
 		}
 		else
 		{
 			ParseTree *expr = Ass->child->right->child;
 
 				CodeGenExpr(expr, main);
-
-				// Return the temporary (set as global)
 
 			memset(cgbuffer,0,100); // to clear memory
 			sprintf(cgbuffer,"\t\tmov eax, [%s]", expr->child->temporary);
@@ -591,6 +867,85 @@ void CodeGenAssg(ParseTree *Ass, CodeBlock *main)
 
 		ParseTree *expr = Ass->child->right->child->right;
 		ParseTree *indexID = Ass->child->right->child->child;
+
+		CodeGenExpr(expr, main);
+
+		if(strcmp(terms[indexID->value],"ID") == 0)
+		{
+			ACLine("\t\tpush rbp",main);
+
+			getL();
+			char iofb[20];
+			strcpy(iofb,labelbuf);
+
+			getL();
+			char doa[20];
+			strcpy(doa,labelbuf);
+
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tmov r13d, [%s]", indexID->entry->temporary);
+			ACLine(cgbuffer,main);
+
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tcmp r13d, %d", Ass->child->entry->startindex->ifnumvalue);
+			ACLine(cgbuffer,main);
+
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tjnge %s", iofb);
+			ACLine(cgbuffer,main);
+
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tcmp r13d, %d", Ass->child->entry->endindex->ifnumvalue);
+			ACLine(cgbuffer,main);
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tjle %s", doa);
+			ACLine(cgbuffer,main);
+
+			ACLine("\n\t; array index out of bounds error", main);
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t%s: ", iofb);
+			ACLine(cgbuffer,main);
+			ACLine("\t\tpush rbp",main);
+			ACLine("\t\tmov rdi, array_iofb",main);
+			ACLine("\t\tmov rax, 0",main);
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tmov rsi, dword %d", Ass->child->n->t->lineno);
+			ACLine(cgbuffer,main);
+			ACLine("\t\tcall printf",main);
+			ACLine("\t\tpop rbp\n",main);
+			ACLine("\t\tjmp exit",main);
+
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t%s: sub r13d, %d", doa, Ass->child->entry->startindex->ifnumvalue);
+			ACLine(cgbuffer,main);
+
+			memset(cgbuffer,0,100); // to clear memory
+			sprintf(cgbuffer,"\t\tmov eax, [%s]", expr->child->temporary);
+			ACLine(cgbuffer,main);
+
+			memset(cgbuffer,0,100); // to clear memory
+			sprintf(cgbuffer,"\t\tmov [%s + 4*r13d], eax", Ass->child->entry->temporary);
+			ACLine(cgbuffer,main);
+			ACLine("\t\tpop rbp\n",main);
+		}
+		else
+		{
+			int indexval = atoi(indexID->n->t->value) - Ass->child->entry->startindex->ifnumvalue;
+
+			ACLine("\t\tpush rbp",main);
+			memset(cgbuffer,0,100);
+			sprintf(cgbuffer,"\t\tmov r9d, %d", indexval);
+			ACLine(cgbuffer,main);
+
+			memset(cgbuffer,0,100); // to clear memory
+			sprintf(cgbuffer,"\t\tmov eax, [%s]", expr->child->temporary);
+			ACLine(cgbuffer,main);
+
+			memset(cgbuffer,0,100); // to clear memory
+			sprintf(cgbuffer,"\t\tmov [%s + 4*r9d], eax", Ass->child->entry->temporary);
+			ACLine(cgbuffer,main);
+			ACLine("\t\tpop rbp\n",main);
+		}
 	}
 }
 
@@ -619,7 +974,61 @@ void CodeGenExprRec(ParseTree *expr, CodeBlock *main)
 
 				if(strcmp(terms[ID->right->child->value],"ID") == 0)
 				{
-					// Dynamic Index
+					ParseTree *indexid = ID->right->child;
+
+					ACLine("\t\tpush rbp",main);
+
+					getL();
+					char iofb[20];
+					strcpy(iofb,labelbuf);
+
+					getL();
+					char doa[20];
+					strcpy(doa,labelbuf);
+
+					memset(cgbuffer,0,100);
+					sprintf(cgbuffer,"\t\tmov r13d, [%s]", indexid->entry->temporary);
+					ACLine(cgbuffer,main);
+
+					memset(cgbuffer,0,100);
+					sprintf(cgbuffer,"\t\tcmp r13d, %d", ID->entry->startindex->ifnumvalue);
+					ACLine(cgbuffer,main);
+
+					memset(cgbuffer,0,100);
+					sprintf(cgbuffer,"\t\tjnge %s", iofb);
+					ACLine(cgbuffer,main);
+
+					memset(cgbuffer,0,100);
+					sprintf(cgbuffer,"\t\tcmp r13d, %d", ID->entry->endindex->ifnumvalue);
+					ACLine(cgbuffer,main);
+					memset(cgbuffer,0,100);
+					sprintf(cgbuffer,"\t\tjle %s", doa);
+					ACLine(cgbuffer,main);
+
+					ACLine("\n\t; array index out of bounds error", main);
+					memset(cgbuffer,0,100);
+					sprintf(cgbuffer,"\t%s: ", iofb);
+					ACLine(cgbuffer,main);
+					ACLine("\t\tpush rbp",main);
+					ACLine("\t\tmov rdi, array_iofb",main);
+					ACLine("\t\tmov rax, 0",main);
+					memset(cgbuffer,0,100);
+					sprintf(cgbuffer,"\t\tmov rsi, dword %d", ID->n->t->lineno);
+					ACLine(cgbuffer,main);
+					ACLine("\t\tcall printf",main);
+					ACLine("\t\tpop rbp\n",main);
+					ACLine("\t\tjmp exit",main);
+
+					memset(cgbuffer,0,100);
+					sprintf(cgbuffer,"\t%s: sub r13d, %d", doa, ID->entry->startindex->ifnumvalue);
+					ACLine(cgbuffer,main);
+					memset(cgbuffer,0,100); // to clear memory
+					sprintf(cgbuffer,"\t\tmov eax, [%s + 4*r13d]\n", ID->entry->temporary);
+					ACLine(cgbuffer,main);
+					memset(cgbuffer,0,100); // to clear memory
+					sprintf(cgbuffer,"\t\tmov [%s], eax", expr->temporary);
+					ACLine(cgbuffer,main);
+					ACLine("\t\tpop rbp\n",main);
 				}
 				else
 				{
@@ -1326,10 +1735,6 @@ void CodeGenIter(ParseTree *Iter, CodeBlock *main)
 		sprintf(cgbuffer,"\t\tmov r15, dword %d", lowval);
 		ACLine(cgbuffer,main);
 
-		memset(cgbuffer,0,100);
-		sprintf(cgbuffer,"\t\tmov [%s], r15", ID->entry->temporary);
-		ACLine(cgbuffer,main);
-
 		getL();
 		char forloop[20];
 		strcpy(forloop,labelbuf);
@@ -1337,7 +1742,7 @@ void CodeGenIter(ParseTree *Iter, CodeBlock *main)
 		sprintf(cgbuffer,"\t\t%s: ",forloop);
 		ACLine(cgbuffer,main);
 		memset(cgbuffer,0,100);
-		sprintf(cgbuffer,"\t\tmov [%s], r15", ID->entry->temporary);
+		sprintf(cgbuffer,"\t\tmov [%s], r15d", ID->entry->temporary);
 		ACLine(cgbuffer,main);
 
 		CodeGenRec(Stmt, main);
@@ -1346,7 +1751,7 @@ void CodeGenIter(ParseTree *Iter, CodeBlock *main)
 		sprintf(cgbuffer,"\t\tcmp r15, %d", highval+1);
 		ACLine(cgbuffer,main);
 		memset(cgbuffer,0,100);
-		sprintf(cgbuffer,"\t\tjne %s",forloop);
+		sprintf(cgbuffer,"\t\tjne %s\n",forloop);
 		ACLine(cgbuffer,main);
 		//ACLine("\t\tpop rbp\n",main);
 	}
@@ -1434,12 +1839,14 @@ void CallingCodeGen(ParseTree *head, SymbolTable *table, FILE *f)
 			ACLine("\tin_format_int_a:      db \"Input: Enter %d array elements of integer type for range %d to %d -> \", 10, 0", main);
 			ACLine("\tin_format_real:       db \"Input: Enter a real value -> \", 10, 0", main);
 			ACLine("\tin_format_real_a:     db \"Input: Enter %d array elements of real type for range %d to %d -> \", 10, 0", main);
-			ACLine("\tin_format_boolean:    db \"Input: Enter a boolean value -> \", 10, 0", main);
-			ACLine("\tin_format_boolean_a:  db \"Input: Enter %d array elements of boolean type for range %d to %d -> \", 10, 0", main);
-			ACLine("\tout_format_m:         db \"Output:\", 10, 0", main);
+			ACLine("\tin_format_boolean:    db \"Input: Enter a boolean value (0 or 1) -> \", 10, 0", main);
+			ACLine("\tin_format_boolean_a:  db \"Input: Enter %d array elements of boolean type (0 or 1) for range %d to %d -> \", 10, 0", main);
+			ACLine("\tout_format_m:         db \"Output: \", 10, 0", main);
+			ACLine("\tout_format_ma:        db \"Output Array: \", 10, 0", main);
 			ACLine("\tout_format:           db \"%d\", 10, 0", main);
 			ACLine("\ttrueout:              db \"True\", 10, 0", main);
 			ACLine("\tfalseout:             db \"False\", 10, 0\n", main);
+			ACLine("\tarray_iofb:           db \"(RUN TIME ERROR): Array index is out of bounds at line no %d\", 10, 0\n", main);
 
 		//******************************************************************************************\\
 
