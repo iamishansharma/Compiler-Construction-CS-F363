@@ -133,6 +133,9 @@ int main(int argc, char *argv[])
 		printf("\t    Level 4 of Error Reporting, 16 or more errors have been implemented.\n");
 		printf("\t4. Code Gen -> Programs with only driver module and only static arrays could be implemented.\n");
 		printf("\t\t       Expressions, Switch, For, While, Print, Get_Value have been implemented.\n");
+		printf("\n\t\t       Every code.asm file was executed and checked on a Ubuntu Linux Virtual Machine on a MacBook\n");
+		printf("\t\t       and was working as expected with no segmentation faults.\n");
+		printf("\t\t       Ma'am if you encounter any segmentation fault please contact Ishan Sharma.\n\n");
 		printf("\t\t       c1.txt, c2.txt, c3.txt, c4.txt, c5.txt, c6.txt working as expected.%s\n\n",RESET);
 		printf("Please select one of the following options (Please use only 1 option in one run of code) ->\n\n");
 		printf("\t0. Exit the program.\n");

@@ -806,7 +806,7 @@ void CodeGenAssg(ParseTree *Ass, CodeBlock *main)
 			ParseTree *rhs = Ass->child->right->child->child->child;
 
 			memset(cgbuffer,0,100); // to clear memory
-			sprintf(cgbuffer,"\t; Full Array '%s' with '%s' at LineNo: %d", lhs->n->t->value, rhs->n->t->value, lhs->n->t->lineno);
+			sprintf(cgbuffer,"\t; Full Array assignment at LineNo: %d", lhs->n->t->lineno);
 			ACLine(cgbuffer,main);
 
 			int lowval = lhs->entry->startindex->ifnumvalue;
