@@ -1,5 +1,0 @@
-<<<driver program>>>
-start
-	declare a:array [5..1] of integer;
-	print(a);
-end
