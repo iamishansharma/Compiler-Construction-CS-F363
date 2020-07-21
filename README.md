@@ -19,6 +19,7 @@ All the testcases are present inside [Testcases](https://github.com/iamishanshar
 
 - c1 - c6 and v1 - v11 pertain to Code Gen testcases specifically
 - All other testcases can be used to check different translational phases of the compiler
+- sampless.txt can be used to verify Symbol Table Creation / Visual Presentation
 
 ## Execution Instructions
 
