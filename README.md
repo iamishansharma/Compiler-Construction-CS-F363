@@ -1,8 +1,8 @@
-# Compiler-Construction
+# ERPLAG Compiler
 
 This was my semester long project for Compiler Construction (CS F363) course at BITS Pilani, Spring 2020.
 
-## ERPLAG
+## ERPLAG (Toy Language) Details
 
 ERPLAG is a toy language made for the course. Details of which can be looked at inside [Language Details](https://github.com/iamishansharma/Compiler-Construction-CS-F363/tree/master/Language%20Details) folder.
 
