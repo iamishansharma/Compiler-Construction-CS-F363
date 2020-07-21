@@ -23,10 +23,9 @@ All the testcases are present inside [Testcases](https://github.com/iamishanshar
 ## Execution Instructions
 
 - Download this repo and change directory to [Code](https://github.com/iamishansharma/Compiler-Construction-CS-F363/tree/master/Code) folder.
-- Run `make {insert_executable_name_here}` eg. `make compiler` <br \>
+- Run `make {insert_executable_name_here}` eg. `make compiler`<br \>
 - Run `./{insert_executable_name_here} {path_to_testcase/*.txt} {parseTree_file_name.txt}`
-- Eg. Run `./compiler ./Test`
-OR
+- Eg. Run `./compiler ./Test`<br \>OR<br \>
 - Run `./{insert_executable_name_here} {path_to_testcase/*.txt} {Assembly_file_name.asm}`
 
 ## Execution Instructions for Code Gen Assembly File
