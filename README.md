@@ -4,7 +4,7 @@ This was my semester long project for Compiler Construction (CS F363) course at 
 
 ## ERPLAG
 
-ERPLAG is a toy language made for the course. Details of which can be looked at inside [Language Details](https://github.com/iamishansharma/Compiler-Construction-CS-F363/tree/master/Languages \Details) folder.
+ERPLAG is a toy language made for the course. Details of which can be looked at inside [Language Details](https://github.com/iamishansharma/Compiler-Construction-CS-F363/tree/master/Language%20Details) folder.
 
 ## Pre-requisites
 
