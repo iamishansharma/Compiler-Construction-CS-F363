@@ -10,8 +10,8 @@ ERPLAG is a toy language made for the course. Details of which can be looked at 
 
 The dependencies on using the ERPLAG compiler are -
 
-   - `gcc`
-   - `nasm`
+- `gcc`
+- `nasm`
 
 ## Testcases
 
@@ -22,13 +22,13 @@ All the testcases are present inside [Testcases]() folder.
 
 ## Execution Instructions
 
-	- Download this repo and change directory to [Code]() folder.
-	- Run `make {insert_executable_name_here}` eg. `make compiler`
-	<br \>
-	- Run `./{insert_executable_name_here} {path_to_testcase/*.txt} {parseTree_file_name.txt}`
-	- Eg. Run `./compiler ./Test`
-	OR
-	- Run `./{insert_executable_name_here} {path_to_testcase/*.txt} {Assembly_file_name.asm}`
+- Download this repo and change directory to [Code]() folder.
+- Run `make {insert_executable_name_here}` eg. `make compiler`
+<br \>
+- Run `./{insert_executable_name_here} {path_to_testcase/*.txt} {parseTree_file_name.txt}`
+- Eg. Run `./compiler ./Test`
+OR
+- Run `./{insert_executable_name_here} {path_to_testcase/*.txt} {Assembly_file_name.asm}`
 
 ## Execution Instructions for Code Gen Assembly File
 
