@@ -4,7 +4,7 @@ This was my semester long project for Compiler Construction (CS F363) course at 
 
 ## ERPLAG
 
-ERPLAG is a toy language made for the course. Details of which can be looked at inside [Language Details]() folder.
+ERPLAG is a toy language made for the course. Details of which can be looked at inside [Language Details](https://github.com/iamishansharma/Compiler-Construction-CS-F363/tree/master/Languages \Details) folder.
 
 ## Pre-requisites
 
@@ -15,14 +15,14 @@ The dependencies on using the ERPLAG compiler are -
 
 ## Testcases
 
-All the testcases are present inside [Testcases]() folder.
+All the testcases are present inside [Testcases](https://github.com/iamishansharma/Compiler-Construction-CS-F363/tree/master/Testcases) folder.
 
 - c1 - c6 and v1 - v11 pertain to Code Gen testcases specifically
 - All other testcases can be used to check different translational phases of the compiler
 
 ## Execution Instructions
 
-- Download this repo and change directory to [Code]() folder.
+- Download this repo and change directory to [Code](https://github.com/iamishansharma/Compiler-Construction-CS-F363/tree/master/Code) folder.
 - Run `make {insert_executable_name_here}` eg. `make compiler` <br \>
 - Run `./{insert_executable_name_here} {path_to_testcase/*.txt} {parseTree_file_name.txt}`
 - Eg. Run `./compiler ./Test`
