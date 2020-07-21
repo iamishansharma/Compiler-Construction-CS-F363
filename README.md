@@ -23,10 +23,17 @@ All the testcases are present inside [Testcases](https://github.com/iamishanshar
 ## Execution Instructions
 
 - Download this repo and change directory to [Code](https://github.com/iamishansharma/Compiler-Construction-CS-F363/tree/master/Code) folder.
-- Run `make {insert_executable_name_here}` eg. `make compiler`<br \>
+- Run `make {insert_executable_name_here}` eg. `make compiler`
+
+### If you don't want to run Code Gen
+
 - Run `./{insert_executable_name_here} {path_to_testcase/*.txt} {parseTree_file_name.txt}`
-- Eg. Run `./compiler ./Test`<br \>OR<br \>
+- Eg. Run `./compiler ./Testcases/t1.txt parseTree.txt`
+
+### If you want to run Code Gen
+
 - Run `./{insert_executable_name_here} {path_to_testcase/*.txt} {Assembly_file_name.asm}`
+- Eg. Run `./compiler ./Testcases/c1.txt code.asm`
 
 ## Execution Instructions for Code Gen Assembly File
 
