@@ -23,8 +23,7 @@ All the testcases are present inside [Testcases]() folder.
 ## Execution Instructions
 
 - Download this repo and change directory to [Code]() folder.
-- Run `make {insert_executable_name_here}` eg. `make compiler`
-<br \>
+- Run `make {insert_executable_name_here}` eg. `make compiler` <br \>
 - Run `./{insert_executable_name_here} {path_to_testcase/*.txt} {parseTree_file_name.txt}`
 - Eg. Run `./compiler ./Test`
 OR
@@ -34,6 +33,6 @@ OR
 
 ### For Linux
 
-	- `nasm -f elf64 -o code.o {Assembly_file_name}.asm`
-	- `gcc -no-pie code.o -o code`
-	- `./code`
+- `nasm -f elf64 -o code.o {Assembly_file_name}.asm`
+- `gcc -no-pie code.o -o code`
+- `./code`
