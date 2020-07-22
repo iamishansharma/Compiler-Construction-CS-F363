@@ -81,17 +81,17 @@ Syntax:
 
 Syntax: 
 
-```for({identifier} in {low_range}..{high_range})```
-```start```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```<statements>```
-```end```
-
-Eg.
-
-```for(k in 2..8)```
-```start```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```x := x + 2*k;```
-```end```
+```for({identifier} in {low_range}..{high_range})```<br />
+```start```<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```<statements>```<br />
+```end```<br />
+<br />
+Eg.<br />
+<br />
+```for(k in 2..8)```<br />
+```start```<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```x := x + 2*k;```<br />
+```end```<br />
 
 #### Properties
 
@@ -99,19 +99,19 @@ Eg.
 
 #### * while
 
-Syntax:
-
-```while({boolean expression})```
-```start```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```<statements>```
-```end```
-
-Eg.
-
-```while(i<=k)```
-```start```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```i := i+1;```
-```end```
+Syntax:<br />
+<br />
+```while({boolean expression})```<br />
+```start```<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```<statements>```<br />
+```end```<br />
+<br />
+Eg.<br />
+<br />
+```while(i<=k)```<br />
+```start```<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```i := i+1;```<br />
+```end```<br />
 
 #### Properties
 
@@ -120,12 +120,12 @@ Eg.
 ------
 ### > Function Call
 
-Syntax:
-
-Non Returning: ```use {function_name} with parameters {parameter_list};```
-Returning: ```[return_list] := use {function_name} with parameters {parameter_list};```
-
-Eg.
-
-[r,m] := use mod1 with parameters v, w;
-use mod2 with parameters a, b;
+Syntax:<br />
+<br />
+Non Returning: ```use {function_name} with parameters {parameter_list};```<br />
+Returning: ```[return_list] := use {function_name} with parameters {parameter_list};```<br />
+<br />
+Eg.<br />
+<br />
+```[r,m] := use mod1 with parameters v, w;```<br />
+```use mod2 with parameters a, b;```<br />
