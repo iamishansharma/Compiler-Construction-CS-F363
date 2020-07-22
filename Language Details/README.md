@@ -10,7 +10,6 @@ The language ERPLAG is a strongly typed language designed for the course Compile
 - `Interger`
 - `Float`
 - `Boolean`
-<br />
 - `Single Dimensional Array` of any primitive datatypes (Static and Dynamic)
 
 ## Types of Statements Supported
