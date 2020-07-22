@@ -37,13 +37,13 @@ Eg. `A[i] := 3;` OR `b := c * d + 4.5;`
 
 ### > Input/Output
 
-#### get_value({identifier})
+#### * get_value({identifier})
 
-The input statement `get_value(v);` intends to read value from the keyboard and associate with the variable v. 
+...The input statement `get_value(v);` intends to read value from the keyboard and associate with the variable v. 
 
-#### print({identifier})
+#### * print({identifier})
 
-The statement `print(v);` intends to write the value of variable v on the monitor.
+...The statement `print(v);` intends to write the value of variable v on the monitor.
 
 ### > Conditional
 
