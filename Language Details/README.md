@@ -242,7 +242,7 @@ Syntax:<br />
 ```takes input [{input_parameter_list}];```<br />
 ```returns [{return_parameter_list}];```<br />
 ```start```<br />
-```&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<function body>```<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```<function body>```<br />
 ```end```<br />
 <br />
 Eg. <br />
@@ -251,8 +251,8 @@ Eg. <br />
 ```takes input [a:integer, b:integer];```<br />
 ```returns [x:integer, abc:real];```<br />
 ```start```<br />
-```&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x = a + b;```<br />
-```&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abc = x * 3.14;```<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```x = a + b;```<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```abc = x * 3.14;```<br />
 ```end```<br />
 
 - A function is a modular implementation which allows ```parameter passing by value for all variable types``` and ```parameter passing by reference for an array ```variable during invocation.
@@ -260,10 +260,10 @@ Eg. <br />
 - The types and the number of parameters returned by a function must be the same as that of the parameters used in invoking the function. 
 - The parameters being returned by a function must be assigned a
 value. 
-<br />
+
 ### Function Declaration
 
-Syntax: ```declare module {function_name};```
+Syntax: ```declare module {function_name};``` <br />
 Eg. ```declare module sum;```
 
 - A function declaration refers to the prototype declaration.
