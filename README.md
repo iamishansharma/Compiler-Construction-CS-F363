@@ -1,4 +1,4 @@
-```json
+```diff
 - # ERPLAG Compiler
 ```
 This was my semester long project for Compiler Construction (CS F363) course at BITS Pilani, Spring 2020.
