@@ -77,9 +77,55 @@ Syntax:
 ------
 ### > Iterative
 
+#### * for
+
+Syntax: 
+
+```for({identifier} in {low_range}..{high_range})```
+```start```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```<statements>```
+```end```
+
+Eg.
+
+```for(k in 2..8)```
+```start```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```x := x + 2*k;```
+```end```
+
+#### Properties
+
+
+
+#### * while
+
+Syntax:
+
+```while({boolean expression})```
+```start```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```<statements>```
+```end```
+
+Eg.
+
+```while(i<=k)```
+```start```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```i := i+1;```
+```end```
+
+#### Properties
+
 
 
 ------
 ### > Function Call
 
+Syntax:
 
+Non Returning: ```use {function_name} with parameters {parameter_list};```
+Returning: ```[return_list] := use {function_name} with parameters {parameter_list};```
+
+Eg.
+
+[r,m] := use mod1 with parameters v, w;
+use mod2 with parameters a, b;
