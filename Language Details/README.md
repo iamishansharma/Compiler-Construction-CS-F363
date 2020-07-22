@@ -148,11 +148,11 @@ Eg. `A[i] := 3;` OR `b := c * d + 4.5;`
 ### > Input/Output
 
 
-#### * get_value({identifier})
+#### - get_value({identifier})
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The input statement `get_value(v);` intends to read value from the keyboard and associate with the variable v. 
 
-#### * print({identifier})
+#### - print({identifier})
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The statement `print(v);` intends to write the value of variable v on the monitor.
 
@@ -184,7 +184,7 @@ Syntax:
 ------
 ### > Iterative
 
-#### * for
+#### - for
 
 Syntax: 
 
@@ -200,11 +200,9 @@ Eg.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```x := x + 2*k;```<br />
 ```end```<br />
 
-#### Properties
+- A for statement must not redefine the variable that participates in the iterating over the range.
 
-
-
-#### * while
+#### - while
 
 Syntax:<br />
 <br />
@@ -220,9 +218,7 @@ Eg.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```i := i+1;```<br />
 ```end```<br />
 
-#### Properties
-
-
+- Atleast one of the variables particiating in the while expression must be assigned a value inside the loop.
 
 ------
 ### > Function Call
@@ -239,3 +235,36 @@ Eg.<br />
 
 ------
 ## Functions
+
+Syntax:<br />
+<br />
+```<<module {function_name}>>```<br />
+```takes input [{input_parameter_list}];```<br />
+```returns [{return_parameter_list}];```<br />
+```start```<br />
+```&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<function body>```<br />
+```end```<br />
+<br />
+Eg. <br />
+<br />
+```<<module sum>>```<br />
+```takes input [a:integer, b:integer];```<br />
+```returns [x:integer, abc:real];```<br />
+```start```<br />
+```&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x = a + b;```<br />
+```&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abc = x * 3.14;```<br />
+```end```<br />
+
+- A function is a modular implementation which allows ```parameter passing by value for all variable types``` and ```parameter passing by reference for an array ```variable during invocation.
+- A function can return multiple values unlike its C counterpart.
+- The types and the number of parameters returned by a function must be the same as that of the parameters used in invoking the function. 
+- The parameters being returned by a function must be assigned a
+value. 
+<br />
+### Function Declaration
+
+Syntax: ```declare module {function_name};```
+Eg. ```declare module sum;```
+
+- A function declaration refers to the prototype declaration.
+- Function invocation should follow function definition or must have function declaration preceding it.
