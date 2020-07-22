@@ -49,15 +49,15 @@ The statement print(v); intends to write the value of variable v on the monitor.
 
 Syntax: 
 
-`switch({identifier})
-start
-    case {value} : <statements S1>;
-                    break;<br />
-    case {value} : <statements S2>;
-                    break;<br />
-    default : <statements S3>;
-              break;
-end`
+`switch({identifier})`<br />
+`start`<br />
+    `case {value} : <statements S1>;`<br />
+                    `break;`<br />
+    `case {value} : <statements S2>;`<br />
+                    `break;`<br />
+    `default : <statements S3>;`<br />
+              `break;`<br />
+`end`
 
 #### Properties
 
