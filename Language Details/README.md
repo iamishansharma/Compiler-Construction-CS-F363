@@ -1,7 +1,5 @@
 # *ER*adicate *PLAG*iarism
 
-- I want to thank Dr Vandana Agarwal for absolutely nothing, rather want to curse her for making our lives difficult.
-
 The language ERPLAG is a strongly typed language designed for the course Compiler Construction CS F363 and the name of the language is motivated by the drive to ERadicate PLAGiarism.
 <br />The language has been evolving to provide a minimal feature set for the project in Compiler Construction course.
 
