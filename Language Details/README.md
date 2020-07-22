@@ -52,11 +52,11 @@ Syntax:
 `switch({identifier})`<br />
 `start`<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`case {value} : <statements S1>;`<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`break;`<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`break;`<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`case {value} : <statements S2>;`<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`break;`<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`break;`<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`default : <statements S3>;`<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`break;`<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`break;`<br />
 `end`
 
 #### Properties
