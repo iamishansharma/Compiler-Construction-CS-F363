@@ -3,12 +3,90 @@
 The language ERPLAG is a strongly typed language designed for the course Compiler Construction CS F363 and the name of the language is motivated by the drive to ERadicate PLAGiarism.
 <br />The language has been evolving to provide a minimal feature set for the project in Compiler Construction course.
 
+## Lexical Structure
+
+### Identifiers
+
+- Regular expression for an identifier is [a-z|A-Z][az|A-Z|0-9|_]*. 
+- Identifiers can be at most 20 characters long. 
+- The language is case sensitive.
+- Identifiers are separated from keywords through a white space.
+
+### White Spaces, Separator and Comments
+
+- The white spaces are blanks, tabs and new line characters. 
+- These are used to separate the tokens. 
+- Any number of white spaces is ignored and need not be tokenized.
+- A semicolon ```;``` separates the statements from each other. 
+- A comment starts with ** and ends with **.
+
+### Numbers
+
+#### Integer
+
+- An integer number is a sequence of digits.
+- The numbers 234, 1,45, 90123 etc. represent integers and are tokenised as NUM. 
+- The type of the integer numbers is integer.
+
+#### Real (Float)
+
+- A floating point number can be either a sequence of digits followed by a decimal point, followed by the fraction part of it again as a continuous sequence of digits.
+- For example, numbers 23.89, 908.567 and 25.0 are valid floating point numbers, but 26. is not because there is no digit after the decimal point. 
+- These numbers can also be represented in mantissa and exponent form, for example, 123.2E+6, 124.2E-1, 124.2e-1 etc. E can be both in upper case and lower case.
+- Signs are optional and if no sign is used with E, the exponent value should be assumed as positive. 
+- The floating point number will not start with a decimal point, for example, .124E+2 is not valid while 1.24E+1 is a valid lexeme. 
+- A floating point number is of data type real and is tokenised as RNUM
+
+#### Operators
+
+- The arithmetic operations are recognized by the lexemes +, -, *, / in their usual meaning.
+- The relational operators are simply <, <=, >, >=, == and !=, known in their usual meaning.
+- The logical and and or operations are permissible and the lexemes ```AND``` and ```OR``` (only in uppercase letters) are valid to be recognized as these two operations.
+- A special operator .. (dot dot) represents the range in defining the array range and for loop ranges.
+- Eg. ```declare C:array[1..10] of integer;``` OR ```for(k in 2..8)```
+- The assignment operator is := and is tokenised as ASSIGNOP.
+
+### Keywords Table
+
+| Pattern | Token |
+| :-------------: |:-------------:|
+| integer | INTEGER |
+| real | REAL |
+| boolean | BOOLEAN |
+| of | OF |
+| array | ARRAY |
+| start | START |
+| end | END |
+| declare | DECLARE |
+| module | MODULE |
+| driver | DRIVER |
+| program | PROGRAM |
+| get_value | GET_VALUE |
+| print | PRINT |
+| use | USE |
+| with | WITH |
+| parameters | PARAMETERS |
+| true | TRUE |
+| false | FALSE |
+| takes | TAKES |
+| input | INPUT |
+| returns | RETURNS |
+| AND | AND |
+| OR | OR |
+| for | FOR |
+| in | IN |
+| switch | SWITCH |
+| case | CASE |
+| break | BREAK |
+| default | DEFAULT |
+| while | WHILE |
+
 ## Datatypes
 
 ### Primitive
 
 - `Interger`
-- `Float`
+- `Real (Float)`
 - `Boolean`
 - `Single Dimensional Array` of any primitive datatypes (Static and Dynamic bound allocation)
 
