@@ -236,3 +236,6 @@ Eg.<br />
 <br />
 ```[r,m] := use mod1 with parameters v, w;```<br />
 ```use mod2 with parameters a, b;```<br />
+
+------
+## Functions
