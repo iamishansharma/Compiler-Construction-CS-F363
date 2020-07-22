@@ -15,7 +15,6 @@ The language ERPLAG is a strongly typed language designed for the course Compile
 ## Types of Statements Supported
 
 ### > Declarative
-------
 
 Syntax: `declare {identifier_list} : primitive_data_type;`
 
@@ -27,8 +26,9 @@ Eg. `declare a, b, c:integer;` declares the identifiers a, b and c to be of type
 - An identifier cannot be declared multiple times in the same scope. 
 - Also, an identifier must be declared before its use.
 
-### > Assignment
 ------
+### > Assignment
+
 
 Syntax: `<left_hand_value> := <right_hand_expression>;`
 
@@ -37,8 +37,9 @@ Eg. `A[i] := 3;` OR `b := c * d + 4.5;`
 - A left value can be a simple identifier or a constructed expression for accessing an array element.
 - The right hand side can be any arithematic or boolen expression.
 
-### > Input/Output
 ------
+### > Input/Output
+
 
 #### * get_value({identifier})
 
@@ -48,8 +49,9 @@ Eg. `A[i] := 3;` OR `b := c * d + 4.5;`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The statement `print(v);` intends to write the value of variable v on the monitor.
 
-### > Conditional
 ------
+### > Conditional
+
 
 Syntax: 
 
@@ -72,12 +74,12 @@ Syntax:
 - A switch statement with an integer value can have any number of case statements and a default statement must follow these case statements. 
 - The case statements are separated by a break.
 
+------
 ### > Iterative
+
+
+
 ------
-
-
-
 ### > Function Call
-------
 
 
