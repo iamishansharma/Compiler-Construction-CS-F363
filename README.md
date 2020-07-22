@@ -43,7 +43,8 @@ ERPLAG is a toy language made for the course. Details of which can be looked at 
 
 ## Compatibility and Pre-requisites
 
-- gcc (Ubuntu 5.4.0 - 6ubuntu1~16.04.4) 5.4.0 20160609 and up
+- Unix (Linux / Mac)
+- gcc 5.4.0 and up
 - NASM version 2.12.01 and up
 
 ## Testcases
