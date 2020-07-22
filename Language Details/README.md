@@ -37,7 +37,7 @@ The language ERPLAG is a strongly typed language designed for the course Compile
 - The floating point number will not start with a decimal point, for example, .124E+2 is not valid while 1.24E+1 is a valid lexeme. 
 - A floating point number is of data type real and is tokenised as RNUM
 
-#### Operators
+### Operators
 
 - The arithmetic operations are recognized by the lexemes +, -, *, / in their usual meaning.
 - The relational operators are simply <, <=, >, >=, == and !=, known in their usual meaning.
@@ -80,6 +80,35 @@ The language ERPLAG is a strongly typed language designed for the course Compile
 | break | BREAK |
 | default | DEFAULT |
 | while | WHILE |
+
+### Symbols/Operators Table
+
+| Pattern | Token |
+| :-------------: | :-------------: |
+ |+ | PLUS |
+ |- | MINUS |
+ |* | MUL |
+ |/ | DIV |
+ |< | LT |
+ |<= | LE |
+ |>= | GE |
+ |> | GT |
+ |== | EQ |
+ |!= | NE |
+ |<< | DEF |
+ |>> | ENDDEF |
+ |<<< | DRIVERDEF |
+ |>>> | DRIVERENDDEF |
+ |: | COLON |
+ |.. | RANGEOP |
+ |; | SEMICOL |
+ |, | COMMA |
+ |:= | ASSIGNOP |
+ |[ | SQBO |
+ |] | SQBC |
+ |( | BO |
+ |) | BC |
+ |** | COMMENTMARK |
 
 ## Datatypes
 
