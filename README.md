@@ -20,8 +20,6 @@ ERPLAG is a toy language made for the course. Details of which can be looked at 
 
 ### AST Construction (ast.c) 
 
-- This module takes in the parse tree and
-
 1. Delete all the irrelevant tokens 
 2. Changes the structure of <expressions> to infix notation (for proper checking and evaluation)
 3. Removes chaining in tree
